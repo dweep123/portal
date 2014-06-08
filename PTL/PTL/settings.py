@@ -57,25 +57,25 @@ WSGI_APPLICATION = 'PTL.wsgi.application'
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
 DATABASES = {
-	'default': {
-		'ENGINE': 'django.db.backends.postgresql_psycopg2',
-		'NAME': 'systersdb1',  
-		'USER': 'root',   
-		'PASSWORD': 'root',   
-		'HOST': 'localhost', 
-		'PORT': '5432', 
-	}
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'systersdb1',
+                'USER': 'root',
+                'PASSWORD': 'root',
+                'HOST': 'localhost',
+                'PORT': '5432',
+    }
 }
 INTERNAL_IPS = ('127.0.0.1',)
 
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'templates')
 
 TEMPLATE_DIRS = (
-		    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-		    # Always use forward slashes, even on Windows.
-		    # Don't forget to use absolute paths, not relative paths.
-		     TEMPLATE_PATH,
-		)
+    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
+    # Always use forward slashes, even on Windows.
+    # Don't forget to use absolute paths, not relative paths.
+    TEMPLATE_PATH,
+)
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
@@ -98,8 +98,8 @@ STATIC_PATH = os.path.join(BASE_DIR, 'static')
 print STATIC_PATH
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
-		    STATIC_PATH,
-		)
+    STATIC_PATH,
+)
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

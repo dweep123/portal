@@ -11,4 +11,4 @@ More information on technical architecture of this project coming soon...
 Setup for developers
 --------------------
 
-1.Read Requirements.pdf
+1. Read Requirements.txx

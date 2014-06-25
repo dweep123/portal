@@ -8,8 +8,8 @@ class SysterUser(models.Model):
     """Profile model to store additional information about a user"""
     user = models.OneToOneField(User)
     country = CountryField(blank=True, null=True)
-    blog_url = models.URLField(max_length=255, blank=True, null=True)
-    homepage_url = models.URLField(max_length=255, blank=True, null=True)
+    blog_url = models.URLField(max_length=255, blank=True)
+    homepage_url = models.URLField(max_length=255, blank=True)
     profile_picture = models.ImageField(upload_to='photos/',
                                         default='photos/dummy.jpeg',
                                         blank=True,
@@ -26,17 +26,18 @@ class SysterUser(models.Model):
 
 class Community(models.Model):
     """Model to represent a Syster Community"""
-    name = models.CharField(max_length=255, blank=False, null=False)
-    email = models.EmailField(max_length=255, blank=True, null=True)
-    mailing_list = models.EmailField(max_length=255, blank=True, null=True)
-    resource_area = models.URLField(max_length=255, blank=True, null=True)
-    members = models.ManyToManyField(SysterUser, blank=True, null=True)
-    community_admin = models.ForeignKey(User)
+    name = models.CharField(max_length=255)
+    email = models.EmailField(max_length=255, blank=True)
+    mailing_list = models.EmailField(max_length=255, blank=True)
+    resource_area = models.URLField(max_length=255, blank=True)
+    members = models.ManyToManyField(SysterUser, blank=True, null=True,
+                                     related_name='member_of_community')
+    community_admin = models.ForeignKey(SysterUser, related_name='community')
     parent_community = models.ForeignKey('self', blank=True, null=True)
-    website = models.URLField(max_length=30, blank=True, null=True)
-    facebook = models.URLField(max_length=30, blank=True, null=True)
-    googleplus = models.URLField(max_length=30, blank=True, null=True)
-    twitter = models.URLField(max_length=30, blank=True, null=True)
+    website = models.URLField(max_length=30, blank=True)
+    facebook = models.URLField(max_length=30, blank=True)
+    googleplus = models.URLField(max_length=30, blank=True)
+    twitter = models.URLField(max_length=30, blank=True)
 
     def __unicode__(self):
         return self.name
@@ -44,15 +45,15 @@ class Community(models.Model):
 
 class Tag(models.Model):
     """Model to represent the tags a resource can have"""
-    name = models.CharField(max_length=30, blank=False, null=False)
+    name = models.CharField(max_length=255)
 
     def __unicode__(self):
         return self.name
 
 
-class Resource_Type(models.Model):
+class ResourceType(models.Model):
     """Model to represent the types a resource can have"""
-    name = models.CharField(max_length=30, blank=False, null=False)
+    name = models.CharField(max_length=255)
 
     def __unicode__(self):
         return self.name
@@ -60,7 +61,7 @@ class Resource_Type(models.Model):
 
 class News(models.Model):
     """Model to represent a News section on Community resource area"""
-    title = models.CharField(max_length=255, blank=False, null=False)
+    title = models.CharField(max_length=255)
     community = models.ForeignKey(Community)
     author = models.ForeignKey(SysterUser)
     date_created = models.DateField(auto_now=False, auto_now_add=True)
@@ -73,9 +74,9 @@ class News(models.Model):
         return "{0} of {1} Community".format(self.title, self.community.name)
 
 
-class CommunityPages(models.Model):
+class CommunityPage(models.Model):
     """Model to represent community pages"""
-    title = models.CharField(max_length=30, blank=False, null=False)
+    title = models.CharField(max_length=255)
     page = models.OneToOneField(Page)
     community = models.ForeignKey(Community)
 
@@ -85,15 +86,15 @@ class CommunityPages(models.Model):
 
 class Resource(models.Model):
     """Model to represent a Resources section on Community resource area"""
-    title = models.CharField(max_length=255, blank=False, null=False)
+    title = models.CharField(max_length=255)
     community = models.ForeignKey(Community)
-    author = models.ForeignKey(User)
+    author = models.ForeignKey(SysterUser)
     date_created = models.DateField(auto_now=False, auto_now_add=True)
     date_modified = models.DateField(auto_now=True, auto_now_add=False)
     is_public = models.BooleanField(default=True)
     tags = models.ManyToManyField(Tag, blank=True, null=True)
-    resource_type = models.ForeignKey(Resource_Type, blank=True, null=True)
+    resource_type = models.ForeignKey(ResourceType, blank=True, null=True)
     content = models.TextField()
 
     def __unicode__(self):
-        return "{0} of {0} Community".format(self.title, self.community.name)
+        return "{0} of {1} Community".format(self.title, self.community.name)

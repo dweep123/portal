@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.signals import post_save
 from django.contrib.auth.models import User
 from django_countries.fields import CountryField
 from cms.models.pagemodel import Page
@@ -22,6 +23,10 @@ class SysterUser(models.Model):
             return "{0} {1}".format(self.user.first_name, self.user.last_name)
         else:
             return self.user.username
+    
+    @models.permalink
+    def get_absolute_url(self):
+        return ('view_userprofile', None, { 'username': self.user.username })
 
 
 class Community(models.Model):
@@ -98,3 +103,13 @@ class Resource(models.Model):
 
     def __unicode__(self):
         return "{0} of {1} Community".format(self.title, self.community.name)
+
+
+def user_post_save(sender, instance, created, **kwargs):
+    """Create a SysterUser profile when a new user account is created"""
+    if created:
+        systeruser = SysterUser()
+        systeruser.user = instance
+        systeruser.save()
+
+post_save.connect(user_post_save, sender=User)

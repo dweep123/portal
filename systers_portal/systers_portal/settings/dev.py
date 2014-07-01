@@ -7,10 +7,11 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'systersdb',
-        'USER': '',
-        'PASSWORD': '',
+        'USER': 'root',
+        'PASSWORD': 'root',
         'HOST': 'localhost',
         'PORT': '5432',
     }
 }
 INTERNAL_IPS = ('127.0.0.1',)
+ROOT_URLCONF = 'systers_portal.urls'

@@ -6,7 +6,7 @@ TEMPLATE_DEBUG = DEBUG
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'systersdb',
+        'NAME': 'systersdb2',
         'USER': 'root',
         'PASSWORD': 'root',
         'HOST': 'localhost',

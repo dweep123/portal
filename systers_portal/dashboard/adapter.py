@@ -6,10 +6,10 @@ class AccountAdapter(DefaultAccountAdapter):
 
     def get_login_redirect_url(self, request):
         if request.user.is_authenticated():
-            url = '/dashboard/profile/' + request.user.username + '/'
+            url = '/dashboard/view_profile/' + request.user.username + '/'
         return resolve_url(url)
 
     def get_signup_redirect_url(self, request):
         if request.user.is_authenticated():
-            url = '/dashboard/profile/' + request.user.username + '/'
+            url = '/dashboard/view_profile/' + request.user.username + '/'
         return resolve_url(url)

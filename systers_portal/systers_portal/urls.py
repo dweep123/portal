@@ -11,6 +11,8 @@ urlpatterns = patterns(
     url(r'^', include('dashboard.urls')),
     url(r'^accounts/', include('allauth.urls')),
     url(r'^cms/', include('cms.urls')),
+    url(r'^superadmin_dashboard/',
+       include('superadmin_dashboard.urls')),
 )
 urlpatterns += patterns(
     'django.views.static',

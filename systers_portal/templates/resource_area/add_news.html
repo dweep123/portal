@@ -1,21 +1,16 @@
-{% extends "superadmin_dashboard/base.html" %}
-{% block title %}Edit Profile{% endblock %}
+{% extends "resource_area/base.html" %}
+{% block title %}Add News{% endblock %}
 {% block content %}
 <div class="hero-unit">
 {% if user.is_authenticated and user.is_active and user.is_superuser%}
-    <h3>Edit {{community_name}} Profile</h3>
+    <h3>Add News</h3>
     <br/>
  <div class="container">
-{% if community %}
-<form id="useredit_form" method="post" action="/superadmin_dashboard/edit_communityprofile/{{community_name_url}}"
-enctype="multipart/form-data">
+<form id="news_add_form" method="post" action="/resource_area/add_news/{{community_name_url}}">
 {% csrf_token %}
-{{ communityform.as_p }}
-<input type="submit" name="submit" value="Save" />
+{{ form.as_p }}
+<input type="submit" name="submit" value="Add News" />
 </form>
-{% else %}
-The specified community {{ community_name }} does not exist!
-{% endif %}
 {% elif   user.is_authenticated and user.is_active %}
 <strong > You should be logged in as Super User!! Please login into super user account </h3>
 {%else%}

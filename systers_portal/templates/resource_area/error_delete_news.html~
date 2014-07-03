@@ -1,26 +1,18 @@
-{% extends "superadmin_dashboard/base.html" %}
-{% block title %}Communities{% endblock %}
+{% extends "resource_area/base.html" %}
+{% block title %}Delete News{% endblock %}
 {% block content %}
 <div class="hero-unit">
 {% if user.is_authenticated and user.is_active and user.is_superuser%}
-<h3>Communities</h3>
-<br/>
-<div class="container">
-{% if communities %}
-<ul>
-{% for community in communities %}
-<li><a href="/resource_area/{{ community.url }}">{{ community.name }}</a></li>
-{% endfor %}
-</ul>
-{% else %}
-<strong>There are no communities present.</strong>
-{% endif %}
+    <h3>Delete News</h3>
+    <br/>
+ <div class="container">
+<strong> This news article cannot be deleted , no such news article</strong>
 
-</div>
 {% elif   user.is_authenticated and user.is_active %}
 <strong > You should be logged in as Super User!! Please login into super user account </h3>
 {%else%}
 <strong > You should be logged in as Super User!! Please login into super user account by clicking <a href="/accounts/login/">here</a></h3>
 {%endif%}
+</div>
 </div>
 {% endblock %}

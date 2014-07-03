@@ -1,0 +1,121 @@
+from django.shortcuts import render
+from django.http import HttpResponse, HttpRequest
+from django.template import RequestContext
+from django.shortcuts import render_to_response
+from dashboard.models import SysterUser, Community, News, Resource
+from django.http import HttpResponseRedirect, HttpResponse
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import user_passes_test
+from resource_area.forms import CommunityForm
+from resource_area.forms import NewsForm
+
+
+def community_resourcearea(request, community_name_url):
+    context = RequestContext(request)
+    community_name = community_name_url.replace('_', ' ')
+    context_dic = {'community_name': community_name}
+    context_dic['community_name_url'] = community_name_url
+    try:
+        community = Community.objects.get(name=community_name)
+        context_dic["community"] = community
+        community.url = community_name_url
+    except Community.DoesNotExist:
+        pass
+    return render_to_response('resource_area/edit_resource_area.html', context_dic, context)
+
+
+def community_editprofile(request, community_name_url):
+    context = RequestContext(request)
+    community_name = community_name_url.replace('_', ' ')
+    context_dic = {'community_name': community_name}
+    context_dic['community_name_url'] = community_name_url
+    try:
+        community = Community.objects.get(name=community_name)
+        context_dic["community"] = community
+        if request.method == 'POST':
+            communityform = CommunityForm(
+                data=request.POST, instance=community)
+            context_dic['communityform'] = communityform
+            if communityform.is_valid():
+                community = communityform.save()
+                return community_resourcearea(request, community_name_url)
+            else:
+                print communityform.errors
+        else:
+            communityform = CommunityForm(instance=community)
+            context_dic['communityform'] = communityform
+
+    except Community.DoesNotExist:
+        pass
+
+    return render_to_response('resource_area/edit_communityprofile.html', context_dic, context)
+
+
+
+def community_News(request, community_name_url):
+    context = RequestContext(request)
+    community_name = community_name_url.replace('_', ' ')
+    context_dic = {'community_name': community_name}
+    context_dic['community_name_url'] = community_name_url
+    try:
+        community = Community.objects.get(name=community_name)
+        context_dic["community"] = community
+        news_list = News.objects.filter(community=community)
+        context_dic['news_list'] = news_list
+    except Community.DoesNotExist:
+        pass
+    return render_to_response('resource_area/show_news.html', context_dic, context)
+
+
+def view_news(request, news_id):
+    context = RequestContext(request)
+    context_dic = {'news_id': news_id}
+    try:
+        news = News.objects.get(id=news_id)
+        context_dic["news"] = news
+    except News.DoesNotExist:
+        pass
+    return render_to_response('resource_area/view_news.html', context_dic, context)
+
+
+def edit_news(request, news_id):
+    context = RequestContext(request)
+    context_dic = {'news_id': news_id}
+    try:
+      	news = News.objects.get(id=news_id)
+        context_dic["news"] = news
+        if request.method == 'POST':
+            newsform = NewsForm(
+                data=request.POST, instance=news)
+            context_dic['newsform'] = newsform
+            if newsform.is_valid():
+                news = newsform.save()
+                return view_news(request, news_id)
+            else:
+                print newsform.errors
+        else:
+            newsform = NewsForm(instance=news)
+            context_dic['newsform'] = newsform
+
+    except News.DoesNotExist:
+        pass
+
+    return render_to_response('resource_area/edit_news.html', context_dic, context)
+
+
+def delete_news(request, news_id):
+    context = RequestContext(request)
+    context_dic = {'news_id': news_id}
+    return render_to_response('resource_area/delete_news.html', context_dic, context)
+
+
+def sure_delete_news(request, news_id):
+    context = RequestContext(request)
+    context_dic = {'news_id': news_id}
+    try:
+        news = News.objects.get(id=news_id)
+	community = news.community.name.replace("  ","_")
+	news.delete()
+	return community_News(request,community)
+    except News.DoesNotExist:
+    	return render_to_response('resource_area/error_delete_news.html', context_dic, context)

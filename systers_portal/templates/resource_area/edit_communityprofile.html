@@ -1,4 +1,4 @@
-{% extends "superadmin_dashboard/base.html" %}
+{% extends "resource_area/base.html" %}
 {% block title %}Edit Profile{% endblock %}
 {% block content %}
 <div class="hero-unit">
@@ -7,7 +7,7 @@
     <br/>
  <div class="container">
 {% if community %}
-<form id="useredit_form" method="post" action="/superadmin_dashboard/edit_communityprofile/{{community_name_url}}"
+<form id="community_profile_edit_form" method="post" action="/resource_area/edit_profile/{{community_name_url}}"
 enctype="multipart/form-data">
 {% csrf_token %}
 {{ communityform.as_p }}

@@ -1,18 +1,22 @@
-{% extends "superadmin_dashboard/base.html" %}
-{% block title %}Edit Profile{% endblock %}
+{% extends "resource_area/base.html" %}
+{% block title %}Resource Area{% endblock %}
 {% block content %}
 <div class="hero-unit">
 {% if user.is_authenticated and user.is_active and user.is_superuser%}
-    <h3>Edit {{community_name}} Profile</h3>
+    <h3>Edit {{community_name}} Resource Area</h3>
     <br/>
  <div class="container">
 {% if community %}
-<form id="useredit_form" method="post" action="/superadmin_dashboard/edit_communityprofile/{{community_name_url}}"
-enctype="multipart/form-data">
-{% csrf_token %}
-{{ communityform.as_p }}
-<input type="submit" name="submit" value="Save" />
-</form>
+<a href="/resource_area/edit_profile/{{ community_name_url }}">Edit {{ community.name }}'s Profile</a><br><br>
+<a href="/resource_area/News/{{ community_name_url }}"> News </a><br><br>
+{% if pages %}
+{% for page in pages %}
+<li><a href="/cms/{{page.url}}"> {{ page.title }}</a></li>
+{% endfor %}
+{% endif %}
+<br>
+<br>
+<a href="/resource_area/add_page/{{ community_name_url }}"> Add Page </a><br><br>
 {% else %}
 The specified community {{ community_name }} does not exist!
 {% endif %}
@@ -24,3 +28,4 @@ The specified community {{ community_name }} does not exist!
 </div>
 </div>
 {% endblock %}
+

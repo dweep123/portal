@@ -1,18 +1,22 @@
-{% extends "superadmin_dashboard/base.html" %}
-{% block title %}Edit Profile{% endblock %}
+{% extends "resource_area/base.html" %}
+{% block title %}{{community_name}} News{% endblock %}
 {% block content %}
 <div class="hero-unit">
 {% if user.is_authenticated and user.is_active and user.is_superuser%}
-    <h3>Edit {{community_name}} Profile</h3>
+    <h3>News</h3>
     <br/>
+<a href="/resource_area/add_news/{{community_name_url}}"> Add News </a> <br>
  <div class="container">
 {% if community %}
-<form id="useredit_form" method="post" action="/superadmin_dashboard/edit_communityprofile/{{community_name_url}}"
-enctype="multipart/form-data">
-{% csrf_token %}
-{{ communityform.as_p }}
-<input type="submit" name="submit" value="Save" />
-</form>
+{% if news_list %}
+<ul>
+{% for news in news_list %}
+<li><a href="/resource_area/view_news/{{news.id}}">{{ news.title }}</a></li>
+{% endfor %}
+</ul>
+{%else%}
+There are no news about this community 
+{% endif %}
 {% else %}
 The specified community {{ community_name }} does not exist!
 {% endif %}

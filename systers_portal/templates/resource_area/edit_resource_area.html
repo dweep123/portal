@@ -10,7 +10,7 @@
 <a href="/resource_area/News/{{ community_name_url }}"> News </a><br><br>
 {% if pages %}
 {% for page in pages %}
-<li><a href="/cms/{{page.url}}/?edit"> {{ page.title }}</a></li>
+<li><a href="/resource_area/pages/{{page.id}}"> {{ page.title }}</a></li>
 {% endfor %}
 {% endif %}
 <br>

@@ -3,6 +3,7 @@ from django.db.models.signals import post_save
 from django.contrib.auth.models import User
 from django_countries.fields import CountryField
 from cms.models.pagemodel import Page
+from cms.models.fields import PlaceholderField
 
 
 class SysterUser(models.Model):
@@ -78,11 +79,12 @@ class News(models.Model):
 class CommunityPage(models.Model):
     """Model to represent community pages"""
     title = models.CharField(max_length=255)
-    page = models.OneToOneField(Page)
+    editable_content = PlaceholderField('editable_content')
+    #    page = models.OneToOneField(Page)
     community = models.ForeignKey(Community)
 
     def __unicode__(self):
-        return "{0} of {1} Community".format(self.page, self.community.name)
+        return "{0} of {1} Community".format(self.title, self.community.name)
 
 
 class Resource(models.Model):

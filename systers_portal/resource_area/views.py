@@ -13,6 +13,14 @@ from resource_area.forms import PageAddForm
 from cms.models.pagemodel import Page
 from cms.api import create_page
 from django.contrib.admin.views.decorators import staff_member_required
+from django.shortcuts import get_object_or_404
+
+def edit_page(request, page_id):
+    page = get_object_or_404(CommunityPage, id=page_id)
+    return render_to_response('resource_area/edit_page.html', {
+        'page': page,
+    }, context_instance=RequestContext(request))
+
 
 @staff_member_required
 def community_resourcearea(request, community_name_url):
@@ -25,8 +33,8 @@ def community_resourcearea(request, community_name_url):
         context_dic["community"] = community
         community.url = community_name_url
 	pages =  CommunityPage.objects.filter(community=community)
-	for page in pages:
-		page.url = page.title.lower()+"_"+page.community.name.replace(' ','_').lower()
+	'''for page in pages:
+		page.url = page.title.lower()+"_"+page.community.name.replace(' ','_').lower()'''
 	context_dic['pages']=pages
     except Community.DoesNotExist:
         pass

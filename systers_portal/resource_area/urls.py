@@ -19,4 +19,6 @@ urlpatterns = patterns('',
                            views.sure_delete_news, name='sure_delete_news'),
                        url(r'^add_page/(?P<community_name_url>\w+)$',
                            views.add_page, name='add_page'),
+                       url(r'^pages/(?P<page_id>\w+)$',
+                           views.edit_page, name='edit_page'),
                        )

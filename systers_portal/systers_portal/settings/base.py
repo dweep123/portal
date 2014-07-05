@@ -96,15 +96,6 @@ CMS_TEMPLATES = (
 LANGUAGES = [
     ('en-us', 'English'),
     ]
-CMS_TOOLBARS = [
-# CMS Toolbars
-    'cms.cms_toolbar.PlaceholderToolbar',
-#    'cms.cms_toolbar.BasicToolbar',
-    'cms.cms_toolbar.PageToolbar',
-
-# 3rd Party Toolbar
-#  'aldryn_blog.cms_toolbar.BlogToolbar',
-    ]
 
 
 # Internationalization

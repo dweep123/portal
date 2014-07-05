@@ -2,7 +2,6 @@
 {% block title %}{{community_name}} News{% endblock %}
 {% block content %}
 <div class="hero-unit">
-{% if user.is_authenticated and user.is_active and user.is_superuser%}
     <h3>News</h3>
     <br/>
 <a href="/resource_area/add_news/{{community_name_url}}"> Add News </a> <br>
@@ -20,11 +19,6 @@ There are no news about this community
 {% else %}
 The specified community {{ community_name }} does not exist!
 {% endif %}
-{% elif   user.is_authenticated and user.is_active %}
-<strong > You should be logged in as Super User!! Please login into super user account </h3>
-{%else%}
-<strong > You should be logged in as Super User!! Please login into super user account by clicking <a href="/accounts/login/">here</a></h3>
-{%endif%}
 </div>
 </div>
 {% endblock %}

@@ -8,9 +8,10 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 """@user_passes_test(lambda u: u.is_superuser)"""
 
-
+@staff_member_required
 def index(request):
     context = RequestContext(request)
     community_list = Community.objects.all()
@@ -19,7 +20,7 @@ def index(request):
         community.url = community.name.replace(' ', '_')
     return render_to_response('superadmin_dashboard/index.html', context_dic, context)
 
-
+@staff_member_required
 def ShowCommunities(request):
     context = RequestContext(request)
     community_list = Community.objects.all()
@@ -28,7 +29,7 @@ def ShowCommunities(request):
         community.url = community.name.replace(' ', '_')
     return render_to_response('superadmin_dashboard/show_communities.html', context_dic, context)
 
-
+@staff_member_required
 def add_community(request):
     context = RequestContext(request)
     if request.method == 'POST':
@@ -42,7 +43,7 @@ def add_community(request):
         form = CommunityForm()
     return render_to_response('superadmin_dashboard/add_community.html', {'form': form}, context)
 
-
+@staff_member_required
 def edit_communityprofile(request, community_name_url):
     context = RequestContext(request)
     community_name = community_name_url.replace('_', ' ')

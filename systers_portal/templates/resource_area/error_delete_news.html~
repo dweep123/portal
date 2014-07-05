@@ -7,7 +7,6 @@
     <br/>
  <div class="container">
 <strong> This news article cannot be deleted , no such news article</strong>
-
 {% elif   user.is_authenticated and user.is_active %}
 <strong > You should be logged in as Super User!! Please login into super user account </h3>
 {%else%}

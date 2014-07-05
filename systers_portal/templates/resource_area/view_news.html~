@@ -14,7 +14,8 @@ Content : {{news.content}}<br><br>
 {% else %}
 There is no such news 
 {% endif %}
-<li><a href="/resource_area/edit_news/{{news.id}}">Edit</a></li>
+<a href="/resource_area/edit_news/{{news.id}}">Edit</a><br>
+<a href="/resource_area/delete_news/{{news.id}}">Delete</a><br>
 {% elif   user.is_authenticated and user.is_active %}
 <strong > You should be logged in as Super User!! Please login into super user account </h3>
 {%else%}

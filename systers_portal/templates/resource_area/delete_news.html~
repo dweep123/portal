@@ -7,7 +7,7 @@
     <br/>
  <div class="container">
 <strong> Are you sure you want to delete it </strong>
-<a href="/resource_area/sure_delete_news/{{news.id}}">Delete</a><br>
+<a href="/resource_area/sure_delete_news/{{news_id}}">Delete</a><br>
 {% elif   user.is_authenticated and user.is_active %}
 <strong > You should be logged in as Super User!! Please login into super user account </h3>
 {%else%}

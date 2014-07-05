@@ -1,6 +1,6 @@
 {% extends "resource_area/base.html" %}
 {% block title %}Add News{% endblock %}
-{% block body_block %}
+{% block content %}
 <div class="hero-unit">
 {% if user.is_authenticated and user.is_active and user.is_superuser%}
     <h3>Add News</h3>

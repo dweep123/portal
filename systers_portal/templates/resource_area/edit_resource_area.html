@@ -2,7 +2,6 @@
 {% block title %}Resource Area{% endblock %}
 {% block content %}
 <div class="hero-unit">
-{% if user.is_authenticated and user.is_active and user.is_superuser%}
     <h3>Edit {{community_name}} Resource Area</h3>
     <br/>
  <div class="container">
@@ -11,7 +10,7 @@
 <a href="/resource_area/News/{{ community_name_url }}"> News </a><br><br>
 {% if pages %}
 {% for page in pages %}
-<li><a href="/cms/{{page.url}}"> {{ page.title }}</a></li>
+<li><a href="/cms/{{page.url}}/?edit"> {{ page.title }}</a></li>
 {% endfor %}
 {% endif %}
 <br>
@@ -20,11 +19,6 @@
 {% else %}
 The specified community {{ community_name }} does not exist!
 {% endif %}
-{% elif   user.is_authenticated and user.is_active %}
-<strong > You should be logged in as Super User!! Please login into super user account </h3>
-{%else%}
-<strong > You should be logged in as Super User!! Please login into super user account by clicking <a href="/accounts/login/">here</a></h3>
-{%endif%}
 </div>
 </div>
 {% endblock %}

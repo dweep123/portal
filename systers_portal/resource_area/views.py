@@ -12,8 +12,9 @@ from resource_area.forms import NewsEditForm
 from resource_area.forms import PageAddForm
 from cms.models.pagemodel import Page
 from cms.api import create_page
+from django.contrib.admin.views.decorators import staff_member_required
 
-
+@staff_member_required
 def community_resourcearea(request, community_name_url):
     context = RequestContext(request)
     community_name = community_name_url.replace('_', ' ')
@@ -31,7 +32,7 @@ def community_resourcearea(request, community_name_url):
         pass
     return render_to_response('resource_area/edit_resource_area.html', context_dic, context)
 
-
+@staff_member_required
 def community_editprofile(request, community_name_url):
     context = RequestContext(request)
     community_name = community_name_url.replace('_', ' ')
@@ -58,7 +59,7 @@ def community_editprofile(request, community_name_url):
 
     return render_to_response('resource_area/edit_communityprofile.html', context_dic, context)
 
-
+@staff_member_required
 def community_News(request, community_name_url):
     context = RequestContext(request)
     community_name = community_name_url.replace('_', ' ')
@@ -73,7 +74,7 @@ def community_News(request, community_name_url):
         pass
     return render_to_response('resource_area/show_news.html', context_dic, context)
 
-
+@staff_member_required
 def add_news(request, community_name_url):
     context = RequestContext(request)
     community_name = community_name_url.replace('_', ' ')
@@ -100,7 +101,7 @@ def add_news(request, community_name_url):
     return render_to_response('resource_area/add_news.html', context_dic,context)
 
 
-
+@staff_member_required
 def view_news(request, news_id):
     context = RequestContext(request)
     context_dic = {'news_id': news_id}
@@ -111,7 +112,7 @@ def view_news(request, news_id):
         pass
     return render_to_response('resource_area/view_news.html', context_dic, context)
 
-
+@staff_member_required
 def edit_news(request, news_id):
     context = RequestContext(request)
     context_dic = {'news_id': news_id}
@@ -136,13 +137,13 @@ def edit_news(request, news_id):
 
     return render_to_response('resource_area/edit_news.html', context_dic, context)
 
-
+@staff_member_required
 def delete_news(request, news_id):
     context = RequestContext(request)
     context_dic = {'news_id': news_id}
     return render_to_response('resource_area/delete_news.html', context_dic, context)
 
-
+@staff_member_required
 def sure_delete_news(request, news_id):
     context = RequestContext(request)
     context_dic = {'news_id': news_id}
@@ -154,7 +155,7 @@ def sure_delete_news(request, news_id):
     except News.DoesNotExist:
     	return render_to_response('resource_area/error_delete_news.html', context_dic, context)
 
-
+@staff_member_required
 def add_page(request, community_name_url):
     context = RequestContext(request)
     community_name = community_name_url.replace('_', ' ')

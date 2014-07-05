@@ -2,7 +2,6 @@
 {% block title %} News{% endblock %}
 {% block content %}
 <div class="hero-unit">
-{% if user.is_authenticated and user.is_active and user.is_superuser%}
     <h3>News</h3>
     <br/>
  <div class="container">
@@ -16,11 +15,6 @@ There is no such news
 {% endif %}
 <a href="/resource_area/edit_news/{{news.id}}">Edit</a><br>
 <a href="/resource_area/delete_news/{{news.id}}">Delete</a><br>
-{% elif   user.is_authenticated and user.is_active %}
-<strong > You should be logged in as Super User!! Please login into super user account </h3>
-{%else%}
-<strong > You should be logged in as Super User!! Please login into super user account by clicking <a href="/accounts/login/">here</a></h3>
-{%endif%}
 </div>
 </div>
 {% endblock %}

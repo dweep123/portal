@@ -2,16 +2,10 @@
 {% block title %}Delete News{% endblock %}
 {% block content %}
 <div class="hero-unit">
-{% if user.is_authenticated and user.is_active and user.is_superuser%}
     <h3>Delete News</h3>
     <br/>
  <div class="container">
 <strong> This news article cannot be deleted , no such news article</strong>
-{% elif   user.is_authenticated and user.is_active %}
-<strong > You should be logged in as Super User!! Please login into super user account </h3>
-{%else%}
-<strong > You should be logged in as Super User!! Please login into super user account by clicking <a href="/accounts/login/">here</a></h3>
-{%endif%}
 </div>
 </div>
 {% endblock %}

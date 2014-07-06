@@ -130,8 +130,8 @@ ACCOUNT_EMAIL_REQUIRED = True
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'reedlepee123@gmail.com'
-EMAIL_HOST_PASSWORD = 'CKT@MPDV19!'
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 

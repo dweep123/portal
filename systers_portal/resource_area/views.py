@@ -168,7 +168,7 @@ def add_page(request, community_name_url):
   	      if form.is_valid():
 		    community_page = form.save(commit=False)
 	    	    community_page.community = community
-		    cms_page = create_page(community_page.title+"_"+community_name_url,'page_template.html','en-us')
+		    cms_page = create_page(community_page.title+"_"+community_name_url,'page_template.html','en-us',published=True)
 		    community_page.page=cms_page
      	            community_page.save()
 		    return community_resourcearea(request, community_name_url)

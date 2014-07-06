@@ -1,0 +1,5 @@
+{% load cms_tags %}
+{% render_placeholder page.editable_content "640"  %}
+{{page.title}}
+
+

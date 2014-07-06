@@ -101,15 +101,15 @@ LANGUAGES = [
     'resource_area.cms_toolbar.PlaceholderToolbar',
     'resource_area.cms_toolbar.PageToolbar',
     ]'''
-CMS_TOOLBARS = [
+'''CMS_TOOLBARS = [
 # CMS Toolbars
     'cms.cms_toolbar.PlaceholderToolbar',
     'cms.cms_toolbar.BasicToolbar',
     'cms.cms_toolbar.PageToolbar',
 
 # 3rd Party Toolbar
-#  'aldryn_blog.cms_toolbar.BlogToolbar',
-    ]
+# 'aldryn_blog.cms_toolbar.BlogToolbar',
+    ]'''
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
@@ -130,8 +130,8 @@ ACCOUNT_EMAIL_REQUIRED = True
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
+EMAIL_HOST_USER = 'reedlepee123@gmail.com'
+EMAIL_HOST_PASSWORD = 'CKT@MPDV19!'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 

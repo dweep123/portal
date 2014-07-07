@@ -7,3 +7,6 @@ django-allauth==0.16.1
 django-cms==3.0
 djangocms-text-ckeditor==2.1.6
 django-countries==2.1.2
+djangocms-file==0.0.1
+djangocms-picture==0.0.2
+djangocms-video== 0.0.1

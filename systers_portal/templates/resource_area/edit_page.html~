@@ -1,0 +1,7 @@
+{% extends "baseforcms.html" %}
+{% load cms_tags %}
+{% block base_content %}
+<h1>{% render_model page "title" "title" %}</h1>
+ {% render_placeholder page.editable_content language 'en-us' %}
+{% endblock %}
+

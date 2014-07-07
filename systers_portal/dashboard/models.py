@@ -82,7 +82,8 @@ class CommunityPage(models.Model):
     editable_content = PlaceholderField('editable_content')
     #    page = models.OneToOneField(Page)
     community = models.ForeignKey(Community)
-
+    slug = models.SlugField(max_length=150, unique=True)
+    
     def __unicode__(self):
         return "{0} of {1} Community".format(self.title, self.community.name)
 

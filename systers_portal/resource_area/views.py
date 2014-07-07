@@ -14,13 +14,20 @@ from cms.models.pagemodel import Page
 from cms.api import create_page
 from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.decorators import permission_required
 
-def edit_page(request, page_id):
-    page = get_object_or_404(CommunityPage, id=page_id)
+
+def edit_page(request, slug):
+    page = get_object_or_404(CommunityPage, slug=slug)
     return render_to_response('resource_area/edit_page.html', {
         'page': page,
     }, context_instance=RequestContext(request))
 
+def view_page(request, slug):
+    page = get_object_or_404(CommunityPage, slug=slug)
+    return render_to_response('resource_area/view_page.html', {
+        'page': page,
+    }, context_instance=RequestContext(request))
 
 @staff_member_required
 def community_resourcearea(request, community_name_url):
@@ -176,8 +183,8 @@ def add_page(request, community_name_url):
   	      if form.is_valid():
 		    community_page = form.save(commit=False)
 	    	    community_page.community = community
-		    cms_page = create_page(community_page.title+"_"+community_name_url,'page_template.html','en-us')
-		    community_page.page=cms_page
+#                   cms_page = create_page(community_page.title+"_"+community_name_url,'page_template.html','en-us')
+#		    community_page.page=cms_page
      	            community_page.save()
 		    return community_resourcearea(request, community_name_url)
   	      else:

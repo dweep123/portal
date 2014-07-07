@@ -25,4 +25,4 @@ class PageAddForm(forms.ModelForm):
 
     class Meta:
         model = CommunityPage
-	fields = ['title','slug']
+	fields = ['title']

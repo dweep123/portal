@@ -41,6 +41,9 @@ INSTALLED_APPS = (
     'menus',
     'south',
     'sekizai',
+# 'djangocms_file',
+    'djangocms_picture',
+    'djangocms_video',
     'django.contrib.messages',
     'django.contrib.sites',
     'allauth',
@@ -61,7 +64,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.doc.XViewMiddleware',
     'cms.middleware.user.CurrentUserMiddleware',
     'cms.middleware.page.CurrentPageMiddleware',
-    'cms.middleware.toolbar.ToolbarMiddleware',
+#'cms.middleware.toolbar.ToolbarMiddleware',
+    'resource_area.toolbar.ToolbarMiddleware',
     'cms.middleware.language.LanguageCookieMiddleware',
 )
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -95,6 +99,14 @@ CMS_TEMPLATES = (
 
 LANGUAGES = [
     ('en-us', 'English'),
+    ]
+CMS_TOOLBARS = [
+# CMS Toolbars
+    'cms.cms_toolbar.PlaceholderToolbar',
+# 'cms.cms_toolbar.BasicToolbar',
+  'cms.cms_toolbar.PageToolbar',
+
+# 3rd Party Toolbar
     ]
 
 

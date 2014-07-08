@@ -2,6 +2,7 @@
 """
 Edit Toolbar middleware
 """
+from cms.utils.conf import get_cms_setting
 from cms.toolbar.toolbar import CMSToolbar
 from cms.utils.i18n import force_language
 from django.contrib.admin.models import LogEntry, ADDITION, CHANGE

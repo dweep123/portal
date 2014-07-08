@@ -80,9 +80,11 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 AUTHENTICATION_BACKENDS = (
+    'dashboard.backend.CustomBackend',
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 )
+
 
 ROOT_URLCONF = 'systers_portal.urls'
 
@@ -97,6 +99,10 @@ CMS_TEMPLATES = (
 
 LANGUAGES = [
     ('en-us', 'English'),
+]
+CMS_TOOLBARS = [
+    'cms.cms_toolbar.PlaceholderToolbar',
+    'cms.cms_toolbar.PageToolbar',
 ]
 
 

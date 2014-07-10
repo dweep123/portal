@@ -1,8 +1,9 @@
 {% load cms_tags sekizai_tags %}
+{% load cms_tags %}
 <html>
 <head>
 <title>{% page_attribute "page_title" %}</title>
-<!-- {% render_block "css" %} -->
+{% render_block "css" %} 
 </head>
 <body>
  
@@ -12,13 +13,13 @@
 {{page.community.name}}<br> -->
 
 
-<!-- {% render_model_block page %}
+ {% render_model_block page %}
     <h1>{{ instance.title }}</h1>
     <div class="body"> -->
         {% render_placeholder instance.editable_content language 'en-us' %}<br>
-   <!-- </div>
+   </div>
 {% endrender_model_block %}
-{% render_block "js" %}--> 
+{% render_block "js" %}
 </body>
 </html>
 

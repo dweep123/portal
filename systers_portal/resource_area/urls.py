@@ -23,4 +23,6 @@ urlpatterns = patterns('',
                            views.edit_page, name='edit_page'),
                        url(r'^pages/(?P<slug>[a-zA-Z0-9_-]+)/$',
                            views.view_page, name='view_page'),
+                        url(r'^(?P<community_name_url>\w+)/(?P<slug>[a-zA-Z0-9_-]+)/delete/$',
+                           views.delete_page, name='delete_page'),
                        )

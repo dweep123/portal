@@ -15,7 +15,7 @@ from cms.api import create_page
 from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import permission_required
-
+from dashboard.backend import MyCustomBackend
 
 def edit_page(request, slug):
     page = get_object_or_404(CommunityPage, slug=slug)
@@ -28,6 +28,14 @@ def view_page(request, slug):
     return render_to_response('resource_area/view_page.html', {
         'page': page,
     }, context_instance=RequestContext(request))
+
+#@permission_required('dashboard.delete_commanitypage',login_url='/accounts/login/',raise_exception=True)
+def delete_page(request, community_name_url, slug):
+    page = get_object_or_404(CommunityPage, slug=slug)
+# uu=MyCustomBackend()
+#   if uu.has_perm(request.user,'dashboard.delete_commanitypage',page):
+    page.delete()
+    community_resourcearea(request, community_name_url)
 
 @staff_member_required
 def community_resourcearea(request, community_name_url):
@@ -170,7 +178,7 @@ def sure_delete_news(request, news_id):
     except News.DoesNotExist:
     	return render_to_response('resource_area/error_delete_news.html', context_dic, context)
 
-@staff_member_required
+#@permission_required('dashboard.add_communitypage',login_url='/accounts/login/')
 def add_page(request, community_name_url):
     context = RequestContext(request)
     community_name = community_name_url.replace('_', ' ')

@@ -80,6 +80,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'allauth.socialaccount.context_processors.socialaccount',
 )
 AUTHENTICATION_BACKENDS = (
+    'dashboard.backend.MyCustomBackend', 
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 )

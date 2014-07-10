@@ -82,6 +82,7 @@ class CommunityPage(models.Model):
     editable_content = PlaceholderField('editable_content')
     #    page = models.OneToOneField(Page)
     community = models.ForeignKey(Community)
+    editor = models.ManyToManyField(SysterUser,related_name='editor_of_page')
     slug = models.SlugField(max_length=150, unique=True)
     
     def __unicode__(self):

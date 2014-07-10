@@ -41,14 +41,14 @@ INSTALLED_APPS = (
     'menus',
     'south',
     'sekizai',
-    'djangocms_picture',
-    'djangocms_video',
     'django.contrib.messages',
     'django.contrib.sites',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
 #   'allauth.socialaccount.providers.facebook',
+    'djangocms_picture',
+    'djangocms_video',
     'dashboard',
 )
 

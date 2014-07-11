@@ -16,7 +16,7 @@ class MyCustomBackend(ModelBackend):
     def has_perm(self, user_obj, perm, obj=None):
         if not user_obj.is_active:
             return False
-	if perm!='dashboard.delete_communitypage' and  isinstance(obj, CommunityPage):
+	if isinstance(obj, CommunityPage):
 	    print perm
 	    editors = SysterUser.objects.filter(editor_of_page=obj)
 	    if user_obj.systeruser in editors:

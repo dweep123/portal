@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django_countries.fields import CountryField
 from cms.models.pagemodel import Page
 from cms.models.fields import PlaceholderField
+from django.core.urlresolvers import reverse
 
 
 class SysterUser(models.Model):
@@ -80,13 +81,15 @@ class CommunityPage(models.Model):
     """Model to represent community pages"""
     title = models.CharField(max_length=255)
     editable_content = PlaceholderField('editable_content')
-    #    page = models.OneToOneField(Page)
     community = models.ForeignKey(Community)
     editor = models.ManyToManyField(SysterUser,related_name='editor_of_page')
     slug = models.SlugField(max_length=150, unique=True)
     
     def __unicode__(self):
         return "{0} of {1} Community".format(self.title, self.community.name)
+
+    def get_absolute_url(self):
+        return reverse('edit_page', args=[self.slug])
 
 
 class Resource(models.Model):

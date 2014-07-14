@@ -237,7 +237,7 @@ class DashboardViewsTestCase(TestCase):
             "blog_url": "http://systers.org/",
             "homepage_url": "http://borg.org/",
         }
-        request = factory.get(reverse('edit_userprofile',
+        request = factory.post(reverse('edit_userprofile',
                                       args=(systeruser.user.username,)),
                               form_data)
         request.user = user

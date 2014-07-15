@@ -10,10 +10,6 @@ from allauth.account import signals
 
 from dashboard.decorators import (membership_required, admin_required,
                                   authorship_required)
-from dashboard.management import (content_contributor_permissions,
-                                  content_manager_permissions,
-                                  user_content_manager_permissions,
-                                  community_admin_permissions)
 from dashboard.models import (SysterUser, Community, News, Resource, Tag,
                               ResourceType, CommunityPage, create_syster_user)
 
@@ -216,20 +212,6 @@ class DashboardModelsTestCase(TestCase):
         self.assertEqual(len(users), 1)
         self.assertEqual(systerusers[0].user, users[0])
 
-    def test_group_permissions(self):
-        groups = ["Content Contributor",
-                  "Content Manager",
-                  "User and Content Manager",
-                  "Community Admin", ]
-        permissions = [content_contributor_permissions,
-                       content_manager_permissions,
-                       user_content_manager_permissions,
-                       community_admin_permissions, ]
-        for i, group_name in enumerate(groups):
-            group = Group.objects.get(name=group_name)
-            group_permissions = [p.codename for p in
-                                 list(group.permissions.all())]
-            self.assertItemsEqual(group_permissions, permissions[i])
 
 
 class DashboardDecoratorsTestCase(TestCase):

@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
+from systers_portal import settings
 
 try:
     admin.autodiscover()
@@ -14,3 +15,8 @@ urlpatterns = patterns(
         r'/edit/$', 'dashboard.views.edit_page', name='edit_page'),
     url(r'^', include('cms.urls')),
 )
+urlpatterns += patterns(
+    'django.views.static',
+    (r'media/(?P<path>.*)',
+     'serve',
+     {'document_root': settings.base.MEDIA_ROOT}), )

@@ -44,10 +44,12 @@ INSTALLED_APPS = (
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'allauth.socialaccount.providers.facebook',
-    'allauth.socialaccount.providers.github',
-    'allauth.socialaccount.providers.google',
-    'allauth.socialaccount.providers.twitter',
+# 'allauth.socialaccount.providers.facebook',
+#   'allauth.socialaccount.providers.github',
+#   'allauth.socialaccount.providers.google',
+#   'allauth.socialaccount.providers.twitter',
+    'djangocms_picture',
+    'djangocms_video',
     'guardian',
     'dashboard',
 )
@@ -125,9 +127,15 @@ SITE_ID = 1
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
+#STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATIC_URL = '/static/'
+"""STATICFILES_DIRS = (
+    STATIC_ROOT,
+)"""
 
-STATIC_URL = "/static/"
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 

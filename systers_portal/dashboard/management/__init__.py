@@ -13,6 +13,13 @@ permissions = [
     "add_text",
     "change_text",
     "delete_text",
+    "add_picture",
+    "change_picture",
+    "delete_picture",
+    "add_video",
+    "change_video",
+    "delete_video",
+
 ]
 
 

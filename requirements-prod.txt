@@ -5,3 +5,5 @@ django-countries==2.1.2
 django-guardian==1.2.4
 djangocms-text-ckeditor==2.1.6
 psycopg2==2.5.3
+djangocms-picture==0.0.2
+djangocms-video== 0.0.1

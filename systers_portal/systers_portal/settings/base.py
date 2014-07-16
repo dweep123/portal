@@ -48,6 +48,7 @@ INSTALLED_APPS = (
     'allauth.socialaccount.providers.github',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.twitter',
+    'guardian',
     'dashboard',
 )
 
@@ -83,6 +84,7 @@ AUTHENTICATION_BACKENDS = (
     'dashboard.backend.CustomBackend',
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
+    'guardian.backends.ObjectPermissionBackend',
 )
 
 
@@ -132,3 +134,6 @@ TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 # Django-allauth settings
 # https://django-allauth.readthedocs.org/en/latest/#configuration
 ACCOUNT_EMAIL_REQUIRED = True
+
+# Django-guardian configuration
+ANONYMOUS_USER_ID = None

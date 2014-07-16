@@ -18,10 +18,10 @@ permissions = [
 
 def create_generic_group(sender, **kwargs):
     """Create a user group with generic permissions. Every user that is member
-    of any other custom group, should become a member of this group too.
+of any other custom group, should become a member of this group too.
 
-    :param sender: models module that was just installed
-    """
+:param sender: models module that was just installed
+"""
     verbosity = kwargs.get("verbosity")
     if verbosity > 0:
         print "Initializing data post_syncdb"

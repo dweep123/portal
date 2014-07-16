@@ -1,12 +1,12 @@
 from django.db import models
+from django.db.models.signals import post_save
 from django.contrib.auth.models import User
+from django.contrib.auth.models import Permission 
 from django_countries.fields import CountryField
-from allauth.account.signals import user_signed_up
+from cms.models.pagemodel import Page
 from cms.models.fields import PlaceholderField
 from django.core.urlresolvers import reverse
-
-from cms.models.pagemodel import Page
-
+from guardian.shortcuts import assign_perm
 
 class SysterUser(models.Model):
     """Profile model to store additional information about a user"""
@@ -30,8 +30,7 @@ class SysterUser(models.Model):
 
 class Community(models.Model):
     """Model to represent a Syster Community"""
-    name = models.CharField(max_length=255, unique=True)
-    slug = models.SlugField(max_length=150, unique=True)
+    name = models.CharField(max_length=255)
     email = models.EmailField(max_length=255, blank=True)
     mailing_list = models.EmailField(max_length=255, blank=True)
     resource_area = models.URLField(max_length=255, blank=True)
@@ -39,11 +38,13 @@ class Community(models.Model):
                                      related_name='member_of_community')
     community_admin = models.ForeignKey(SysterUser, related_name='community')
     parent_community = models.ForeignKey('self', blank=True, null=True)
-    website = models.URLField(max_length=255, blank=True)
-    facebook = models.URLField(max_length=255, blank=True)
-    googleplus = models.URLField(max_length=255, blank=True)
-    twitter = models.URLField(max_length=255, blank=True)
-    __original_name = None
+    website = models.URLField(max_length=30, blank=True)
+    facebook = models.URLField(max_length=30, blank=True)
+    googleplus = models.URLField(max_length=30, blank=True)
+    twitter = models.URLField(max_length=30, blank=True)
+    slug = models.SlugField(max_length=150, unique=True)
+    __original_name = None	
+
 
     class Meta:
         permissions = (
@@ -65,16 +66,46 @@ class Community(models.Model):
         super(Community, self).__init__(*args, **kwargs)
         self.__original_name = self.name
 
-    def __unicode__(self):
-        return self.name
-
-    def save(self, *args, **kwargs):
+   def save(self, *args, **kwargs):
+        obj=Permission.objects.get(codename='add_text')    
+	obj1=Permission.objects.get(codename='change_text')    
+	obj2=Permission.objects.get(codename='delete_text')    
+        for community in Community.objects.all():
+	    for member in SysterUser.objects.filter(member_of_community=community):
+		member.user.is_staff=True
+		member.user.save()
+		member.user.user_permissions.add(obj)
+		member.user.user_permissions.add(obj1)
+		member.user.user_permissions.add(obj2)
+                assign_perm('change_community_page',member.user,community)
         super(Community, self).save(*args, **kwargs)
         self.__original_name = self.name
 
     @property
     def original_name(self):
         return self.__original_name
+    def __unicode__(self):
+        return self.name
+
+
+    """class Meta:
+        permissions = (
+             ('change_community_page', 'change community page'),
+        )
+    def save(self, *args, **kwargs):
+	obj=Permission.objects.get(codename='add_text')    
+	obj1=Permission.objects.get(codename='change_text')    
+	obj2=Permission.objects.get(codename='delete_text')    
+        for community in Community.objects.all():
+	    for member in SysterUser.objects.filter(member_of_community=community):
+		member.user.is_staff=True
+		member.user.save()
+		member.user.user_permissions.add(obj)
+		member.user.user_permissions.add(obj1)
+		member.user.user_permissions.add(obj2)
+                assign_perm('change_community_page',member.user,community)
+        super(Community, self).save(*args, **kwargs)"""
+       
 
 
 class Tag(models.Model):
@@ -114,10 +145,10 @@ class CommunityPage(models.Model):
     title = models.CharField(max_length=255)
     editable_content = PlaceholderField('editable_content')
     community = models.ForeignKey(Community)
-    #editor = models.ManyToManyField(SysterUser, related_name='editor_of_page')
-    #   creator = models.ForeignKey(SysterUser, related_name='creator_of_page')
+    editor = models.ManyToManyField(SysterUser,related_name='editor_of_page')
+    creator = models.ForeignKey(SysterUser, related_name='creator_of_page')
     slug = models.SlugField(max_length=150, unique=True)
-
+    
     def __unicode__(self):
         return "{0} of {1} Community".format(self.title, self.community.name)
 
@@ -140,3 +171,13 @@ class Resource(models.Model):
 
     def __unicode__(self):
         return "{0} of {1} Community".format(self.title, self.community.name)
+
+
+def user_post_save(sender, instance, created, **kwargs):
+    """Create a SysterUser profile when a new user account is created"""
+    if created:
+        systeruser = SysterUser()
+        systeruser.user = instance
+        systeruser.save()
+
+post_save.connect(user_post_save, sender=User)

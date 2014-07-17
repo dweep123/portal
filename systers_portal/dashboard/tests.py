@@ -286,6 +286,23 @@ class DashboardModelsTestCase(TestCase):
             group_permissions += get_perms(group, community)
             self.assertItemsEqual(group_permissions, value)
 
+    def test_grant_access_to_parent_community(self):
+        systeruser1 = SysterUser.objects.create(user=self.auth_user)
+        auth_user2 = User.objects.create(username='bar', password='foobar')
+        systeruser2 = SysterUser.objects.create(user=auth_user2)
+        community_a = Community.objects.create(name="A", slug='a',
+                                               community_admin=systeruser1)
+        community_b = Community.objects.create(name="B", slug='b',
+                                               community_admin=systeruser2)
+        group_a = Group.objects.get(name="Community Admin for A")
+        group_a.user_set.add(self.auth_user)
+        community_b.parent_community = community_a
+        community_b.save()
+        group_b = Group.objects.get(name="Community Admin for B")
+        user_groups = self.auth_user.groups.all()
+        self.assertIn(group_a, user_groups)
+        self.assertIn(group_b, user_groups)
+
     def test_create_generic_group(self):
         self.assertTrue(Group.objects.filter(
             name="Generic permissions").exists())

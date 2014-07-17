@@ -1,4 +1,4 @@
-from django.contrib.auth.models import Group, Permission
+from django.contrib.auth.models import Group, Permission, User
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from allauth.account.signals import user_signed_up
@@ -59,6 +59,7 @@ def create_community_groups(sender, instance, created, **kwargs):
             delede_groups(instance.original_name)
             create_groups(instance.name)
             assign_permissions(instance)
+    grant_access_to_parent_community(instance)
 
 
 @receiver(post_delete, sender=Community, dispatch_uid="remove_groups")
@@ -109,3 +110,21 @@ def assign_permissions(community):
                 group.save()
             else:
                 assign_perm(perm, group, community)
+
+
+def grant_access_to_parent_community(community):
+    """Make members of parent community "Community Admin" group, also members
+    of subcommunity's "Community Admin" group.
+
+    :param community: Community object
+    """
+    if community.parent_community is not None:
+        community_admin_group = Group.objects.get(
+            name=generic_groups["community_admin"].format(
+                community.name))
+        parent_community_admin_users = User.objects.filter(
+            groups__name=generic_groups["community_admin"].format(
+                community.parent_community.name))
+        for user in parent_community_admin_users:
+            community_admin_group.user_set.add(user)
+

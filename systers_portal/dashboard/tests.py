@@ -9,9 +9,11 @@ from cms.models.pagemodel import Page
 from cms.api import create_page
 from allauth.account import signals
 from guardian.shortcuts import get_perms
+from south.signals import post_migrate
 
 from dashboard.decorators import (membership_required, admin_required,
                                   authorship_required)
+from dashboard.management import create_generic_group, permissions
 from dashboard.models import (SysterUser, Community, News, Resource, Tag,
                               ResourceType, CommunityPage)
 from dashboard.signals import *
@@ -204,9 +206,12 @@ class DashboardModelsTestCase(TestCase):
                                       signals.user_signed_up.receivers]
         post_save_registered_funcs = [r[1]() for r in post_save.receivers]
         post_delete_registered_funcs = [r[1]() for r in post_delete.receivers]
+        post_migrate_registered_funcs = [r[1]() for r in
+                                         post_migrate.receivers]
         self.assertIn(create_syster_user, signed_up_registered_funcs)
         self.assertIn(create_community_groups, post_save_registered_funcs)
         self.assertIn(remove_community_groups, post_delete_registered_funcs)
+        self.assertIn(create_generic_group, post_migrate_registered_funcs)
 
     def test_create_syster_user(self):
         """Test the creation of SysterUser object on user signup"""
@@ -280,6 +285,14 @@ class DashboardModelsTestCase(TestCase):
                                  list(group.permissions.all())]
             group_permissions += get_perms(group, community)
             self.assertItemsEqual(group_permissions, value)
+
+    def test_create_generic_group(self):
+        self.assertTrue(Group.objects.filter(
+            name="Generic permissions").exists())
+        group = Group.objects.get(name="Generic permissions")
+        group_permissions = [p.codename for p in
+                             list(group.permissions.all())]
+        self.assertItemsEqual(group_permissions, permissions)
 
 
 class DashboardDecoratorsTestCase(TestCase):

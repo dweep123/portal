@@ -35,6 +35,8 @@ INSTALLED_APPS = (
     'django_nose',
     'django.contrib.sites',
     'djangocms_text_ckeditor',
+    'djangocms_picture',
+    'djangocms_video',
     'cms',
     'mptt',
     'menus',

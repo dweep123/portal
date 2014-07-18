@@ -43,6 +43,7 @@ class Community(models.Model):
     googleplus = models.URLField(max_length=255, blank=True)
     twitter = models.URLField(max_length=255, blank=True)
     __original_name = None
+    __original_community_admin = None
 
     class Meta:
         permissions = (
@@ -63,6 +64,8 @@ class Community(models.Model):
     def __init__(self, *args, **kwargs):
         super(Community, self).__init__(*args, **kwargs)
         self.__original_name = self.name
+        if self.community_admin_id is not None:
+            self.__original_community_admin = self.community_admin
 
     def __unicode__(self):
         return self.name
@@ -70,10 +73,15 @@ class Community(models.Model):
     def save(self, *args, **kwargs):
         super(Community, self).save(*args, **kwargs)
         self.__original_name = self.name
+        self.__original_community_admin = self.community_admin
 
     @property
     def original_name(self):
         return self.__original_name
+
+    @property
+    def original_community_admin(self):
+        return self.__original_community_admin
 
 
 class Tag(models.Model):

@@ -1,6 +1,7 @@
 from django.contrib.auth.models import Group, Permission, User
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
+from django.shortcuts import get_object_or_404
 from allauth.account.signals import user_signed_up
 from guardian.shortcuts import assign_perm
 
@@ -54,11 +55,19 @@ def create_community_groups(sender, instance, created, **kwargs):
     if created:
         create_groups(instance.name)
         assign_permissions(instance)
+        join_group(instance.community_admin,
+                   generic_groups["community_admin"].format(instance.name))
     else:
         if instance.name != instance.original_name:
             delede_groups(instance.original_name)
             create_groups(instance.name)
             assign_permissions(instance)
+        if instance.community_admin != instance.original_community_admin:
+            community_admin_group_name = generic_groups[
+                "community_admin"].format(instance.name)
+            leave_group(instance.original_community_admin,
+                        community_admin_group_name)
+            join_group(instance.community_admin, community_admin_group_name)
     grant_access_to_parent_community(instance)
 
 
@@ -128,3 +137,23 @@ def grant_access_to_parent_community(community):
         for user in parent_community_admin_users:
             community_admin_group.user_set.add(user)
 
+
+def join_group(user, group_name):
+    """Make user member of a group
+
+    :param user: SysterUser object
+    :param group_name: string full name of a group
+    """
+    group = get_object_or_404(Group, name=group_name)
+    user.user.groups.add(group)
+
+
+def leave_group(user, group_name):
+    """Remove the user from group members
+
+    :param user:
+    :param group_name:
+    :return:
+    """
+    group = get_object_or_404(Group, name=group_name)
+    user.user.groups.remove(group)

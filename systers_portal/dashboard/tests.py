@@ -4,6 +4,7 @@ from django.db.models.signals import post_save, post_delete
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.models import Group
+from django.http import Http404
 from django.test import TestCase
 from cms.models.pagemodel import Page
 from cms.api import create_page
@@ -236,8 +237,20 @@ class DashboardModelsTestCase(TestCase):
         for key, group_name in generic_groups.items():
             self.assertTrue(Group.objects.filter(
                 name=group_name.format(community.name)).exists())
+        self.assertIn(Group.objects.get(
+            name=generic_groups["community_admin"].format(name)),
+            systeruser.user.groups.all())
         community.name = "BarFoo"
+        systeruser2 = SysterUser.objects.create(
+            user=User.objects.create(username='bar', password='foobar'))
+        community.community_admin = systeruser2
         community.save()
+        self.assertNotIn(Group.objects.get(
+            name=generic_groups["community_admin"].format(community.name)),
+            systeruser.user.groups.all())
+        self.assertIn(Group.objects.get(
+            name=generic_groups["community_admin"].format(community.name)),
+            systeruser2.user.groups.all())
         for key, group_name in generic_groups.items():
             self.assertFalse(Group.objects.filter(
                 name=group_name.format(name)).exists())
@@ -310,6 +323,23 @@ class DashboardModelsTestCase(TestCase):
         group_permissions = [p.codename for p in
                              list(group.permissions.all())]
         self.assertItemsEqual(group_permissions, permissions)
+
+    def test_join_leave_group(self):
+        systeruser = SysterUser.objects.create(user=self.auth_user)
+        community = Community.objects.create(name="Foo",
+                                             community_admin=systeruser)
+        self.assertRaises(Http404, join_group, systeruser, "No such group")
+        self.assertRaises(Http404, leave_group, systeruser, "No such group")
+        join_group(systeruser,
+                   generic_groups["content_manager"].format(community.name))
+        self.assertIn(Group.objects.get(
+            name=generic_groups["content_manager"].format(community.name)),
+            systeruser.user.groups.all())
+        leave_group(systeruser,
+                    generic_groups["content_manager"].format(community.name))
+        self.assertNotIn(Group.objects.get(
+            name=generic_groups["content_manager"].format(community.name)),
+            systeruser.user.groups.all())
 
 
 class DashboardDecoratorsTestCase(TestCase):

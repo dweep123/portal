@@ -1,6 +1,6 @@
 import mock
 
-from django.db.models.signals import post_save, post_delete
+from django.db.models.signals import post_save, post_delete, m2m_changed
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.models import Group
@@ -209,10 +209,12 @@ class DashboardModelsTestCase(TestCase):
         post_delete_registered_funcs = [r[1]() for r in post_delete.receivers]
         post_migrate_registered_funcs = [r[1]() for r in
                                          post_migrate.receivers]
+        m2m_changed_registered_funcs = [r[1]() for r in m2m_changed.receivers]
         self.assertIn(create_syster_user, signed_up_registered_funcs)
         self.assertIn(create_community_groups, post_save_registered_funcs)
         self.assertIn(remove_community_groups, post_delete_registered_funcs)
         self.assertIn(create_generic_group, post_migrate_registered_funcs)
+        self.assertIn(give_basic_access, m2m_changed_registered_funcs)
 
     def test_create_syster_user(self):
         """Test the creation of SysterUser object on user signup"""
@@ -224,6 +226,20 @@ class DashboardModelsTestCase(TestCase):
         self.assertEqual(len(systerusers), len(users))
         self.assertEqual(len(users), 1)
         self.assertEqual(systerusers[0].user, users[0])
+
+    def test_give_basic_access(self):
+        """Test giving basic access to users"""
+        self.assertEqual(list(self.auth_user.groups.all()), [])
+        self.assertFalse(self.auth_user.is_staff)
+        group = Group.objects.create(name="Foo group")
+        self.auth_user.groups.add(group)
+        self.auth_user.save()
+        self.assertIn(group, self.auth_user.groups.all())
+        self.assertTrue(self.auth_user.is_staff)
+        self.auth_user.groups.remove(group)
+        self.auth_user.save()
+        self.assertEqual(list(self.auth_user.groups.all()), [])
+        self.assertFalse(self.auth_user.is_staff)
 
     def test_create_community_groups(self):
         """Test creation of community specific groups"""

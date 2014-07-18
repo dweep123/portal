@@ -1,5 +1,5 @@
 from django.contrib.auth.models import Group, Permission, User
-from django.db.models.signals import post_save, post_delete
+from django.db.models.signals import post_save, post_delete, m2m_changed
 from django.dispatch import receiver
 from django.shortcuts import get_object_or_404
 from allauth.account.signals import user_signed_up
@@ -86,6 +86,44 @@ def create_syster_user(sender, **kwargs):
     if user is not None:
         syster_user = SysterUser(user=user)
         syster_user.save()
+
+
+@receiver(m2m_changed, sender=User.groups.through,
+          dispatch_uid="give_basic_access")
+def give_basic_access(sender, instance, action, **kwargs):
+    """Give basic access to users who are members of at least one community group.
+
+    If you decide to give user direct permissions instead of groups, then you
+    should manually make user staff member and add him to the "Generic
+    permissions" group, if you want the user to have those generic permissions.
+    """
+    if isinstance(instance, User):
+        if action == "post_add" or action == "post_remove":
+            has_generic_access = instance.groups.filter(
+                name="Generic permissions").exists()
+            is_member_other_groups = instance.groups.exclude(
+                name="Generic permissions").exists()
+            if is_member_other_groups:
+                if has_generic_access:
+                    if not instance.is_staff:
+                        instance.is_staff = True
+                else:
+                    m2m_changed.disconnect(give_basic_access,
+                                           sender=User.groups.through,
+                                           dispatch_uid="give_basic_access")
+                    instance.groups.add(
+                        Group.objects.get(name="Generic permissions"))
+                    instance.is_staff = True
+            else:
+                m2m_changed.disconnect(give_basic_access,
+                                       sender=User.groups.through,
+                                       dispatch_uid="give_basic_access")
+                instance.groups.remove(
+                    Group.objects.get(name="Generic permissions"))
+                instance.is_staff = False
+            instance.save()
+            m2m_changed.connect(give_basic_access, sender=User.groups.through,
+                                dispatch_uid="give_basic_access")
 
 
 def create_groups(community_name):

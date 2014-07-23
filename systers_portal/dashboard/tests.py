@@ -12,7 +12,7 @@ from south.signals import post_migrate
 
 from dashboard.decorators import (membership_required, admin_required,
                                   authorship_required)
-from dashboard.forms import UserForm, CommunityForm
+from dashboard.forms import UserForm, CommunityForm, NewsForm
 from dashboard.management import create_generic_group, permissions
 from dashboard.models import (SysterUser, Community, News, Resource, Tag,
                               ResourceType, CommunityPage)
@@ -376,6 +376,8 @@ class DashboardFormsTestCase(TestCase):
         self.user.save()
         self.community = Community(name='bar', community_admin=self.user)
         self.community.save()
+        self.tag = Tag.objects.create(name='foo_tag')
+        self.tag.save()
 
     def test_userform(self):
         """Test userform"""
@@ -444,6 +446,31 @@ class DashboardFormsTestCase(TestCase):
         result = [False] * 6 + [True] * 3
         for i, data in enumerate(form_data):
             form = CommunityForm(data=data)
+            self.assertEqual(form.is_valid(), result[i])
+
+    def test_News_form(self):
+        form_data = [
+            {},
+            {'title': 'news'},
+            {'slug': 'foo'},
+            {'content': 'This is dummy news'},
+            {'title': 'foo', 'slug': 'foo'},
+            {'title': 'foo',
+             'slug': 'foo',
+             'tags': self.tag},
+            {'title': 'foo',
+             'slug': 'foo',
+             'is_public': True,
+             'tags': [self.tag.id],
+             'content': 'This is dummy news'},
+            {'title': 'foo',
+             'slug': 'foo',
+             'is_public': True,
+             'content': 'This is dummy news'},
+        ]
+        result = [False] * 6 + [True] * 2
+        for i, data in enumerate(form_data):
+            form = NewsForm(data=data)
             self.assertEqual(form.is_valid(), result[i])
 
 

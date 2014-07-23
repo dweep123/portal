@@ -453,6 +453,10 @@ class DashboardViewsTestCase(TestCase):
         auth_user = User.objects.create_user(username="foo", password="foobar")
         self.user = SysterUser(user=auth_user)
         self.user.save()
+        self.community = Community(name='bar',
+                                   community_admin=self.user,
+                                   slug="bar-1")
+        self.community.save()
 
     def _test_response_status(self, method, url, status_code, **kwargs):
         """Helper function to test if a request returns expected status code
@@ -497,9 +501,9 @@ class DashboardViewsTestCase(TestCase):
             "blog_url": "http://systers.org/",
             "homepage_url": "http://borg.org/",
         }
-        request = factory.post(reverse('edit_userprofile',
-                                      args=(systeruser.user.username,)),
-                              form_data)
+        request = factory.post(
+            reverse('edit_userprofile', args=(systeruser.user.username,)),
+            form_data)
         request.user = user
         edit_userprofile(request, user.username)
         self.assertEqual(systeruser.user.first_name, "ullu")
@@ -507,3 +511,12 @@ class DashboardViewsTestCase(TestCase):
         self.assertEqual(systeruser.blog_url, "http://systers.org/")
         self.assertNotEqual(systeruser.homepage_url, "http://anitaborg.org/")
         self.assertEqual(unicode(systeruser), "ullu bar")
+
+    def test_view_community_profile(self):
+        """Test community profile view """
+        nonexistent_url = reverse('view_community_profile',
+                                  kwargs={'community_slug': "non-existent"})
+        self._test_response_status('get', nonexistent_url, 404)
+        url = reverse('view_community_profile',
+                      kwargs={'community_slug': self.community.slug})
+        self._test_response_status('get', url, 200)

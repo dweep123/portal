@@ -51,19 +51,28 @@ class SysterUser(models.Model):
 
 class Community(models.Model):
     """Model to represent a Syster Community"""
-    name = models.CharField(max_length=255, unique=True)
-    slug = models.SlugField(max_length=150, unique=True)
-    email = models.EmailField(max_length=255, blank=True)
-    mailing_list = models.EmailField(max_length=255, blank=True)
-    resource_area = models.URLField(max_length=255, blank=True)
+    name = models.CharField(max_length=255, verbose_name="Name")
+    slug = models.SlugField(max_length=150, unique=True, verbose_name="Slug")
+    email = models.EmailField(max_length=255, blank=True, verbose_name="Email")
+    mailing_list = models.EmailField(max_length=255, blank=True,
+                                     verbose_name="Mailing List")
+    resource_area = models.URLField(max_length=255, blank=True,
+                                    verbose_name="Resource area")
     members = models.ManyToManyField(SysterUser, blank=True, null=True,
-                                     related_name='member_of_community')
-    community_admin = models.ForeignKey(SysterUser, related_name='community')
-    parent_community = models.ForeignKey('self', blank=True, null=True)
-    website = models.URLField(max_length=255, blank=True)
-    facebook = models.URLField(max_length=255, blank=True)
-    googleplus = models.URLField(max_length=255, blank=True)
-    twitter = models.URLField(max_length=255, blank=True)
+                                     related_name='member_of_community',
+                                     verbose_name="Members")
+    community_admin = models.ForeignKey(SysterUser, related_name='community',
+                                        verbose_name="Admin")
+    parent_community = models.ForeignKey('self', blank=True, null=True,
+                                         verbose_name="Parent Community")
+    website = models.URLField(max_length=255, blank=True,
+                              verbose_name="Website")
+    facebook = models.URLField(max_length=255, blank=True,
+                               verbose_name="Facebook")
+    googleplus = models.URLField(max_length=255, blank=True,
+                                 verbose_name="Google+")
+    twitter = models.URLField(max_length=255, blank=True,
+                              verbose_name="Twitter")
     __original_name = None
     __original_community_admin = None
 
@@ -92,11 +101,6 @@ class Community(models.Model):
     def __unicode__(self):
         return self.name
 
-    def save(self, *args, **kwargs):
-        super(Community, self).save(*args, **kwargs)
-        self.__original_name = self.name
-        self.__original_community_admin = self.community_admin
-
     @property
     def original_name(self):
         return self.__original_name
@@ -104,6 +108,19 @@ class Community(models.Model):
     @property
     def original_community_admin(self):
         return self.__original_community_admin
+
+    def save(self, *args, **kwargs):
+        super(Community, self).save(*args, **kwargs)
+        self.__original_name = self.name
+        self.__original_community_admin = self.community_admin
+
+    def get_fields(self):
+        """Get model fields of a community object
+
+        :return: list of tuples (fieldname, fieldvalue)
+        """
+        return [(field.name, getattr(self, field.name)) for field in
+                Community._meta.fields]
 
 
 class Tag(models.Model):

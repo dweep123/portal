@@ -7,7 +7,6 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from guardian.decorators import permission_required_or_403
 
-from dashboard.decorators import authorship_required
 from dashboard.forms import UserForm
 from dashboard.models import CommunityPage, Community, SysterUser
 
@@ -39,6 +38,7 @@ def view_userprofile(request, username):
                               {'systeruser': systeruser},
                               context)
 
+
 @login_required
 def edit_userprofile(request, username):
     context = RequestContext(request)
@@ -58,3 +58,14 @@ def edit_userprofile(request, username):
         'dashboard/edit_profile.html',
         {'userform': userform},
         context)
+
+
+def view_community_profile(request, community_slug):
+    """Display profile of a community
+
+    :param request: request object
+    :param community_slug: string slug parsed from the URL
+    """
+    community = get_object_or_404(Community, slug=community_slug)
+    return render_to_response('dashboard/view_community_profile.html',
+                              {'community': community})

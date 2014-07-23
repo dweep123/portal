@@ -8,13 +8,15 @@ from django.core.urlresolvers import reverse
 class SysterUser(models.Model):
     """Profile model to store additional information about a user"""
     user = models.OneToOneField(User)
-    country = CountryField(blank=True, null=True)
-    blog_url = models.URLField(max_length=255, blank=True)
-    homepage_url = models.URLField(max_length=255, blank=True)
+    country = CountryField(blank=True, null=True, verbose_name="Country")
+    blog_url = models.URLField(max_length=255, blank=True, verbose_name="Blog")
+    homepage_url = models.URLField(max_length=255, blank=True,
+                                   verbose_name="Homepage")
     profile_picture = models.ImageField(upload_to='photos/',
                                         default='photos/dummy.jpeg',
                                         blank=True,
-                                        null=True)
+                                        null=True,
+                                        verbose_name="Photo")
 
     def __unicode__(self):
         firstname = self.user.first_name
@@ -23,6 +25,28 @@ class SysterUser(models.Model):
             return "{0} {1}".format(self.user.first_name, self.user.last_name)
         else:
             return self.user.username
+
+    def get_absolute_url(self):
+        return reverse('view_userprofile', args=[self.user.username])
+
+    def get_user_fields(self):
+        """Set verbose name for User fields and Get model fields of a User object
+
+        :return: list of tuples (fieldname, fieldvalue)
+        """
+        User._meta.get_field('first_name').verbose_name = 'Firstname'
+        User._meta.get_field('last_name').verbose_name = 'Lastname'
+        User._meta.get_field('email').verbose_name = 'Email'
+        return [(field.name, getattr(self.user, field.name)) for field in
+                User._meta.fields]
+
+    def get_fields(self):
+        """Get model fields of a SysterUser object
+
+        :return: list of tuples (fieldname, fieldvalue)
+        """
+        return [(field.name, getattr(self, field.name)) for field in
+                SysterUser._meta.fields]
 
 
 class Community(models.Model):

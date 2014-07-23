@@ -1,9 +1,14 @@
+from django.core.urlresolvers import reverse
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from guardian.decorators import permission_required_or_403
 
+from dashboard.decorators import authorship_required
+from dashboard.forms import UserForm
 from dashboard.models import CommunityPage, Community, SysterUser
 
 
@@ -33,3 +38,23 @@ def view_userprofile(request, username):
     return render_to_response('dashboard/view_profile.html',
                               {'systeruser': systeruser},
                               context)
+
+@login_required
+def edit_userprofile(request, username):
+    context = RequestContext(request)
+    if request.method == 'POST':
+        userform = UserForm(data=request.POST, instance=request.user)
+        if userform.is_valid():
+            user = userform.save()
+            systeruser = user.systeruser
+            if 'profile_picture' in request.FILES:
+                systeruser.profile_picture = request.FILES['profile_picture']
+            systeruser.save()
+            return HttpResponseRedirect(
+                reverse('view_userprofile', args=(user.username,)))
+    else:
+        userform = UserForm(instance=request.user)
+    return render_to_response(
+        'dashboard/edit_profile.html',
+        {'userform': userform},
+        context)

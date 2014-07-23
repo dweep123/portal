@@ -15,11 +15,14 @@ urlpatterns = patterns(
     '',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include('allauth.urls')),
-    url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/(?P<page_slug>[a-zA-Z0-9_-]+)'
-        r'/edit/$', 'dashboard.views.edit_page', name='edit_page'),
     url(r'^users/(?P<username>[\w.@+-]+)/$',
         'dashboard.views.view_userprofile',
         name='view_userprofile'),
+    url(r'^users/(?P<username>[\w.@+-]+)/edit/$',
+        'dashboard.views.edit_userprofile', name='edit_userprofile'),
+    url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/(?P<page_slug>[a-zA-Z0-9_-]+)'
+        r'/edit/$', 'dashboard.views.edit_page', name='edit_page'),
+
     url(r'^$', 'dashboard.views.index', name='index',),
     url(r'^', include('cms.urls')),
 )

@@ -5,7 +5,7 @@ from django.contrib.auth.models import User, Group
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.http import Http404
-from django.test import TestCase, Client
+from django.test import TestCase, Client, RequestFactory
 from allauth.account import signals
 from guardian.shortcuts import get_perms
 from south.signals import post_migrate
@@ -17,6 +17,7 @@ from dashboard.management import create_generic_group, permissions
 from dashboard.models import (SysterUser, Community, News, Resource, Tag,
                               ResourceType, CommunityPage)
 from dashboard.signals import *
+from dashboard.views import edit_userprofile
 
 
 class DashboardModelsTestCase(TestCase):
@@ -474,3 +475,35 @@ class DashboardViewsTestCase(TestCase):
         url = reverse('view_userprofile',
                       kwargs={'username': self.user.user.username})
         self._test_response_status('get', url, 200)
+
+    def test_edituserprofile(self):
+        """Test the edit_userprofile function"""
+        user = User.objects.create_user(
+            'john',
+            'lennon@thebeatles.com',
+            'johnpassword')
+        systeruser = SysterUser.objects.create(
+            user=user,
+            blog_url="http://anitaborg.org/",
+            homepage_url="http://anitaborg.org/")
+        self.assertEqual(systeruser.user.first_name, '')
+        self.assertEqual(systeruser.user.last_name, '')
+        self.assertEqual(systeruser.blog_url, "http://anitaborg.org/")
+        self.assertEqual(unicode(systeruser), user.username)
+        factory = RequestFactory()
+        form_data = {
+            'first_name': 'ullu',
+            'last_name': 'bar',
+            "blog_url": "http://systers.org/",
+            "homepage_url": "http://borg.org/",
+        }
+        request = factory.post(reverse('edit_userprofile',
+                                      args=(systeruser.user.username,)),
+                              form_data)
+        request.user = user
+        edit_userprofile(request, user.username)
+        self.assertEqual(systeruser.user.first_name, "ullu")
+        self.assertEqual(systeruser.user.last_name, "bar")
+        self.assertEqual(systeruser.blog_url, "http://systers.org/")
+        self.assertNotEqual(systeruser.homepage_url, "http://anitaborg.org/")
+        self.assertEqual(unicode(systeruser), "ullu bar")

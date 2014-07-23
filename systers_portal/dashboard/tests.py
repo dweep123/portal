@@ -12,6 +12,7 @@ from south.signals import post_migrate
 
 from dashboard.decorators import (membership_required, admin_required,
                                   authorship_required)
+from dashboard.forms import UserForm
 from dashboard.management import create_generic_group, permissions
 from dashboard.models import (SysterUser, Community, News, Resource, Tag,
                               ResourceType, CommunityPage)
@@ -364,3 +365,45 @@ class DashboardDecoratorsTestCase(TestCase):
                 else:
                     self.assertRaises(PermissionDenied, wrapped, request,
                                       **request_kwargs)
+
+
+class DashboardFormsTestCase(TestCase):
+
+    def test_userform(self):
+        """Test userform"""
+        user = User.objects.create_user(
+            'john',
+            'lennon@thebeatles.com',
+            'johnpassword')
+        systeruser = SysterUser.objects.create(user=user)
+        form_data = {
+            'first_name': 'FOO',
+            'last_name': 'BAR',
+            'country': 'FO',
+            "blog_url": "http://anitaborg.org/",
+            "homepage_url": "http://anitaborg.org/",
+        }
+        form = UserForm(data=form_data, instance=user)
+        self.assert_(form.is_valid())
+        self.assertEqual(form.instance.first_name, 'FOO')
+        form.save()
+        self.assertEqual(systeruser.blog_url, "http://anitaborg.org/")
+        self.assertEqual(systeruser.homepage_url, "http://anitaborg.org/")
+        self.assertEqual(
+            User.objects.get(id=form.instance.id).first_name,
+            'FOO'
+        )
+        form_data = [
+            {},
+            {'first_name': 'foo'},
+            {'last_name': 'bar'},
+            {'country': 'FO'},
+            {"blog_url": "http://anitaborg.org/"},
+            {"homepage_url": "http://anitaborg.org/"},
+            {"blog_url": "anitaborg"},
+            {"homepage_url": "foorbaranitaborg"},
+        ]
+        result = [True] * 6 + [False] * 2
+        for i, data in enumerate(form_data):
+            form = UserForm(data=data, instance=user)
+            self.assertEqual(form.is_valid(), result[i])

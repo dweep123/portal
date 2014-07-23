@@ -12,7 +12,7 @@ from south.signals import post_migrate
 
 from dashboard.decorators import (membership_required, admin_required,
                                   authorship_required)
-from dashboard.forms import UserForm
+from dashboard.forms import UserForm, CommunityForm
 from dashboard.management import create_generic_group, permissions
 from dashboard.models import (SysterUser, Community, News, Resource, Tag,
                               ResourceType, CommunityPage)
@@ -369,6 +369,13 @@ class DashboardDecoratorsTestCase(TestCase):
 
 class DashboardFormsTestCase(TestCase):
 
+    def setUp(self):
+        auth_user = User.objects.create_user(username="foo", password="foobar")
+        self.user = SysterUser(user=auth_user)
+        self.user.save()
+        self.community = Community(name='bar', community_admin=self.user)
+        self.community.save()
+
     def test_userform(self):
         """Test userform"""
         user = User.objects.create_user(
@@ -406,4 +413,34 @@ class DashboardFormsTestCase(TestCase):
         result = [True] * 6 + [False] * 2
         for i, data in enumerate(form_data):
             form = UserForm(data=data, instance=user)
+            self.assertEqual(form.is_valid(), result[i])
+
+    def test_community_form(self):
+        form_data = [
+            {},
+            {'name': 'foo'},
+            {'community_admin': self.user.id},
+            {'slug': 'foo'},
+            {'email': 'invalid_email'},
+            {'website': 'just website'},
+            {'name': 'foo', 'community_admin': self.user.id, 'slug': 'foo'},
+            {'name': 'foo',
+             'slug': 'foo',
+             'community_admin': self.user.id,
+             'parent_community': self.community.id},
+            {'name': 'foo',
+             'slug': 'foo',
+             'email': 'foo@mail.org',
+             'mailing_list': 'foo@mailing.org',
+             'resource_area': 'http://foo.com/foo',
+             'community_admin': self.user.id,
+             'parent_community': self.community.id,
+             'website': 'http://foo.com',
+             'facebook': 'http://foo.com',
+             'googleplus': 'http://foo.com',
+             'twitter': 'http://foo.com'},
+        ]
+        result = [False] * 6 + [True] * 3
+        for i, data in enumerate(form_data):
+            form = CommunityForm(data=data)
             self.assertEqual(form.is_valid(), result[i])

@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.forms.models import model_to_dict, fields_for_model
 
-from dashboard.models import SysterUser
+from dashboard.models import SysterUser, Community
 
 
 class UserForm(forms.ModelForm):
@@ -34,3 +34,11 @@ class UserForm(forms.ModelForm):
         systeruser.save()
         user = super(UserForm, self).save(*args, **kwargs)
         return user
+
+
+class CommunityForm(forms.ModelForm):
+    """Community profile form excluding the members ManyToManyField
+    """
+    class Meta:
+        model = Community
+        exclude = ['members']

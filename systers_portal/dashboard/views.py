@@ -153,3 +153,33 @@ def add_news(request, community_slug):
     return render_to_response('dashboard/add_news.html',
                               {'form': form, 'community': community},
                               context)
+
+
+@login_required
+@permission_required_or_403('dashboard.change_community_news',
+                            (Community, 'slug__exact', 'community_slug'))
+def edit_news(request, community_slug, news_slug):
+    """Edit a particluar news about a community
+
+    :param request: request object
+    :param community_slug: string community_slug parsed from the URL
+    :param news_slug: string news_slug parsed from the URL
+    :raises Http404: if a community entry or news entry
+    inside that community doesn't exist
+    """
+    context = RequestContext(request)
+    community = get_object_or_404(Community, slug=community_slug)
+    news = get_object_or_404(News, community=community, slug=news_slug)
+    if request.method == 'POST':
+        newsform = NewsForm(request.POST, instance=news)
+        if newsform.is_valid():
+            changed_news = newsform.save()
+            return redirect('view_news',
+                            community_slug=community.slug,
+                            news_slug=changed_news.slug)
+        news = get_object_or_404(News, community=community, slug=news_slug)
+    else:
+            newsform = NewsForm(instance=news)
+    return render_to_response('dashboard/edit_news.html',
+                              {'newsform': newsform, 'news': news},
+                              context)

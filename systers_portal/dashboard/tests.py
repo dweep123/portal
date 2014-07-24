@@ -627,3 +627,23 @@ class DashboardViewsTestCase(TestCase):
         self.assertEqual(news.title, 'foo')
         self.assertEqual(news.author, self.user)
         self.assertEqual(news.community, self.community)
+
+    def test_edit_news(self):
+        """Test edit_news function"""
+        nonexistent_url = reverse('edit_news',
+                                  kwargs={'community_slug': "non-existent",
+                                          'news_slug': self.news.slug})
+        url = reverse('edit_news',
+                      kwargs={'community_slug': self.community.slug,
+                              'news_slug': self.news.slug})
+        self.client.login(username='foo', password='foobar')
+        self._test_response_status('get', nonexistent_url, 404)
+        self._test_response_status('get', url, 200)
+        self._test_response_status('post', url, 200)
+        self._test_response_status('post', url, 302,
+                                   title='ullu', slug='foo',
+                                   content='bar')
+        updated_news = News.objects.get(slug='foo')
+        self.assertEqual(updated_news.title, 'ullu')
+        self.assertEqual(updated_news.slug, 'foo')
+        self.assertEqual(updated_news.content, 'bar')

@@ -528,6 +528,12 @@ class DashboardViewsTestCase(TestCase):
                          author=self.user,
                          content='This is foo news')
         self.news.save()
+        self.resource = Resource(title='foo_resource',
+                                 slug='foo_slug',
+                                 community=self.community,
+                                 author=self.user,
+                                 content='This is foo resource')
+        self.resource.save()
 
     def _test_response_status(self, method, url, status_code, **kwargs):
         """Helper function to test if a request returns expected status code
@@ -718,3 +724,19 @@ class DashboardViewsTestCase(TestCase):
                               'news_slug': self.news.slug})
         self._test_response_status('get', url, 302)
         self.assertEqual(len(News.objects.all()), 0)
+
+    def test_view_resource(self):
+        """Test resource view"""
+        nonexistent_url = reverse('view_resource',
+                                  kwargs={'community_slug': "non-existent",
+                                          'resource_slug': self.resource.slug})
+        self._test_response_status('get', nonexistent_url, 404)
+        nonexistent_url = reverse(
+            'view_resource',
+            kwargs={'community_slug': self.community.slug,
+                    'resource_slug': "non-existent"})
+        self._test_response_status('get', nonexistent_url, 404)
+        url = reverse('view_resource',
+                      kwargs={'community_slug': self.community.slug,
+                              'resource_slug': self.resource.slug})
+        self._test_response_status('get', url, 200)

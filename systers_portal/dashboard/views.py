@@ -7,7 +7,8 @@ from django.template import RequestContext
 from guardian.decorators import permission_required_or_403
 
 from dashboard.forms import UserForm, CommunityForm, NewsForm
-from dashboard.models import CommunityPage, Community, SysterUser, News
+from dashboard.models import (CommunityPage, Community, SysterUser, News,
+                              Resource)
 
 
 @login_required
@@ -221,3 +222,22 @@ def confirm_delete_news(request, community_slug, news_slug):
     news = get_object_or_404(News, community=community, slug=news_slug)
     news.delete()
     return redirect('show_community_news', community_slug=community.slug)
+
+
+def view_resource(request, community_slug, resource_slug):
+    """View a particluar resource of a community
+
+    :param request: request object
+    :param community_slug: string community_slug parsed from the URL
+    :param resource_slug: string resource_slug parsed from the URL
+    :raises Http404: if a community entry or resource entry
+                     inside that community doesn't exist
+    """
+    context = RequestContext(request)
+    community = get_object_or_404(Community, slug=community_slug)
+    resource = get_object_or_404(Resource,
+                                 community=community,
+                                 slug=resource_slug)
+    return render_to_response('dashboard/view_resource.html',
+                              {'resource': resource},
+                              context)

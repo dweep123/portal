@@ -740,3 +740,12 @@ class DashboardViewsTestCase(TestCase):
                       kwargs={'community_slug': self.community.slug,
                               'resource_slug': self.resource.slug})
         self._test_response_status('get', url, 200)
+
+    def test_show_community_resources(self):
+        """Test show community resources view"""
+        nonexistent_url = reverse('show_community_resources',
+                                  kwargs={'community_slug': "non-existent"})
+        self._test_response_status('get', nonexistent_url, 404)
+        url = reverse('show_community_resources',
+                      kwargs={'community_slug': self.community.slug})
+        self._test_response_status('get', url, 200)

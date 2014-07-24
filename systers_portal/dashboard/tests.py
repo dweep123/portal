@@ -749,3 +749,22 @@ class DashboardViewsTestCase(TestCase):
         url = reverse('show_community_resources',
                       kwargs={'community_slug': self.community.slug})
         self._test_response_status('get', url, 200)
+
+    def test_add_resource(self):
+        """Test add_resource view """
+        nonexistent_url = reverse('add_resource',
+                                  kwargs={'community_slug': "non-existent"})
+        url = reverse('add_resource',
+                      kwargs={'community_slug': self.community.slug})
+        self.client.login(username='foo', password='foobar')
+        self._test_response_status('get', nonexistent_url, 404)
+        self._test_response_status('get', url, 200)
+        self._test_response_status('post', url, 200)
+        self._test_response_status('post', url, 302,
+                                   title='foo', slug='foo',
+                                   content='This is foo resource')
+        self.assertEqual(len(Resource.objects.all()), 2)
+        resource = Resource.objects.get(slug='foo')
+        self.assertEqual(resource.title, 'foo')
+        self.assertEqual(resource.author, self.user)
+        self.assertEqual(resource.community, self.community)

@@ -42,6 +42,8 @@ urlpatterns = patterns(
     url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/news/'
         r'(?P<news_slug>[a-zA-Z0-9_-]+)/confirm_delete/$',
         'dashboard.views.confirm_delete_news', name='confirm_delete_news'),
+    url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/resources/add/',
+        'dashboard.views.add_resource', name='add_resource'),
     url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/resources/'
         r'(?P<resource_slug>[a-zA-Z0-9_-]+)/$',
         'dashboard.views.view_resource', name='view_resource'),

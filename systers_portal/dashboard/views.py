@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404, redirect, render_to_response
 from django.template import RequestContext
 from guardian.decorators import permission_required_or_403
 
-from dashboard.forms import UserForm, CommunityForm, NewsForm
+from dashboard.forms import UserForm, CommunityForm, NewsForm, ResourceForm
 from dashboard.models import (CommunityPage, Community, SysterUser, News,
                               Resource)
 
@@ -255,4 +255,29 @@ def show_community_resources(request, community_slug):
     resources = Resource.objects.filter(community=community)
     return render_to_response('dashboard/show_community_resources.html',
                               {'Resources': resources},
+                              context)
+
+
+def add_resource(request, community_slug):
+    """Add resource for a community
+
+    :param request: request object
+    :param community_slug: string community_slug parsed from the URL
+    :raises Http404: if a community entry doesn't exist
+    """
+    context = RequestContext(request)
+    community = get_object_or_404(Community, slug=community_slug)
+    if request.method == 'POST':
+        form = ResourceForm(request.POST)
+        if form.is_valid():
+            resource = form.save(commit=False)
+            resource.community = community
+            resource.author = SysterUser.objects.get(user=request.user)
+            resource.save()
+            return redirect('show_community_resources',
+                            community_slug=community.slug)
+    else:
+        form = ResourceForm()
+    return render_to_response('dashboard/add_resource.html',
+                              {'form': form, 'community': community},
                               context)

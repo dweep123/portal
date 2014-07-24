@@ -45,6 +45,9 @@ urlpatterns = patterns(
     url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/resources/add/',
         'dashboard.views.add_resource', name='add_resource'),
     url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/resources/'
+        r'(?P<resource_slug>[a-zA-Z0-9_-]+)/edit/$',
+        'dashboard.views.edit_resource', name='edit_resource'),
+    url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/resources/'
         r'(?P<resource_slug>[a-zA-Z0-9_-]+)/$',
         'dashboard.views.view_resource', name='view_resource'),
     url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/resources/',

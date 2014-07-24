@@ -258,6 +258,9 @@ def show_community_resources(request, community_slug):
                               context)
 
 
+@login_required
+@permission_required_or_403('dashboard.add_community_resource',
+                            (Community, 'slug__exact', 'community_slug'))
 def add_resource(request, community_slug):
     """Add resource for a community
 
@@ -280,4 +283,39 @@ def add_resource(request, community_slug):
         form = ResourceForm()
     return render_to_response('dashboard/add_resource.html',
                               {'form': form, 'community': community},
+                              context)
+
+
+@login_required
+@permission_required_or_403('dashboard.change_community_resource',
+                            (Community, 'slug__exact', 'community_slug'))
+def edit_resource(request, community_slug, resource_slug):
+    """Edit a particular resource of a community
+
+    :param request: request object
+    :param community_slug: string community_slug parsed from the URL
+    :param resource_slug: string resource_slug parsed from the URL
+    :raises Http404: if a community entry or resource entry
+                     inside that community doesn't exist
+    """
+    context = RequestContext(request)
+    community = get_object_or_404(Community, slug=community_slug)
+    resource = get_object_or_404(Resource,
+                                 community=community,
+                                 slug=resource_slug)
+    if request.method == 'POST':
+        resourceform = ResourceForm(request.POST, instance=resource)
+        if resourceform.is_valid():
+            changed_resource = resourceform.save()
+            return redirect('view_resource',
+                            community_slug=community.slug,
+                            resource_slug=changed_resource.slug)
+        resource = get_object_or_404(Resource,
+                                     community=community,
+                                     slug=resource_slug)
+    else:
+        resourceform = ResourceForm(instance=resource)
+    return render_to_response('dashboard/edit_resource.html',
+                              {'resourceform': resourceform,
+                               'resource': resource},
                               context)

@@ -768,3 +768,23 @@ class DashboardViewsTestCase(TestCase):
         self.assertEqual(resource.title, 'foo')
         self.assertEqual(resource.author, self.user)
         self.assertEqual(resource.community, self.community)
+
+    def test_edit_resource(self):
+        """Test edit_resource function"""
+        nonexistent_url = reverse('edit_resource',
+                                  kwargs={'community_slug': "non-existent",
+                                          'resource_slug': self.resource.slug})
+        url = reverse('edit_resource',
+                      kwargs={'community_slug': self.community.slug,
+                              'resource_slug': self.resource.slug})
+        self.client.login(username='foo', password='foobar')
+        self._test_response_status('get', nonexistent_url, 404)
+        self._test_response_status('get', url, 200)
+        self._test_response_status('post', url, 200)
+        self._test_response_status('post', url, 302,
+                                   title='ullu', slug='foo',
+                                   content='bar')
+        updated_resource = Resource.objects.get(slug='foo')
+        self.assertEqual(updated_resource.title, 'ullu')
+        self.assertEqual(updated_resource.slug, 'foo')
+        self.assertEqual(updated_resource.content, 'bar')

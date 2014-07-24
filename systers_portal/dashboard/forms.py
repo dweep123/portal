@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.forms.models import model_to_dict, fields_for_model
 
-from dashboard.models import SysterUser, Community, News
+from dashboard.models import SysterUser, Community, News, Resource
 
 
 class UserForm(forms.ModelForm):
@@ -48,4 +48,11 @@ class NewsForm(forms.ModelForm):
 
     class Meta:
         model = News
+        exclude = ('community', 'author')
+
+
+class ResourceForm(forms.ModelForm):
+
+    class Meta:
+        model = Resource
         exclude = ('community', 'author')

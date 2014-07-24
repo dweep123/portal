@@ -12,7 +12,7 @@ from south.signals import post_migrate
 
 from dashboard.decorators import (membership_required, admin_required,
                                   authorship_required)
-from dashboard.forms import UserForm, CommunityForm, NewsForm
+from dashboard.forms import UserForm, CommunityForm, NewsForm, ResourceForm
 from dashboard.management import create_generic_group, permissions
 from dashboard.models import (SysterUser, Community, News, Resource, Tag,
                               ResourceType, CommunityPage)
@@ -379,6 +379,9 @@ class DashboardFormsTestCase(TestCase):
         self.community.save()
         self.tag = Tag.objects.create(name='foo_tag')
         self.tag.save()
+        self.resource_type = ResourceType.objects.create(
+            name='foo_resourcetype')
+        self.resource_type.save()
 
     def test_userform(self):
         """Test userform"""
@@ -472,6 +475,40 @@ class DashboardFormsTestCase(TestCase):
         result = [False] * 6 + [True] * 2
         for i, data in enumerate(form_data):
             form = NewsForm(data=data)
+            self.assertEqual(form.is_valid(), result[i])
+
+    def test_Resource_form(self):
+        form_data = [
+            {},
+            {'title': 'resource'},
+            {'slug': 'foo'},
+            {'content': 'This is dummy resource'},
+            {'title': 'foo', 'slug': 'foo'},
+            {'title': 'foo',
+             'slug': 'foo',
+             'tags': [self.tag.id]},
+            {'title': 'foo',
+             'slug': 'foo',
+             'resource_type': self.resource_type.id},
+            {'title': 'foo',
+             'slug': 'foo',
+             'is_public': True,
+             'tags': [self.tag.id],
+             'content': 'This is dummy resource'},
+            {'title': 'foo',
+             'slug': 'foo',
+             'is_public': True,
+             'tags': [self.tag.id],
+             'resource_type': self.resource_type.id,
+             'content': 'This is dummy resource'},
+            {'title': 'foo',
+             'slug': 'foo',
+             'is_public': True,
+             'content': 'This is dummy resource'},
+        ]
+        result = [False] * 7 + [True] * 3
+        for i, data in enumerate(form_data):
+            form = ResourceForm(data=data)
             self.assertEqual(form.is_valid(), result[i])
 
 

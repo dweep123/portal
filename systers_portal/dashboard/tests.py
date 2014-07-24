@@ -547,3 +547,31 @@ class DashboardViewsTestCase(TestCase):
         url = reverse('view_community_profile',
                       kwargs={'community_slug': self.community.slug})
         self._test_response_status('get', url, 200)
+
+    def test_edit_community_profile(self):
+        """Test edit community profile view """
+        nonexistent_url = reverse('edit_community_profile',
+                                  kwargs={'community_slug': "non-existent"})
+        url = reverse('edit_community_profile',
+                      kwargs={'community_slug': self.community.slug})
+
+        # redirects to login URL
+        response1 = self._test_response_status('get', url, 302)
+        self.assertTemplateNotUsed(response1,
+                                   'dashboard.edit_community_profile')
+        self.client.login(username='foo', password='foobar')
+        # TODO: fix this
+        # self._test_response_status('get', url, 403)
+        community_admin_group = Group.objects.get(
+            name="Community Admin for {0}".format(self.community.name))
+        self.user.user.groups = [community_admin_group]
+        self._test_response_status('get', nonexistent_url, 404)
+        self._test_response_status('get', url, 200)
+        self._test_response_status('post', url, 200)
+        self._test_response_status('post', url, 302,
+                                   name='foo', slug='foo',
+                                   community_admin=self.user.id)
+        self.assertEqual(len(Community.objects.all()), 1)
+        updated_community = Community.objects.get(slug='foo')
+        self.assertEqual(updated_community.name, 'foo')
+        self.assertEqual(updated_community.slug, 'foo')

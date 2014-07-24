@@ -26,6 +26,8 @@ urlpatterns = patterns(
     url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/edit/$',
         'dashboard.views.edit_community_profile',
         name='edit_community_profile'),
+    url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/news/$',
+        'dashboard.views.show_community_news', name='show_community_news'),
     url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/news/'
         r'(?P<news_slug>[a-zA-Z0-9_-]+)/$',
         'dashboard.views.view_news', name='view_news'),

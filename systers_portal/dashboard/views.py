@@ -110,5 +110,19 @@ def view_news(request, community_slug, news_slug):
     community = get_object_or_404(Community, slug=community_slug)
     news = get_object_or_404(News, community=community, slug=news_slug)
     return render_to_response('dashboard/view_news.html',
-                              {'news': news},
+                              {'news': news}, context)
+
+
+def show_community_news(request, community_slug):
+    """Show all news about a community
+
+    :param request: request object
+    :param community_slug: string community_slug parsed from the URL
+    :raises Http404: if a community entry doesn't exist
+    """
+    context = RequestContext(request)
+    community = get_object_or_404(Community, slug=community_slug)
+    news = News.objects.filter(community=community)
+    return render_to_response('dashboard/show_community_news.html',
+                              {'News': news},
                               context)

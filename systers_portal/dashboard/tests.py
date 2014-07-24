@@ -320,6 +320,7 @@ class DashboardModelsTestCase(TestCase):
 
 
 class DashboardDecoratorsTestCase(TestCase):
+
     def setUp(self):
         self.auth_user_foo = User.objects.create_user(username="foo",
                                                       password="foobar")
@@ -596,4 +597,13 @@ class DashboardViewsTestCase(TestCase):
         url = reverse('view_news',
                       kwargs={'community_slug': self.community.slug,
                               'news_slug': self.news.slug})
+        self._test_response_status('get', url, 200)
+
+    def test_show_community_news(self):
+        """Test show all news view"""
+        nonexistent_url = reverse('show_community_news',
+                                  kwargs={'community_slug': "non-existent"})
+        self._test_response_status('get', nonexistent_url, 404)
+        url = reverse('show_community_news',
+                      kwargs={'community_slug': self.community.slug})
         self._test_response_status('get', url, 200)

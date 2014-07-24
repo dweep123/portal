@@ -484,6 +484,12 @@ class DashboardViewsTestCase(TestCase):
                                    community_admin=self.user,
                                    slug="bar-1")
         self.community.save()
+        self.news = News(title='foo_news',
+                         slug='foo_slug',
+                         community=self.community,
+                         author=self.user,
+                         content='This is foo news')
+        self.news.save()
 
     def _test_response_status(self, method, url, status_code, **kwargs):
         """Helper function to test if a request returns expected status code
@@ -575,3 +581,19 @@ class DashboardViewsTestCase(TestCase):
         updated_community = Community.objects.get(slug='foo')
         self.assertEqual(updated_community.name, 'foo')
         self.assertEqual(updated_community.slug, 'foo')
+
+    def test_view_news(self):
+        """Test news view"""
+        nonexistent_url = reverse('view_news',
+                                  kwargs={'community_slug': "non-existent",
+                                          'news_slug': self.news.slug})
+        self._test_response_status('get', nonexistent_url, 404)
+        nonexistent_url = reverse(
+            'view_news',
+            kwargs={'community_slug': self.community.slug,
+                    'news_slug': "non-existent"})
+        self._test_response_status('get', nonexistent_url, 404)
+        url = reverse('view_news',
+                      kwargs={'community_slug': self.community.slug,
+                              'news_slug': self.news.slug})
+        self._test_response_status('get', url, 200)

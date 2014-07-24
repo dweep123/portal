@@ -7,7 +7,7 @@ from django.template import RequestContext
 from guardian.decorators import permission_required_or_403
 
 from dashboard.forms import UserForm, CommunityForm
-from dashboard.models import CommunityPage, Community, SysterUser
+from dashboard.models import CommunityPage, Community, SysterUser, News
 
 
 @login_required
@@ -95,3 +95,20 @@ def edit_community_profile(request, community_slug):
         form = CommunityForm(instance=community)
     return render_to_response('dashboard/edit_community_profile.html',
                               {'form': form, 'community': community}, context)
+
+
+def view_news(request, community_slug, news_slug):
+    """View a particluar news about a community
+
+    :param request: request object
+    :param community_slug: string community_slug parsed from the URL
+    :param news_slug: string news_slug parsed from the URL
+    :raises Http404: if a community entry or news entry
+                     inside that community doesn't exist
+    """
+    context = RequestContext(request)
+    community = get_object_or_404(Community, slug=community_slug)
+    news = get_object_or_404(News, community=community, slug=news_slug)
+    return render_to_response('dashboard/view_news.html',
+                              {'news': news},
+                              context)

@@ -6,7 +6,8 @@ from django.shortcuts import get_object_or_404, redirect, render_to_response
 from django.template import RequestContext
 from guardian.decorators import permission_required_or_403
 
-from dashboard.forms import UserForm, CommunityForm, NewsForm, ResourceForm
+from dashboard.forms import (UserForm, CommunityForm, NewsForm,
+                             ResourceForm, PageForm)
 from dashboard.models import (CommunityPage, Community, SysterUser, News,
                               Resource)
 
@@ -15,9 +16,121 @@ from dashboard.models import (CommunityPage, Community, SysterUser, News,
 @permission_required_or_403('dashboard.change_community_page',
                             (Community, 'slug', 'community_slug'))
 def edit_page(request, community_slug, page_slug):
-    page = get_object_or_404(CommunityPage, slug=page_slug)
+    """Edit page in a community
+
+    :param request: request object
+    :param community_slug: string community_slug parsed from the URL
+    :param page_slug: string page_slug parsed from the URL
+    :raises Http404: if a community entry doesn't exist
+                     or page for that community does not exist
+    """
+    community = get_object_or_404(Community, slug=community_slug)
+    page = get_object_or_404(
+        CommunityPage, community=community, slug=page_slug)
     return render_to_response('page_template.html', {'page': page},
                               context_instance=RequestContext(request))
+
+
+def view_page(request, community_slug, page_slug):
+    """View page in a community
+
+    :param request: request object
+    :param community_slug: string community_slug parsed from the URL
+    :param page_slug: string page_slug parsed from the URL
+    :raises Http404: if a community entry doesn't exist
+                     or page for that community does not exist
+    """
+    community = get_object_or_404(Community, slug=community_slug)
+    page = get_object_or_404(
+        CommunityPage, community=community, slug=page_slug)
+    return render_to_response('dashboard/view_page.html', {'page': page},
+                              context_instance=RequestContext(request))
+
+
+@login_required
+@permission_required_or_403('dashboard.change_community_page',
+                            (Community, 'slug', 'community_slug'))
+def manage_pages(request, community_slug):
+    """Manage Pages in a community
+
+    :param request: request object
+    :param community_slug: string community_slug parsed from the URL
+    :raises Http404: if a community entry doesn't exist
+    """
+    context = RequestContext(request)
+    community = get_object_or_404(Community, slug=community_slug)
+    Pages = CommunityPage.objects.filter(community=community)
+    return render_to_response('dashboard/manage_pages.html',
+                              {'Pages': Pages, 'community': community},
+                              context)
+
+
+@login_required
+@permission_required_or_403('dashboard.add_community_page',
+                            (Community, 'slug__exact', 'community_slug'))
+def add_page(request, community_slug):
+    """Add page for a community
+
+    :param request: request object
+    :param community_slug: string community_slug parsed from the URL
+    :raises Http404: if a community entry doesn't exist
+    """
+    context = RequestContext(request)
+    community = get_object_or_404(Community, slug=community_slug)
+    if request.method == 'POST':
+        form = PageForm(request.POST)
+        if form.is_valid():
+            page = form.save(commit=False)
+            page.community = community
+            page.save()
+            return redirect('edit_page',
+                            community_slug=community.slug,
+                            page_slug=page.slug)
+    else:
+        form = PageForm()
+    return render_to_response('dashboard/add_page.html',
+                              {'form': form, 'community': community},
+                              context)
+
+
+@login_required
+@permission_required_or_403('dashboard.delete_community_page',
+                            (Community, 'slug__exact', 'community_slug'))
+def delete_page(request, community_slug, page_slug):
+    """Ask Confirmation to delete page of a community
+
+    :param request: request object
+    :param community_slug: string community_slug parsed from the URL
+    :param page_slug: string page_slug parsed from the URL
+    :raises Http404: if a community or news entry
+                     inside community doesn't exist
+    """
+    context = RequestContext(request)
+    community = get_object_or_404(Community, slug=community_slug)
+    page = get_object_or_404(
+        CommunityPage, community=community, slug=page_slug)
+    return render_to_response('dashboard/delete_page.html',
+                              {'page': page},
+                              context)
+
+
+@login_required
+@permission_required_or_403('dashboard.delete_community_page',
+                            (Community, 'slug__exact', 'community_slug'))
+def confirm_delete_page(request, community_slug, page_slug):
+    """Delete page of a community after confirmation
+
+    :param request: request object
+    :param community_slug: string community_slug parsed from the URL
+    :param page_slug: string page_slug parsed from the URL
+    :raises Http404: if a community or news entry
+                     inside community doesn't exist
+    """
+    community = get_object_or_404(Community, slug=community_slug)
+    page = get_object_or_404(
+        CommunityPage, community=community, slug=page_slug)
+    page.delete()
+    return redirect('manage_pages', community_slug=community.slug)
 
 
 def index(request):
@@ -180,7 +293,7 @@ def edit_news(request, community_slug, news_slug):
                             news_slug=changed_news.slug)
         news = get_object_or_404(News, community=community, slug=news_slug)
     else:
-            newsform = NewsForm(instance=news)
+        newsform = NewsForm(instance=news)
     return render_to_response('dashboard/edit_news.html',
                               {'newsform': newsform, 'news': news},
                               context)
@@ -319,3 +432,43 @@ def edit_resource(request, community_slug, resource_slug):
                               {'resourceform': resourceform,
                                'resource': resource},
                               context)
+
+
+@login_required
+@permission_required_or_403('dashboard.delete_community_resource',
+                            (Community, 'slug__exact', 'community_slug'))
+def delete_resource(request, community_slug, resource_slug):
+    """Ask Confirmation to delete resource of a community
+
+    :param request: request object
+    :param community_slug: string community_slug parsed from the URL
+    :param resource_slug: string resource_slug parsed from the URL
+    :raises Http404: if a community or news entry
+                     inside community doesn't exist
+    """
+    context = RequestContext(request)
+    community = get_object_or_404(Community, slug=community_slug)
+    resource = get_object_or_404(
+        Resource, community=community, slug=resource_slug)
+    return render_to_response('dashboard/delete_resource.html',
+                              {'resource': resource},
+                              context)
+
+
+@login_required
+@permission_required_or_403('dashboard.delete_community_resource',
+                            (Community, 'slug__exact', 'community_slug'))
+def confirm_delete_resource(request, community_slug, resource_slug):
+    """Delete resource of a community after confirmation
+
+    :param request: request object
+    :param community_slug: string community_slug parsed from the URL
+    :param resource_slug: string resource_slug parsed from the URL
+    :raises Http404: if a community or news entry
+                     inside community doesn't exist
+    """
+    community = get_object_or_404(Community, slug=community_slug)
+    resource = get_object_or_404(
+        Resource, community=community, slug=resource_slug)
+    resource.delete()
+    return redirect('show_community_resources', community_slug=community.slug)

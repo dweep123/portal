@@ -1,0 +1,11 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Delete Page{% endblock %}
+{% block content %}
+<div>
+  <h3>Delete Page</h3>
+  <div>
+    <strong> Are you sure you want to delete it </strong>
+    <a href="{% url 'confirm_delete_page' page.community.slug page.slug %}">Yes I am sure</a><br>
+  </div>
+</div>
+{% endblock %}

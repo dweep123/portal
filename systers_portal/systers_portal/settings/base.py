@@ -85,6 +85,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 AUTHENTICATION_BACKENDS = (
+    'dashboard.backend.CustomBackend',
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
     'guardian.backends.ObjectPermissionBackend',
@@ -144,6 +145,13 @@ TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 # Django-allauth settings
 # https://django-allauth.readthedocs.org/en/latest/#configuration
 ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_REQUIRED = True
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
 
 # Django-guardian configuration
 ANONYMOUS_USER_ID = None

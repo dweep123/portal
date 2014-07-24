@@ -16,6 +16,7 @@
           {% if user.is_authenticated and user.is_active %}
           <li>Welcome</li>
           <li><a href="{{ user.systeruser.get_absolute_url }}">{{ user.username }}</a></li>
+          <li><a href="{% url 'edit_userprofile' user.username %}">Edit Profile</a></li>
           <li><a href="{% url 'account_logout' %}">Logout</a></li>
           {% else %}
           <li><a href="{% url 'account_signup' %}">Register</a></li>

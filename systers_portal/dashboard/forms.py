@@ -2,11 +2,14 @@ from django import forms
 from django.contrib.auth.models import User
 from django.forms.models import model_to_dict, fields_for_model
 
-from dashboard.models import SysterUser, Community, News, Resource
+from dashboard.models import (SysterUser, Community, News,
+                              Resource, CommunityPage)
 
 
 class UserForm(forms.ModelForm):
+
     """Combined Form for SysterUser and User"""
+
     def __init__(self, instance=None, *args, **kwargs):
         _fields = ('country', 'blog_url', 'homepage_url', 'profile_picture')
         if not instance:
@@ -37,6 +40,7 @@ class UserForm(forms.ModelForm):
 
 
 class CommunityForm(forms.ModelForm):
+
     """Community profile form excluding the members ManyToManyField
     """
     class Meta:
@@ -56,3 +60,10 @@ class ResourceForm(forms.ModelForm):
     class Meta:
         model = Resource
         exclude = ('community', 'author')
+
+
+class PageForm(forms.ModelForm):
+
+    class Meta:
+        model = CommunityPage
+        exclude = ('community',)

@@ -1,0 +1,17 @@
+{% load cms_tags sekizai_tags %}
+{% load cms_tags %}
+<html>
+<head>
+<title>{% page_attribute "page_title" %}</title>
+{% render_block "css" %}
+</head>
+<body>
+ {% render_model_block page %}
+    <h1>{{ instance.title }}</h1>
+    <div class="body">
+        {% render_placeholder instance.editable_content language 'en-us' %}<br>
+   </div>
+{% endrender_model_block %}
+{% render_block "js" %}
+</body>
+</html>

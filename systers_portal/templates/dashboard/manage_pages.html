@@ -1,0 +1,22 @@
+{% extends "dashboard/base.html" %}
+{% load guardian_tags %}
+{% block title %}Pages{% endblock %}
+{% block content %}
+<div>
+  <h3>Community Pages</h3>
+  <div>
+   {% get_obj_perms request.user for community as "community_perms" %}
+    <ul>
+      {% for page in Pages %}
+        <li><a href="{% url 'edit_page' page.community.slug page.slug %}">{{ page.title }}</a></li>
+        {% if "delete_community_page" in community_perms %}
+          <a href="{% url 'delete_page' page.community.slug page.slug %}">Delete</a>
+        {% endif %}
+      {% endfor %}
+    </ul>
+    {% if "add_community_page" in community_perms %}
+      <a href="{% url 'add_page' community.slug %}">Add Page</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

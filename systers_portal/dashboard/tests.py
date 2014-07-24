@@ -21,6 +21,7 @@ from dashboard.views import edit_userprofile
 
 
 class DashboardModelsTestCase(TestCase):
+
     def setUp(self):
         self.auth_user = User.objects.create(username='foo', password='foobar')
         self.tag = Tag.objects.create(name='dummy_tag')
@@ -513,6 +514,7 @@ class DashboardFormsTestCase(TestCase):
 
 
 class DashboardViewsTestCase(TestCase):
+
     def setUp(self):
         self.client = Client()
         auth_user = User.objects.create_user(username="foo", password="foobar")

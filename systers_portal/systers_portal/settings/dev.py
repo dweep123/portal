@@ -7,8 +7,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'systersdb',
-        'USER': '',
-        'PASSWORD': '',
+        'USER': 'root',
+        'PASSWORD': 'password',
         'HOST': 'localhost',
         'PORT': '5432',
     }

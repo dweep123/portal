@@ -607,3 +607,23 @@ class DashboardViewsTestCase(TestCase):
         url = reverse('show_community_news',
                       kwargs={'community_slug': self.community.slug})
         self._test_response_status('get', url, 200)
+
+    def test_add_news(self):
+        """Test add_news view"""
+        nonexistent_url = reverse('add_news',
+                                  kwargs={'community_slug': "non-existent"})
+        url = reverse('add_news',
+                      kwargs={'community_slug': self.community.slug})
+        self.client.login(username='foo', password='foobar')
+        self._test_response_status('get', nonexistent_url, 404)
+        self._test_response_status('get', url, 200)
+        self._test_response_status('post', url, 200)
+        self.assertEqual(len(News.objects.all()), 1)
+        self._test_response_status('post', url, 302,
+                                   title='foo', slug='foo',
+                                   content='This is foo news')
+        self.assertEqual(len(News.objects.all()), 2)
+        news = News.objects.get(slug='foo')
+        self.assertEqual(news.title, 'foo')
+        self.assertEqual(news.author, self.user)
+        self.assertEqual(news.community, self.community)

@@ -1,8 +1,8 @@
 from django.contrib.auth.models import User
 from django_countries.fields import CountryField
-from cms.models.fields import PlaceholderField
 from django.core.urlresolvers import reverse
 from django.db import models
+from cms.models.fields import PlaceholderField
 
 
 class SysterUser(models.Model):

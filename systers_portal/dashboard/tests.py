@@ -647,3 +647,37 @@ class DashboardViewsTestCase(TestCase):
         self.assertEqual(updated_news.title, 'ullu')
         self.assertEqual(updated_news.slug, 'foo')
         self.assertEqual(updated_news.content, 'bar')
+
+    def test_delete_news(self):
+        """Test delete news view"""
+        nonexistent_url = reverse('delete_news',
+                                  kwargs={'community_slug': "non-existent",
+                                          'news_slug': self.news.slug})
+        self.client.login(username='foo', password='foobar')
+        self._test_response_status('get', nonexistent_url, 404)
+        nonexistent_url = reverse(
+            'delete_news',
+            kwargs={
+                'community_slug': self.community.slug,
+                'news_slug': "non-existent"})
+        self._test_response_status('get', nonexistent_url, 404)
+        url = reverse('delete_news',
+                      kwargs={'community_slug': self.community.slug,
+                              'news_slug': self.news.slug})
+        self._test_response_status('get', url, 200)
+
+    def test_confirm_delete_news(self):
+        """Test confirm delete news view"""
+        nonexistent_url = reverse(
+            'confirm_delete_news',
+            kwargs={
+                'community_slug': self.community.slug,
+                'news_slug': "non-existent"})
+        self.client.login(username='foo', password='foobar')
+        self._test_response_status('get', nonexistent_url, 404)
+        self.assertEqual(len(News.objects.all()), 1)
+        url = reverse('confirm_delete_news',
+                      kwargs={'community_slug': self.community.slug,
+                              'news_slug': self.news.slug})
+        self._test_response_status('get', url, 302)
+        self.assertEqual(len(News.objects.all()), 0)

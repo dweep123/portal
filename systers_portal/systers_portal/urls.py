@@ -36,6 +36,12 @@ urlpatterns = patterns(
     url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/news/'
         r'(?P<news_slug>[a-zA-Z0-9_-]+)/edit/$',
         'dashboard.views.edit_news', name='edit_news'),
+    url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/news/'
+        r'(?P<news_slug>[a-zA-Z0-9_-]+)/delete/$',
+        'dashboard.views.delete_news', name='delete_news'),
+    url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/news/'
+        r'(?P<news_slug>[a-zA-Z0-9_-]+)/confirm_delete/$',
+        'dashboard.views.confirm_delete_news', name='confirm_delete_news'),
     url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/(?P<page_slug>[a-zA-Z0-9_-]+)'
         r'/edit/$', 'dashboard.views.edit_page', name='edit_page'),
     url(r'^$', 'dashboard.views.index', name='index',),

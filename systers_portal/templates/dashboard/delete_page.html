@@ -6,6 +6,7 @@
   <div>
     <strong> Are you sure you want to delete it </strong>
     <a href="{% url 'confirm_delete_page' page.community.slug page.slug %}">Yes I am sure</a><br>
+    <a href="{% url 'manage_pages' page.community.slug %}">Cancel</a><br>
   </div>
 </div>
 {% endblock %}

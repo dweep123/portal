@@ -6,6 +6,7 @@
   <div>
     <strong> Are you sure you want to delete it </strong>
     <a href="{% url 'confirm_delete_news' news.community.slug news.slug %}">Yes I am sure</a><br>
+    <a href="{% url 'view_news' news.community.slug news.slug %}">Cancel</a><br>
   </div>
 </div>
 {% endblock %}

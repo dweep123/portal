@@ -138,6 +138,14 @@ def index(request):
     return render_to_response('dashboard/index.html', {}, context)
 
 
+def community_main_page(request, community_slug):
+    context = RequestContext(request)
+    community = get_object_or_404(Community, slug=community_slug)
+    Pages = CommunityPage.objects.filter(community=community)
+    return render_to_response('dashboard/community_main_page.html',
+                              {'community': community, 'Pages': Pages}, context)
+
+
 def view_userprofile(request, username):
     """View profile of a user
 
@@ -238,7 +246,7 @@ def show_community_news(request, community_slug):
     community = get_object_or_404(Community, slug=community_slug)
     news = News.objects.filter(community=community)
     return render_to_response('dashboard/show_community_news.html',
-                              {'News': news}, context)
+                              {'News': news, 'community': community}, context)
 
 
 @login_required
@@ -367,7 +375,7 @@ def show_community_resources(request, community_slug):
     community = get_object_or_404(Community, slug=community_slug)
     resources = Resource.objects.filter(community=community)
     return render_to_response('dashboard/show_community_resources.html',
-                              {'Resources': resources},
+                              {'Resources': resources, 'community': community},
                               context)
 
 

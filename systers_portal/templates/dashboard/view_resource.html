@@ -1,10 +1,12 @@
 {% extends "dashboard/base.html" %}
 {% load dashboard_extras %}
+{% load guardian_tags %}
 {% block title %}Resource{% endblock %}
 {% block content %}
 <div>
   <h3>Resource</h3>
   <div>
+    {% get_obj_perms request.user for resource.community as "community_perms" %}
     {% for name, value in resource.get_fields %}
       {% with "id slug community is_public tags" as unnecessary_fields %}
         {% if value and name not in unnecessary_fields %}
@@ -20,10 +22,12 @@
         {% endfor %}
       </ul>
     {% endif %}
-    {# TODO: check permissions to edit this resource object, if none, don't display the link #}
-    {# TODO: Link to edit page for this resource object #}
-    {# TODO: check permissions to delete this resource object, if none, don't display the link #}
-    {# TODO: Link to delete page for this resource object #}
+    {% if "change_community_resource" in community_perms %}
+    <a href="{% url 'edit_resource' resource.community.slug  resource.slug %}">Edit</a>
+    {% endif %}
+    {% if "delete_community_resource" in community_perms %}
+    <a href="{% url 'delete_resource' resource.community.slug  resource.slug %}">Delete</a>
+    {% endif %}
   </div>
 </div>
 {% endblock %}

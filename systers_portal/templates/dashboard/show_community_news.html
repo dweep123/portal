@@ -1,9 +1,11 @@
 {% extends "dashboard/base.html" %}
+{% load guardian_tags %}
 {% block title %}News{% endblock %}
 {% block content %}
 <div>
   <h3>News</h3>
   <div>
+    {% get_obj_perms request.user for community as "community_perms" %}
     {% if News %}
       <ul>
         {% for news in News %}
@@ -13,6 +15,9 @@
     {% else %}
       <p>Currently there is no news for this community</p>
     {% endif %}
-  </div>
+    {% if "add_community_news" in community_perms %}
+      <a href="{% url 'add_news' community.slug %}">Add News</a>
+    {% endif %}
+   </div>
 </div>
 {% endblock %}

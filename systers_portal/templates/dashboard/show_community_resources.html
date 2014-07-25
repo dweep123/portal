@@ -1,9 +1,11 @@
 {% extends "dashboard/base.html" %}
+{% load guardian_tags %}
 {% block title %}Resources{% endblock %}
 {% block content %}
 <div>
   <h3>Resources</h3>
   <div>
+    {% get_obj_perms request.user for community as "community_perms" %}
     {% if Resources %}
       <ul>
         {% for resource in Resources %}
@@ -12,6 +14,9 @@
       </ul>
     {% else %}
       <p>Currently there are  no resources for this community</p>
+    {% endif %}
+    {% if "add_community_resource" in community_perms %}
+       <a href="{% url 'add_resource' community.slug %}">Add Resources</a>
     {% endif %}
   </div>
 </div>

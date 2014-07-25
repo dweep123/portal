@@ -143,7 +143,8 @@ def community_main_page(request, community_slug):
     community = get_object_or_404(Community, slug=community_slug)
     Pages = CommunityPage.objects.filter(community=community)
     return render_to_response('dashboard/community_main_page.html',
-                              {'community': community, 'Pages': Pages}, context)
+                              {'community': community, 'Pages': Pages},
+                              context)
 
 
 def view_userprofile(request, username):

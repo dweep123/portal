@@ -6,7 +6,6 @@
 <div>
   <h3>Resource</h3>
   <div>
-    {% get_obj_perms request.user for resource.community as "community_perms" %}
     {% for name, value in resource.get_fields %}
       {% with "id slug community is_public tags" as unnecessary_fields %}
         {% if value and name not in unnecessary_fields %}
@@ -22,11 +21,14 @@
         {% endfor %}
       </ul>
     {% endif %}
+    {% if user.is_authenticated and user.is_active %}
+    {% get_obj_perms request.user for community as "community_perms" %}
     {% if "change_community_resource" in community_perms %}
     <a href="{% url 'edit_resource' resource.community.slug  resource.slug %}">Edit</a>
     {% endif %}
     {% if "delete_community_resource" in community_perms %}
     <a href="{% url 'delete_resource' resource.community.slug  resource.slug %}">Delete</a>
+    {% endif %}
     {% endif %}
   </div>
 </div>

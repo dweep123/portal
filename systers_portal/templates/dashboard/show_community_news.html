@@ -5,7 +5,6 @@
 <div>
   <h3>News</h3>
   <div>
-    {% get_obj_perms request.user for community as "community_perms" %}
     {% if News %}
       <ul>
         {% for news in News %}
@@ -15,8 +14,11 @@
     {% else %}
       <p>Currently there is no news for this community</p>
     {% endif %}
+    {% if user.is_authenticated and user.is_active %}
+    {% get_obj_perms request.user for community as "community_perms" %}
     {% if "add_community_news" in community_perms %}
       <a href="{% url 'add_news' community.slug %}">Add News</a>
+    {% endif %}
     {% endif %}
    </div>
 </div>

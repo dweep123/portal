@@ -6,7 +6,6 @@ from cms.models.fields import PlaceholderField
 
 
 class SysterUser(models.Model):
-
     """Profile model to store additional information about a user"""
     user = models.OneToOneField(User)
     country = CountryField(blank=True, null=True, verbose_name="Country")
@@ -51,7 +50,6 @@ class SysterUser(models.Model):
 
 
 class Community(models.Model):
-
     """Model to represent a Syster Community"""
     name = models.CharField(max_length=255, verbose_name="Name")
     slug = models.SlugField(max_length=150, unique=True, verbose_name="Slug")
@@ -126,7 +124,6 @@ class Community(models.Model):
 
 
 class Tag(models.Model):
-
     """Model to represent the tags a resource can have"""
     name = models.CharField(max_length=255)
 
@@ -135,7 +132,6 @@ class Tag(models.Model):
 
 
 class ResourceType(models.Model):
-
     """Model to represent the types a resource can have"""
     name = models.CharField(max_length=255)
 
@@ -144,7 +140,6 @@ class ResourceType(models.Model):
 
 
 class News(models.Model):
-
     """Model to represent a News section on Community resource area"""
     title = models.CharField(max_length=255, verbose_name='Title')
     slug = models.SlugField(max_length=150, unique=True, verbose_name='Slug')
@@ -178,7 +173,6 @@ class News(models.Model):
 
 
 class CommunityPage(models.Model):
-
     """Model to represent community pages"""
     title = models.CharField(max_length=255)
     editable_content = PlaceholderField('editable_content')
@@ -193,7 +187,6 @@ class CommunityPage(models.Model):
 
 
 class Resource(models.Model):
-
     """Model to represent a Resources section on Community resource area"""
     title = models.CharField(max_length=255, verbose_name='Title')
     slug = models.SlugField(max_length=150, unique=True, verbose_name='Slug')

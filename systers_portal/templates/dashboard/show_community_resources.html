@@ -5,7 +5,6 @@
 <div>
   <h3>Resources</h3>
   <div>
-    {% get_obj_perms request.user for community as "community_perms" %}
     {% if Resources %}
       <ul>
         {% for resource in Resources %}
@@ -15,8 +14,11 @@
     {% else %}
       <p>Currently there are  no resources for this community</p>
     {% endif %}
-    {% if "add_community_resource" in community_perms %}
-       <a href="{% url 'add_resource' community.slug %}">Add Resources</a>
+    {% if user.is_authenticated and user.is_active %}
+    {% get_obj_perms request.user for community as "community_perms" %}
+    {% if "add_community_news" in community_perms %}
+      <a href="{% url 'add_resource' community.slug %}">Add Resources</a>
+    {% endif %}
     {% endif %}
   </div>
 </div>

@@ -130,9 +130,14 @@ SITE_ID = 1
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATIC_PATH = os.path.join(BASE_DIR, 'static')
+print STATIC_PATH
+STATIC_URL = '/static/'
+STATICFILES_DIRS = (
+    STATIC_PATH,
+)
 
-STATIC_URL = "/static/"
+#STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 MEDIA_URL = '/media/'
 
@@ -149,3 +154,9 @@ ACCOUNT_EMAIL_REQUIRED = True
 
 # Django-guardian configuration
 ANONYMOUS_USER_ID = None
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'reedlepee123@gmail.com'
+EMAIL_HOST_PASSWORD = 'CKT@MPDV19!'

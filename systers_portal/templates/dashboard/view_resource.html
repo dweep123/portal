@@ -22,7 +22,7 @@
       </ul>
     {% endif %}
     {% if user.is_authenticated and user.is_active %}
-    {% get_obj_perms request.user for community as "community_perms" %}
+    {% get_obj_perms request.user for resource.community as "community_perms" %}
     {% if "change_community_resource" in community_perms %}
     <a href="{% url 'edit_resource' resource.community.slug  resource.slug %}">Edit</a>
     {% endif %}

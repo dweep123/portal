@@ -2,13 +2,25 @@
 {% load guardian_tags %}
 {% block title %}News{% endblock %}
 {% block content %}
+ <style type="text/css">
+        .time { font-size: 0.8em; margin-top: 2px; }
+        .body { font-size: 1.1em; margin-top: 2px; }
+        .title {
+            font-size: 1.4em; margin-top: 20px; border-bottom: 1px solid #ccc;
+            padding-left: 4px; margin-left: 5px;
+        }
+    </style>
 <div>
   <h3>News</h3>
   <div>
     {% if News %}
       <ul>
         {% for news in News %}
-          <li><a href="{{ news.get_absolute_url }}">{{ news.title }}</a></li>
+          <div class="title"><a href="{{ news.get_absolute_url }}">{{ news.title }}</a></div>
+          <ul>
+            <div class="time">{{ news.date_modified }}</div>
+            <div class="body">{{ news.content|linebreaks }}</div>
+          </ul>
         {% endfor %}
       </ul>
     {% else %}

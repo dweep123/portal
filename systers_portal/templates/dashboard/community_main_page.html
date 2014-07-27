@@ -5,13 +5,14 @@
 <div>
   <h3>{{community.name}}</h3>
   <div>
-    {% get_obj_perms request.user for community as "community_perms" %}
     <ul> 
       {% for page in Pages %}
         <li><a href="{% url 'view_page' page.community.slug page.slug %}">{{ page.title }}</a></li>
       {% endfor %}
       <li><a href="{% url 'show_community_news' community.slug %}">News</a></li>
       <li><a href="{% url 'show_community_resources' community.slug %}">Resources</a></li>
+      {% if user.is_authenticated and user.is_active %}
+      {% get_obj_perms request.user for community as "community_perms" %}
       {% if "change_community" in community_perms %}
       <li><a href="{% url 'edit_community_profile' community.slug %}">Edit Community Profile</a></li>
       {% endif %}
@@ -19,6 +20,7 @@
       <li><a href="{% url 'manage_pages' community.slug %}">Manage Pages</a></li>
       {% endif %}
       {# TODO: check if user has permissions for managing users for this community , if yes display the link for managing users else do not display the link #}
+      {% endif %}
   </div>
 </div>
 {% endblock %}

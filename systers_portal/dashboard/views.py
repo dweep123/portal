@@ -7,9 +7,10 @@ from django.template import RequestContext
 from guardian.decorators import permission_required_or_403
 
 from dashboard.forms import (UserForm, CommunityForm, NewsForm,
-                             ResourceForm, PageForm)
+                             ResourceForm, PageForm,
+                             NewsCommentForm, ResourceCommentForm)
 from dashboard.models import (CommunityPage, Community, SysterUser, News,
-                              Resource)
+                              Resource, NewsComment, ResourceComment)
 
 
 @login_required
@@ -232,8 +233,50 @@ def view_news(request, community_slug, news_slug):
     context = RequestContext(request)
     community = get_object_or_404(Community, slug=community_slug)
     news = get_object_or_404(News, community=community, slug=news_slug)
+    comments = NewsComment.objects.filter(news=news)
+    form = NewsCommentForm()
     return render_to_response('dashboard/view_news.html',
-                              {'news': news}, context)
+                              {'news': news, 'comments':
+                               comments, 'form': form},
+                              context)
+
+
+@login_required
+def add_newscomment(request, community_slug, news_slug):
+    """Add a new comment."""
+    community = get_object_or_404(Community, slug=community_slug)
+    news = get_object_or_404(News, community=community, slug=news_slug)
+    if request.method == 'POST':
+        form = NewsCommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.news = news
+            comment.author = SysterUser.objects.get(user=request.user)
+            comment.save()
+            return redirect('view_news',
+                            community_slug=community.slug,
+                            news_slug=news.slug)
+    else:
+        form = NewsCommentForm()
+    return redirect('view_news',
+                    community_slug=community.slug,
+                    news_slug=news.slug)
+
+
+@login_required
+def delete_newscomment(request, community_slug, news_slug, comment_id=None):
+    """Delete comment(s) with primary key
+    comment_id or with comment_ids in POST."""
+    community = get_object_or_404(Community, slug=community_slug)
+    if not comment_id:
+        commentlist = request.POST.getlist("delete")
+    else:
+        commentlist = [comment_id]
+    for comment_id in commentlist:
+        NewsComment.objects.get(pk=comment_id).delete()
+    return redirect('view_news',
+                    community_slug=community.slug,
+                    news_slug=news_slug)
 
 
 def show_community_news(request, community_slug):
@@ -360,8 +403,12 @@ def view_resource(request, community_slug, resource_slug):
     resource = get_object_or_404(Resource,
                                  community=community,
                                  slug=resource_slug)
+    comments = ResourceComment.objects.filter(resource=resource)
+    form = ResourceCommentForm()
     return render_to_response('dashboard/view_resource.html',
-                              {'resource': resource},
+                              {'resource': resource,
+                               'comments': comments,
+                               'form': form},
                               context)
 
 
@@ -378,6 +425,46 @@ def show_community_resources(request, community_slug):
     return render_to_response('dashboard/show_community_resources.html',
                               {'Resources': resources, 'community': community},
                               context)
+
+
+@login_required
+def add_resourcecomment(request, community_slug, resource_slug):
+    """Add a resource comment."""
+    community = get_object_or_404(Community, slug=community_slug)
+    resource = get_object_or_404(
+        Resource, community=community, slug=resource_slug)
+    if request.method == 'POST':
+        form = ResourceCommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.resource = resource
+            comment.author = SysterUser.objects.get(user=request.user)
+            comment.save()
+            return redirect('view_resource',
+                            community_slug=community.slug,
+                            resource_slug=resource.slug)
+    else:
+        form = ResourceCommentForm()
+    return redirect('view_resource',
+                    community_slug=community.slug,
+                    resource_slug=resource.slug)
+
+
+@login_required
+def delete_resourcecomment(request, community_slug,
+                           resource_slug, comment_id=None):
+    """Delete comment(s) with primary key
+    comment_id or with comment_ids in POST."""
+    community = get_object_or_404(Community, slug=community_slug)
+    if not comment_id:
+        commentlist = request.POST.getlist("delete")
+    else:
+        commentlist = [comment_id]
+    for comment_id in commentlist:
+        ResourceComment.objects.get(pk=comment_id).delete()
+    return redirect('view_resource',
+                    community_slug=community.slug,
+                    resource_slug=resource_slug)
 
 
 @login_required

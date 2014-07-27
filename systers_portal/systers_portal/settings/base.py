@@ -34,6 +34,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.comments',
     'django_nose',
     'django.contrib.sites',
     'djangocms_text_ckeditor',
@@ -130,9 +131,13 @@ SITE_ID = 1
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATIC_PATH = os.path.join(BASE_DIR, 'static')
 
-STATIC_URL = "/static/"
+STATIC_URL = '/static/'
+
+STATICFILES_DIRS = (
+    STATIC_PATH,
+)
 
 MEDIA_URL = '/media/'
 

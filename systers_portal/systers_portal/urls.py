@@ -15,6 +15,7 @@ urlpatterns = patterns(
     '',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include('allauth.urls')),
+    (r'^comments/', include('django.contrib.comments.urls')),
     url(r'^users/(?P<username>[\w.@+-]+)/$',
         'dashboard.views.view_userprofile',
         name='view_userprofile'),
@@ -40,6 +41,15 @@ urlpatterns = patterns(
         r'(?P<news_slug>[a-zA-Z0-9_-]+)/$',
         'dashboard.views.view_news', name='view_news'),
     url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/news/'
+        r'(?P<news_slug>[a-zA-Z0-9_-]+)/add_comment$',
+        'dashboard.views.add_newscomment', name='add_newscomment'),
+    url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/news/'
+        r'(?P<news_slug>[a-zA-Z0-9_-]+)/delete_comment$',
+        'dashboard.views.delete_newscomment', name='delete_newscomment'),
+    url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/news/'
+        r'(?P<news_slug>[a-zA-Z0-9_-]+)/delete_comment/(?P<comment_id>\d+)/$',
+        'dashboard.views.delete_newscomment', name='delete_newscomment'),
+    url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/news/'
         r'(?P<news_slug>[a-zA-Z0-9_-]+)/edit/$',
         'dashboard.views.edit_news', name='edit_news'),
     url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/news/'
@@ -50,6 +60,15 @@ urlpatterns = patterns(
         'dashboard.views.confirm_delete_news', name='confirm_delete_news'),
     url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/resources/add/',
         'dashboard.views.add_resource', name='add_resource'),
+    url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/resources/'
+        r'(?P<resource_slug>[a-zA-Z0-9_-]+)/delete_comment$',
+        'dashboard.views.delete_resourcecomment',
+        name='delete_resourcecomment'),
+    url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/resources/'
+        r'(?P<resource_slug>[a-zA-Z0-9_-]+)/'
+        r'delete_comment/(?P<comment_id>\d+)/$',
+        'dashboard.views.delete_resourcecomment',
+        name='delete_resourcecomment'),
     url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/resources/'
         r'(?P<resource_slug>[a-zA-Z0-9_-]+)/delete/$',
         'dashboard.views.delete_resource', name='delete_resource'),
@@ -63,6 +82,9 @@ urlpatterns = patterns(
     url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/resources/'
         r'(?P<resource_slug>[a-zA-Z0-9_-]+)/$',
         'dashboard.views.view_resource', name='view_resource'),
+    url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/resources/'
+        r'(?P<resource_slug>[a-zA-Z0-9_-]+)/add_comment$',
+        'dashboard.views.add_resourcecomment', name='add_resourcecomment'),
     url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/resources/',
         'dashboard.views.show_community_resources',
         name='show_community_resources'),

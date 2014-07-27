@@ -3,7 +3,7 @@ from guardian.admin import GuardedModelAdmin
 
 from dashboard.models import (
     SysterUser, Community, News, Resource, Tag, ResourceType,
-    CommunityPage)
+    CommunityPage, NewsComment, ResourceComment)
 from cms.admin.placeholderadmin import PlaceholderAdminMixin
 
 
@@ -17,6 +17,8 @@ class CommunityAdmin(GuardedModelAdmin):
 
 admin.site.register(CommunityPage, CommunityPageAdmin)
 admin.site.register(SysterUser)
+admin.site.register(NewsComment)
+admin.site.register(ResourceComment)
 admin.site.register(Community, CommunityAdmin)
 admin.site.register(News)
 admin.site.register(Resource)

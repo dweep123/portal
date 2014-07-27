@@ -3,7 +3,8 @@ from django.contrib.auth.models import User
 from django.forms.models import model_to_dict, fields_for_model
 
 from dashboard.models import (SysterUser, Community, News,
-                              Resource, CommunityPage)
+                              Resource, CommunityPage,
+                              NewsComment, ResourceComment)
 
 
 class UserForm(forms.ModelForm):
@@ -67,3 +68,17 @@ class PageForm(forms.ModelForm):
     class Meta:
         model = CommunityPage
         exclude = ('community',)
+
+
+class NewsCommentForm(forms.ModelForm):
+
+    class Meta:
+        model = NewsComment
+        exclude = ["news", "author"]
+
+
+class ResourceCommentForm(forms.ModelForm):
+
+    class Meta:
+        model = ResourceComment
+        exclude = ["resource", "author"]

@@ -219,3 +219,23 @@ class Resource(models.Model):
         """
         return [(field.name, getattr(self, field.name)) for field in
                 Resource._meta.fields]
+
+
+class NewsComment(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    author = models.ForeignKey(SysterUser)
+    body = models.TextField()
+    news = models.ForeignKey(News)
+
+    def __unicode__(self):
+        return unicode("%s: %s" % (self.news, self.body))
+
+
+class ResourceComment(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    author = models.ForeignKey(SysterUser)
+    body = models.TextField()
+    resource = models.ForeignKey(Resource)
+
+    def __unicode__(self):
+        return unicode("%s: %s" % (self.resource, self.body))

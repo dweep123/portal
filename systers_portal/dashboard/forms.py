@@ -13,7 +13,7 @@ class UserForm(forms.ModelForm):
 
     def __init__(self, instance=None, *args, **kwargs):
         _fields = ('country', 'blog_url', 'homepage_url', 'profile_picture')
-        if not instance:
+        if instance is not None:
             _initial = model_to_dict(instance.systeruser, _fields)
         else:
             _initial = {}

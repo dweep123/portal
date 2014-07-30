@@ -15,7 +15,6 @@ urlpatterns = patterns(
     '',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include('allauth.urls')),
-    (r'^comments/', include('django.contrib.comments.urls')),
     url(r'^users/(?P<username>[\w.@+-]+)/$',
         'dashboard.views.view_userprofile',
         name='view_userprofile'),

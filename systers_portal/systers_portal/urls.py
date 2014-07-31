@@ -88,6 +88,12 @@ urlpatterns = patterns(
     url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/resources/',
         'dashboard.views.show_community_resources',
         name='show_community_resources'),
+    url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/users/$',
+        'dashboard.views.manage_community_users',
+        name='manage_community_users'),
+    url(r'(?P<community_slug>[a-zA-Z0-9_-]+)/users/(?P<username>[\w.@+-]+)'
+        r'/groups/$', 'dashboard.views.manage_user_groups',
+        name='manage_user_groups'),
     url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/(?P<page_slug>[a-zA-Z0-9_-]+)/$',
         'dashboard.views.view_page', name='view_page'),
     url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/(?P<page_slug>[a-zA-Z0-9_-]+)'

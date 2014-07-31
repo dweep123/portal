@@ -1,13 +1,13 @@
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render_to_response
 from django.template import RequestContext
 from guardian.decorators import permission_required_or_403
 
 from dashboard.forms import (UserForm, CommunityForm, NewsForm,
-                             ResourceForm, PageForm,
+                             ResourceForm, PageForm, UserGroupsForm,
                              NewsCommentForm, ResourceCommentForm)
 from dashboard.models import (CommunityPage, Community, SysterUser, News,
                               Resource, NewsComment, ResourceComment)
@@ -568,3 +568,45 @@ def confirm_delete_resource(request, community_slug, resource_slug):
         Resource, community=community, slug=resource_slug)
     resource.delete()
     return redirect('show_community_resources', community_slug=community.slug)
+
+
+@login_required
+@permission_required_or_403('dashboard.change_community_systeruser',
+                            (Community, 'slug__exact', 'community_slug'))
+def manage_community_users(request, community_slug):
+    """Manage all community users
+
+    :param request:
+    :param community_slug:
+    :return:
+    """
+    context = RequestContext(request)
+    community = get_object_or_404(Community, slug=community_slug)
+    users = community.members.all()
+    return render_to_response('dashboard/community_users.html',
+                              {'community': community, 'users': users}, context)
+
+
+@login_required
+@permission_required_or_403('dashboard.change_community_systeruser',
+                            (Community, 'slug__exact', 'community_slug'))
+def manage_user_groups(request, community_slug, username):
+    """Manage the auth groups of a user
+
+    :param community_slug: string community_slug parsed from the URL
+    :param username: string username parsed from the URL
+    """
+    context = RequestContext(request)
+    user = get_object_or_404(User, username=username)
+    community = get_object_or_404(Community, slug=community_slug)
+    if request.method == 'POST':
+        form = UserGroupsForm(request.POST, community_name=community.name, username=username)
+        if form.is_valid():
+            form.save(community=community, user=user)
+            return redirect('manage_community_users',
+                            community_slug=community.slug)
+    else:
+        form = UserGroupsForm(community_name=community.name, username=username)
+    return render_to_response('dashboard/user_groups.html',
+                              {'form': form, 'user': user, 'community': community}, context)
+

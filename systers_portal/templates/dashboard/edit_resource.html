@@ -1,12 +1,14 @@
 {% extends "dashboard/base.html" %}
 {% block title %}{{ resource.title }}{% endblock %}
 {% block content %}
-<div>
+<div class="row">
+  <div class="span5">
   <form action="{% url 'edit_resource' resource.community.slug resource.slug %} " method="post">
     {% csrf_token %}
-    {{ resourceform.as_p }}
+    {{ resourceform|crispy"}}
     <input type="submit" value="Submit"/>
     <a href="{% url 'view_resource' resource.community.slug resource.slug %}">Cancel</a>
   </form>
+  </div>
 </div>
 {% endblock %}

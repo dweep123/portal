@@ -1,10 +1,10 @@
 {% extends "dashboard/base.html" %}
-{% block title %}Delete Resource{% endblock %}
+{% block title %}Delete Resource of {{ community.name }}{% endblock %}
 {% block content %}
 <div>
-  <h3>Delete Resource</h3>
+  <h3>Delete "{{ resource.title }}" News of "{{ community.name }}"</h3>
   <div>
-    <strong> Are you sure you want to delete it </strong>
+    <strong>Are you sure you want to delete it?</strong>
     <a href="{% url 'confirm_delete_resource' resource.community.slug resource.slug %}">Yes I am sure</a><br>
     <a href="{% url 'view_resource' resource.community.slug resource.slug %}">Cancel</a><br>
   </div>

@@ -44,7 +44,10 @@ def view_page(request, community_slug, page_slug):
     community = get_object_or_404(Community, slug=community_slug)
     page = get_object_or_404(
         CommunityPage, community=community, slug=page_slug)
-    return render_to_response('dashboard/view_page.html', {'page': page},
+    Pages = CommunityPage.objects.filter(community=community)
+    return render_to_response('dashboard/view_page.html',
+                              {'community': community, 'page': page,
+                               'Pages': Pages, 'active_page': page.slug},
                               context_instance=RequestContext(request))
 
 
@@ -144,7 +147,8 @@ def community_main_page(request, community_slug):
     community = get_object_or_404(Community, slug=community_slug)
     Pages = CommunityPage.objects.filter(community=community)
     return render_to_response('dashboard/community_main_page.html',
-                              {'community': community, 'Pages': Pages},
+                              {'community': community, 'Pages': Pages,
+                               'active_page': 'home'},
                               context)
 
 
@@ -235,9 +239,10 @@ def view_news(request, community_slug, news_slug):
     news = get_object_or_404(News, community=community, slug=news_slug)
     comments = NewsComment.objects.filter(news=news)
     form = NewsCommentForm()
+    Pages = CommunityPage.objects.filter(community=community)
     return render_to_response('dashboard/view_news.html',
                               {'news': news, 'comments':
-                               comments, 'form': form},
+                               comments, 'form': form, 'active_page': 'news', 'Pages': Pages},
                               context)
 
 
@@ -289,8 +294,9 @@ def show_community_news(request, community_slug):
     context = RequestContext(request)
     community = get_object_or_404(Community, slug=community_slug)
     news = News.objects.filter(community=community)
+    Pages = CommunityPage.objects.filter(community=community)
     return render_to_response('dashboard/show_community_news.html',
-                              {'News': news, 'community': community}, context)
+                              {'News': news, 'community': community, 'active_page': 'news', 'Pages': Pages}, context)
 
 
 @login_required
@@ -422,8 +428,10 @@ def show_community_resources(request, community_slug):
     context = RequestContext(request)
     community = get_object_or_404(Community, slug=community_slug)
     resources = Resource.objects.filter(community=community)
+    Pages = CommunityPage.objects.filter(community=community)
     return render_to_response('dashboard/show_community_resources.html',
-                              {'Resources': resources, 'community': community},
+                              {'Resources': resources, 'community': community,
+                               'active_page': 'resources', 'Pages': Pages},
                               context)
 
 

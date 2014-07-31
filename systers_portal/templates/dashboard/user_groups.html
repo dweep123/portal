@@ -1,17 +1,20 @@
 {% extends "dashboard/base.html" %}
-{#{% load guardian_tags %}#}
 {% block title %}User {{ user.username }} permission groups{% endblock %}
 {% block content %}
-<div>
-  <h3>Manage user {{ user.username }} permission groups</h3>
-  <div>
-    <form action="{% url 'manage_user_groups' community.slug user.username %} "
-          method="post">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <input type="submit" value="Submit"/>
-      <a href="{% url 'manage_community_users' community.slug %}">Cancel</a>
-    </form>
+  <div class="row">
+    <div class="span5">
+      <h3>Manage user {{ user.username }} permission groups</h3>
+
+      <div>
+        <form
+            action="{% url 'manage_user_groups' community.slug user.username %} "
+            method="post">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <input type="submit" value="Submit"/>
+          <a href="{% url 'manage_community_users' community.slug %}">Cancel</a>
+        </form>
+      </div>
+    </div>
   </div>
-</div>
 {% endblock %}

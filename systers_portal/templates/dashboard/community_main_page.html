@@ -1,23 +1,34 @@
 {% extends "dashboard/base.html" %}
 {% load guardian_tags %}
-{% block title %}{{community.name}}{% endblock %}
+{% block title %}{{ community.name }}{% endblock %}
 {% block content %}
-  <div>
-    <h3>{{ community.name }}</h3>
-
-    <div>
-      <ul>
+  <div class="row">
+    <div class="span9">
+      <h3>{{ community.name }}</h3>
+      <ul class="nav nav-tabs">
+        <li class="{% if active_page == 'home' %} active {% endif %}"><a
+            href="{% url 'community_main_page' community.slug %}">Home</a>
+        </li>
+        <li class="{% if active_page == 'news' %} active {% endif %}"><a
+            href="{% url 'show_community_news' community.slug %}">News</a>
+        </li>
+        <li class="{% if active_page == 'resources' %} active {% endif %}">
+        <a href="{% url 'show_community_resources' community.slug %}">Resources</a>
         {% for page in Pages %}
-          <li><a
-              href="{% url 'view_page' page.community.slug page.slug %}">{{ page.title }}</a>
+          <li class="{% if active_page == page.slug %} active {% endif %}">
+            <a href="{% url 'view_page' page.community.slug page.slug %}">{{ page.title }}</a>
           </li>
         {% endfor %}
-        <li><a href="{% url 'show_community_news' community.slug %}">News</a>
-        </li>
-        <li><a href="{% url 'show_community_resources' community.slug %}">Resources</a>
-        </li>
-        {% if user.is_authenticated and user.is_active %}
-          {% get_obj_perms request.user for community as "community_perms" %}
+      </ul>
+
+    {% block community_page %}
+    {% endblock %}
+    </div>
+    {% if user.is_authenticated and user.is_active %}
+      {% get_obj_perms request.user for community as "community_perms" %}
+      <div class="span3">
+      <div class="well sidebar-nav">
+        <ul class="nav nav-list">
           {% if "change_community" in community_perms %}
             <li><a href="{% url 'edit_community_profile' community.slug %}">Edit
               Community Profile</a></li>
@@ -27,10 +38,12 @@
               Pages</a></li>
           {% endif %}
           {% if "change_community_systeruser" in community_perms %}
-            <li><a href="{% url 'manage_community_users' community.slug %}">Manage community users</a></li>
+            <li><a href="{% url 'manage_community_users' community.slug %}">Manage
+              community users</a></li>
           {% endif %}
-        {% endif %}
-      </ul>
+        </ul>
+      </div>
+    {% endif %}
     </div>
   </div>
 {% endblock %}

@@ -1,9 +1,9 @@
 {% extends "dashboard/base.html" %}
 {% load guardian_tags %}
-{% block title %}Pages{% endblock %}
+{% block title %}Manage Pages of {{ community.name }}{% endblock %}
 {% block content %}
 <div>
-  <h3>Community Pages</h3>
+  <h3>Community "{{ community.name }}" Pages</h3>
   <div>
    {% get_obj_perms request.user for community as "community_perms" %}
     <ul>

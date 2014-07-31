@@ -1,37 +1,28 @@
-{% extends "dashboard/base.html" %}
+{% extends "dashboard/community_main_page.html" %}
 {% load guardian_tags %}
-{% block title %}News{% endblock %}
-{% block content %}
- <style type="text/css">
-        .time { font-size: 0.8em; margin-top: 2px; }
-        .body { font-size: 1.1em; margin-top: 2px; }
-        .title {
-            font-size: 1.4em; margin-top: 20px; border-bottom: 1px solid #ccc;
-            padding-left: 4px; margin-left: 5px;
-        }
-    </style>
-<div>
-  <h3>News</h3>
+{% block title %}{{ community.name }} News{% endblock %}
+{% block community_page %}
   <div>
     {% if News %}
-      <ul>
-        {% for news in News %}
-          <div class="title"><a href="{{ news.get_absolute_url }}">{{ news.title }}</a></div>
-          <ul>
-            <div class="time">{{ news.date_modified }}</div>
-            <div class="body">{{ news.content|linebreaks }}</div>
-          </ul>
-        {% endfor %}
-      </ul>
+      {% for news in News %}
+        <div>
+          <h4 class="title"><a
+              href="{{ news.get_absolute_url }}">{{ news.title }}</a></h4>
+
+          <p class="time">{{ news.date_modified }}</p>
+
+          <div class="body">{{ news.content|linebreaks }}</div>
+        </div>
+        <hr>
+      {% endfor %}
     {% else %}
       <p>Currently there is no news for this community</p>
     {% endif %}
     {% if user.is_authenticated and user.is_active %}
-    {% get_obj_perms request.user for community as "community_perms" %}
-    {% if "add_community_news" in community_perms %}
-      <a href="{% url 'add_news' community.slug %}">Add News</a>
+      {% get_obj_perms request.user for community as "community_perms" %}
+      {% if "add_community_news" in community_perms %}
+        <a href="{% url 'add_news' community.slug %}">Add News</a>
+      {% endif %}
     {% endif %}
-    {% endif %}
-   </div>
-</div>
+  </div>
 {% endblock %}

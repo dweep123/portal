@@ -1,10 +1,10 @@
 {% extends "dashboard/base.html" %}
-{% block title %}Delete Page{% endblock %}
+{% block title %}Delete Page of {{ community.name }}{% endblock %}
 {% block content %}
 <div>
-  <h3>Delete Page</h3>
+  <h3>Delete "{{ page.title }}" News of "{{ community.name }}"</h3>
   <div>
-    <strong> Are you sure you want to delete it </strong>
+    <strong>Are you sure you want to delete it?</strong>
     <a href="{% url 'confirm_delete_page' page.community.slug page.slug %}">Yes I am sure</a><br>
     <a href="{% url 'manage_pages' page.community.slug %}">Cancel</a><br>
   </div>

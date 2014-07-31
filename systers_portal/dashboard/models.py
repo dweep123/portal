@@ -122,6 +122,9 @@ class Community(models.Model):
         return [(field.name, getattr(self, field.name)) for field in
                 Community._meta.fields]
 
+    def get_absolute_url(self):
+        return reverse('community_main_page', args=[self.slug])
+
 
 class Tag(models.Model):
     """Model to represent the tags a resource can have"""

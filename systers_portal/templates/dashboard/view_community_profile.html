@@ -2,7 +2,8 @@
 {% load dashboard_extras %}
 {% block title %}{{ community.name }} Profile{% endblock %}
 {% block content %}
-  <div>
+  <div class="row">
+  <div class="span5">
     <h3>{{ community.name }} Profile</h3>
     <ul>
       {# TODO: link to the user profile #}
@@ -16,5 +17,6 @@
         {% endwith %}
       {% endfor %}
     </ul>
+  </div>
   </div>
 {% endblock %}

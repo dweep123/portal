@@ -2,7 +2,8 @@
 {% load dashboard_extras %}
 {% block title %}{{ systeruser.user.username }} Profile{% endblock %}
 {% block content %}
-  <div>
+  <div class="row">
+  <div class="span5">
     <h3>{{ systeruser.user.username }} Profile</h3>
     <ul>    
       {% for name, value in systeruser.get_user_fields %}
@@ -26,5 +27,6 @@
           <p>No Image Available</p>
         {% endif %}
     </ul>
+  </div>
   </div>
 {% endblock %}

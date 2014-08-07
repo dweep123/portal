@@ -618,3 +618,7 @@ def manage_user_groups(request, community_slug, username):
     return render_to_response('dashboard/user_groups.html',
                               {'form': form, 'user': user, 'community': community}, context)
 
+@login_required
+def community_request(request):
+    """Render google form for new community requests"""
+    return render_to_response('dashboard/community_request.html')

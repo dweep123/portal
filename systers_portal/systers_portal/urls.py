@@ -47,11 +47,22 @@ urlpatterns = patterns(
         r'(?P<news_slug>[a-zA-Z0-9_-]+)/delete_comment$',
         'dashboard.views.delete_newscomment', name='delete_newscomment'),
     url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/news/'
-        r'(?P<news_slug>[a-zA-Z0-9_-]+)/delete_comment/(?P<comment_id>\d+)/$',
-        'dashboard.views.delete_newscomment', name='delete_newscomment'),
+        r'(?P<news_slug>[a-zA-Z0-9_-]+)/'
+        r'delete_comment/(?P<comment_id>\d+)/$',
+        'dashboard.views.delete_newscomment',
+        name='delete_newscomment'),
+    url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/news/'
+        r'(?P<news_slug>[a-zA-Z0-9_-]+)/approve_comment/(?P<comment_id>\d+)/$',
+        'dashboard.views.approve_newscomment', name='approve_newscomment'),
     url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/news/'
         r'(?P<news_slug>[a-zA-Z0-9_-]+)/edit/$',
         'dashboard.views.edit_news', name='edit_news'),
+    url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/news/'
+        r'(?P<news_slug>[a-zA-Z0-9_-]+)/monitor/$',
+        'dashboard.views.monitor_news', name='monitor_news'),
+    url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/news/'
+        r'(?P<news_slug>[a-zA-Z0-9_-]+)/unmonitor/$',
+        'dashboard.views.unmonitor_news', name='unmonitor_news'),
     url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/news/'
         r'(?P<news_slug>[a-zA-Z0-9_-]+)/delete/$',
         'dashboard.views.delete_news', name='delete_news'),
@@ -70,6 +81,11 @@ urlpatterns = patterns(
         'dashboard.views.delete_resourcecomment',
         name='delete_resourcecomment'),
     url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/resources/'
+        r'(?P<resource_slug>[a-zA-Z0-9_-]+)/'
+        r'approve_comment/(?P<comment_id>\d+)/$',
+        'dashboard.views.approve_resourcecomment',
+        name='approve_resourcecomment'),
+    url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/resources/'
         r'(?P<resource_slug>[a-zA-Z0-9_-]+)/delete/$',
         'dashboard.views.delete_resource', name='delete_resource'),
     url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/resources/'
@@ -79,6 +95,12 @@ urlpatterns = patterns(
     url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/resources/'
         r'(?P<resource_slug>[a-zA-Z0-9_-]+)/edit/$',
         'dashboard.views.edit_resource', name='edit_resource'),
+    url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/resources/'
+        r'(?P<resource_slug>[a-zA-Z0-9_-]+)/monitor/$',
+        'dashboard.views.monitor_resource', name='monitor_resource'),
+    url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/resources/'
+        r'(?P<resource_slug>[a-zA-Z0-9_-]+)/unmonitor/$',
+        'dashboard.views.unmonitor_resource', name='unmonitor_resource'),
     url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/resources/'
         r'(?P<resource_slug>[a-zA-Z0-9_-]+)/$',
         'dashboard.views.view_resource', name='view_resource'),

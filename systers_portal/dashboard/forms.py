@@ -53,14 +53,14 @@ class NewsForm(forms.ModelForm):
 
     class Meta:
         model = News
-        exclude = ('community', 'author')
+        exclude = ('community', 'author', 'is_monitor')
 
 
 class ResourceForm(forms.ModelForm):
 
     class Meta:
         model = Resource
-        exclude = ('community', 'author')
+        exclude = ('community', 'author', 'is_monitor')
 
 
 class PageForm(forms.ModelForm):

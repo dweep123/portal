@@ -9,6 +9,7 @@ from guardian.decorators import permission_required_or_403
 from dashboard.forms import (UserForm, CommunityForm, NewsForm,
                              ResourceForm, PageForm, UserGroupsForm,
                              NewsCommentForm, ResourceCommentForm)
+from dashboard.decorators import admin_required
 from dashboard.models import (CommunityPage, Community, SysterUser, News,
                               Resource, NewsComment, ResourceComment)
 
@@ -257,12 +258,29 @@ def add_newscomment(request, community_slug, news_slug):
             comment = form.save(commit=False)
             comment.news = news
             comment.author = SysterUser.objects.get(user=request.user)
+            comment.is_approved = True 
+	    if news.is_monitor and community.community_admin!=comment.author:
+                comment.is_approved = False
             comment.save()
             return redirect('view_news',
                             community_slug=community.slug,
                             news_slug=news.slug)
     else:
         form = NewsCommentForm()
+    return redirect('view_news',
+                    community_slug=community.slug,
+                    news_slug=news.slug)
+
+
+@login_required
+@admin_required(Community, 'slug__exact', 'community_slug')
+def approve_newscomment(request, community_slug, news_slug, comment_id):
+    community = get_object_or_404(Community, slug=community_slug)
+    news = get_object_or_404(
+        News, community=community, slug=news_slug)
+    comment = get_object_or_404(NewsComment, news=news, pk=comment_id)
+    comment.is_approved = True
+    comment.save()
     return redirect('view_news',
                     community_slug=community.slug,
                     news_slug=news.slug)
@@ -358,6 +376,32 @@ def edit_news(request, community_slug, news_slug):
 
 
 @login_required
+@admin_required(Community, 'slug__exact', 'community_slug')
+def monitor_news(request, community_slug, news_slug):
+    context = RequestContext(request)
+    community = get_object_or_404(Community, slug=community_slug)
+    news = get_object_or_404(News, community=community, slug=news_slug)
+    news.is_monitor = True
+    news.save()
+    return redirect('view_news',
+                    community_slug=community.slug,
+                    news_slug=news.slug)
+    
+
+@login_required
+@admin_required(Community, 'slug__exact', 'community_slug')
+def unmonitor_news(request, community_slug, news_slug):
+    context = RequestContext(request)
+    community = get_object_or_404(Community, slug=community_slug)
+    news = get_object_or_404(News, community=community, slug=news_slug)
+    news.is_monitor = False
+    news.save()
+    return redirect('view_news',
+                    community_slug=community.slug,
+                    news_slug=news.slug)
+
+
+@login_required
 @permission_required_or_403('dashboard.delete_community_news',
                             (Community, 'slug__exact', 'community_slug'))
 def delete_news(request, community_slug, news_slug):
@@ -447,12 +491,29 @@ def add_resourcecomment(request, community_slug, resource_slug):
             comment = form.save(commit=False)
             comment.resource = resource
             comment.author = SysterUser.objects.get(user=request.user)
+            comment.is_approved = True 
+            if resource.is_monitor and community.community_admin!=comment.author:
+                comment.is_approved = False
             comment.save()
             return redirect('view_resource',
                             community_slug=community.slug,
                             resource_slug=resource.slug)
     else:
         form = ResourceCommentForm()
+    return redirect('view_resource',
+                    community_slug=community.slug,
+                    resource_slug=resource.slug)
+
+
+@login_required
+@admin_required(Community, 'slug__exact', 'community_slug')
+def approve_resourcecomment(request, community_slug, resource_slug, comment_id):
+    community = get_object_or_404(Community, slug=community_slug)
+    resource = get_object_or_404(
+        Resource, community=community, slug=resource_slug)
+    comment = get_object_or_404(ResourceComment, resource=resource, pk=comment_id)
+    comment.is_approved = True
+    comment.save()
     return redirect('view_resource',
                     community_slug=community.slug,
                     resource_slug=resource.slug)
@@ -536,6 +597,35 @@ def edit_resource(request, community_slug, resource_slug):
                               {'resourceform': resourceform,
                                'resource': resource},
                               context)
+
+
+@login_required
+@admin_required(Community, 'slug__exact', 'community_slug')
+def monitor_resource(request, community_slug, resource_slug):
+    context = RequestContext(request)
+    community = get_object_or_404(Community, slug=community_slug)
+    resource = get_object_or_404(Resource,
+                                 community=community,
+                                 slug=resource_slug)
+    resource.is_monitor = True
+    resource.save()
+    return redirect('view_resource',
+                     community_slug=community.slug,
+                     resource_slug=resource.slug)
+
+@login_required
+@admin_required(Community, 'slug__exact', 'community_slug')
+def unmonitor_resource(request, community_slug, resource_slug):
+    context = RequestContext(request)
+    community = get_object_or_404(Community, slug=community_slug)
+    resource = get_object_or_404(Resource,
+                                 community=community,
+                                 slug=resource_slug)
+    resource.is_monitor = False 
+    resource.save()
+    return redirect('view_resource',
+                     community_slug=community.slug,
+                     resource_slug=resource.slug)
 
 
 @login_required

@@ -63,6 +63,13 @@
       {{ news.content }}
     </div>
     {% if user.is_authenticated and user.is_active %}
+      {% ifequal request.user.systeruser  news.community.community_admin %}
+        {% if news.is_monitor %}
+          <a href="{% url 'unmonitor_news' news.community.slug news.slug %}">Unwatch</a>
+        {% else %}
+          <a href="{% url 'monitor_news' news.community.slug news.slug %}">Watch</a>
+      {% endif %}
+      {% endifequal %}
       {% get_obj_perms request.user for news.community as "community_perms" %}
       {% if "change_community_news" in community_perms %}
         <a href="{% url 'edit_news' news.community.slug news.slug %}">Edit</a>
@@ -73,14 +80,14 @@
     {% endif %}
     <div>
       <div class="fb-share-button"
-           data-href="{% url 'view_news'  news.community.slug news.slug %}"
+           data-href="{% url 'view_news' news.community.slug news.slug %}"
            data-type="button"></div>
       <div class="g-plus" data-action="share"
-           data-href="{% url 'view_news'  news.community.slug news.slug %}"
+           data-href="{% url 'view_news' news.community.slug news.slug %}"
            data-annotation="none"></div>
       <a href="https://twitter.com/share" class="twitter-share-button"
          data-count="none"
-         data-href="{% url 'view_news'  news.community.slug news.slug %}">Tweet</a>
+         data-href="{% url 'view_news' news.community.slug news.slug %}">Tweet</a>
       <script src="//platform.linkedin.com/in.js" type="text/javascript">
         lang: en_US
       </script>
@@ -88,29 +95,44 @@
     </div>
 
 
-    {% if comments %}
+   {% if comments %}
       <p>Comments:</p>
     {% endif %}
     <form
         action="{% url 'delete_newscomment' news.community.slug news.slug %}"
         method="POST">
       {% csrf_token %}
+      <div>
       {% for comment in comments %}
-        <div class="comment">
-        <div class="time">{{ comment.created }} |<a
-            href="{{ comment.author.get_absolute_url }}">{{ comment.author }}</a>
-        </div>
-        <div class="body">{{ comment.body|linebreaks }}</div>
-        {% if user.is_authenticated %}
-          {% get_obj_perms request.user for news.community as "community_perms" %}
-          {% if "delete_community_news" in community_perms %}
-            <input type="checkbox" name="delete" value="{{ comment.pk }}">
-            <a href="{% url 'delete_newscomment' news.community.slug news.slug comment.id %}">delete</a>
-          {% else %}
-            {% ifequal request.user  comment.author.user %}
+        {% if comment.is_approved %}
+          <div class="comment">
+          <div class="time">{{ comment.created }} |<a
+              href="{{ comment.author.get_absolute_url }}">{{ comment.author }}</a>
+          </div>
+          <div class="body">{{ comment.body|linebreaks }}</div>
+          {% if user.is_authenticated %}
+            {% get_obj_perms request.user for news.community as "community_perms" %}
+            {% if "delete_community_news" in community_perms %}
+              <input type="checkbox" name="delete" value="{{ comment.pk }}">
               <a href="{% url 'delete_newscomment' news.community.slug news.slug comment.id %}">delete</a>
-            {% endifequal %}
+            {% else %}
+              {% ifequal request.user  comment.author.user %}
+                <a href="{% url 'delete_newscomment' news.community.slug news.slug comment.id %}">delete</a>
+              {% endifequal %}
+            {% endif %}
+          </div>
           {% endif %}
+        
+        {% else %}
+          {% ifequal request.user.systeruser  comment.news.community.community_admin %}
+            <div class="comment">
+            <div class="time">{{ comment.created }} |<a
+                href="{{ comment.author.get_absolute_url }}">{{ comment.author }}</a>
+            </div>
+            <div class="body">{{ comment.body|linebreaks }}</div>
+            <a href="{% url 'approve_newscomment' news.community.slug news.slug comment.id %}">Approve</a>
+         {% endifequal %}
+         </div>
         {% endif %}
       {% endfor %}
       </div>

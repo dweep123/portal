@@ -156,6 +156,7 @@ class News(models.Model):
     tags = models.ManyToManyField(Tag, blank=True, null=True,
                                   verbose_name='Tags')
     content = models.TextField(verbose_name='Content')
+    is_monitor = models.BooleanField(default=False, verbose_name='is_monitor')
 
     def __unicode__(self):
         return "{0} of {1} Community".format(self.title, self.community.name)
@@ -205,6 +206,7 @@ class Resource(models.Model):
     resource_type = models.ForeignKey(ResourceType, blank=True, null=True,
                                       verbose_name='Resource Type')
     content = models.TextField(verbose_name='Content')
+    is_monitor = models.BooleanField(default=False, verbose_name='is_monitor')
 
     def __unicode__(self):
         return "{0} of {1} Community".format(self.title, self.community.name)
@@ -229,6 +231,7 @@ class NewsComment(models.Model):
     author = models.ForeignKey(SysterUser)
     body = models.TextField()
     news = models.ForeignKey(News)
+    is_approved = models.BooleanField(default=True, verbose_name='is_approved')
 
     def __unicode__(self):
         return unicode("%s: %s" % (self.news, self.body))
@@ -239,6 +242,7 @@ class ResourceComment(models.Model):
     author = models.ForeignKey(SysterUser)
     body = models.TextField()
     resource = models.ForeignKey(Resource)
+    is_approved = models.BooleanField(default=True, verbose_name='is_approved')
 
     def __unicode__(self):
         return unicode("%s: %s" % (self.resource, self.body))

@@ -120,7 +120,8 @@ def give_basic_access(sender, instance, action, **kwargs):
                                        dispatch_uid="give_basic_access")
                 instance.groups.remove(
                     Group.objects.get(name="Generic permissions"))
-                instance.is_staff = False
+                if not instance.is_superuser:
+                    instance.is_staff = False
             instance.save()
             m2m_changed.connect(give_basic_access, sender=User.groups.through,
                                 dispatch_uid="give_basic_access")

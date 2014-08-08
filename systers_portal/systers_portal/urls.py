@@ -1,11 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-from django.views.generic import TemplateView
-
-try:
-    from systers_portal import settings
-except ImportError:
-    from systers_portal.systers_portal import settings
+from django.conf import settings
+from dashboard.views import ExtraContextTemplateView
 
 try:
     admin.autodiscover()
@@ -16,11 +12,17 @@ urlpatterns = patterns(
     '',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include('allauth.urls')),
-    url(r'^$', TemplateView.as_view(template_name="common/index.html"),
+    url(r'^$', ExtraContextTemplateView.as_view(template_name="common/index.html"),
         name="index"),
-    url(r'^about/$', TemplateView.as_view(template_name="common/about.html",), name="about"),
+    url(r'^about/$',
+        ExtraContextTemplateView.as_view(template_name="common/about.html",
+                                         extra_context={
+                                         'current_page': 'about'}),
+        name="about"),
     url(r'^contact/$',
-        TemplateView.as_view(template_name="common/contact.html"),
+        ExtraContextTemplateView.as_view(template_name="common/contact.html",
+                                         extra_context={
+                                         'current_page': 'contact'}),
         name="contact"),
     url(r'^comments/', include('django.contrib.comments.urls')),
     url(r'^community_proposal/$', 'dashboard.views.community_proposal',
@@ -124,8 +126,10 @@ urlpatterns = patterns(
     url(r'^', include('cms.urls')),
 )
 
-urlpatterns += patterns(
-    'django.views.static',
-    (r'media/(?P<path>.*)',
-     'serve',
-     {'document_root': settings.base.MEDIA_ROOT}), )
+if not settings.DEBUG:
+    urlpatterns += patterns('',
+        (r'^static/(?P<path>.*)$', 'django.views.static.serve',
+            {'document_root': settings.STATIC_ROOT}),
+        (r'^media/(?P<path>.*)$', 'django.views.static.serve',
+            {'document_root': settings.MEDIA_ROOT}),
+    )

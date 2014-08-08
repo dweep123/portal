@@ -7,7 +7,7 @@
   <meta name="description" content="Systers Portal is a unified platform for Systers
   and its sub-groups to share information and get the latest news.">
 
-  <title>Systers Portal{% block head_title %}{% endblock %}</title>
+  <title>Systers Portal{% block title %}{% endblock %}</title>
 
   {% load staticfiles %}
   <link rel="icon" href="{% static 'img/favicon.ico' %}">
@@ -52,7 +52,7 @@
           </ul>
         </li>
         <li><a href="http://systers.org/systers-dev/">Wiki</a></li>
-        <li {% if current_page == 'contact' %}class="active"{% endif %}><a href="#">Contact</a></li>
+        <li {% if current_page == 'contact' %}class="active"{% endif %}><a href="{% url 'contact' %}">Contact</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         {% if user.is_authenticated and user.is_active %}

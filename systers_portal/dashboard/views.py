@@ -4,6 +4,7 @@ from django.contrib.auth.models import User, Group
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render_to_response
 from django.template import RequestContext
+from django.views.generic import TemplateView
 from guardian.decorators import permission_required_or_403
 
 from dashboard.forms import (UserForm, CommunityForm, NewsForm,
@@ -11,6 +12,17 @@ from dashboard.forms import (UserForm, CommunityForm, NewsForm,
                              NewsCommentForm, ResourceCommentForm)
 from dashboard.models import (CommunityPage, Community, SysterUser, News,
                               Resource, NewsComment, ResourceComment)
+
+
+class ExtraContextTemplateView(TemplateView):
+    extra_context = None
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(ExtraContextTemplateView, self).get_context_data(*args,
+                                                                         **kwargs)
+        if self.extra_context:
+            context.update(self.extra_context)
+        return context
 
 
 @login_required

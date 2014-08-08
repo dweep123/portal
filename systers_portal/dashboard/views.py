@@ -11,11 +11,10 @@ from guardian.decorators import permission_required_or_403
 from dashboard.forms import (UserForm, CommunityForm, NewsForm,
                              ResourceForm, PageForm, UserGroupsForm,
                              NewsCommentForm, ResourceCommentForm)
-from dashboard.decorators import admin_required
 from dashboard.models import (CommunityPage, Community, SysterUser, News,
                               Resource, NewsComment, ResourceComment,
                               JoinRequest)
-from dashboard.signals import generic_groups 
+from dashboard.signals import generic_groups
 from systers_portal import settings
 
 
@@ -157,13 +156,15 @@ def community_main_page(request, community_slug):
     if request.user.is_authenticated():
         systeruser = SysterUser.objects.get(user=request.user)
         community_admin_group_name = generic_groups[
-                        "community_admin"].format(community.name)
+            "community_admin"].format(community.name)
         group = Group.objects.get(name=community_admin_group_name)
         if group in request.user.groups.all() or request.user.is_superuser:
-            is_admin=1
-        requested = JoinRequest.objects.filter(user=systeruser, community=community, is_approved=False).exists()
+            is_admin = 1
+        requested = JoinRequest.objects.filter(
+            user=systeruser, community=community, is_approved=False).exists()
         if requested:
-            request_id = JoinRequest.objects.get(user=systeruser, community=community, is_approved=False).id 
+            request_id = JoinRequest.objects.get(
+                user=systeruser, community=community, is_approved=False).id
     return render_to_response('dashboard/community_main_page.html',
                               {'community': community, 'Pages': Pages,
                                'active_page': 'home', 'request_id': request_id,
@@ -202,18 +203,20 @@ def edit_userprofile(request, username):
     else:
         userform = UserForm(instance=request.user)
     member_communities = []
-    systeruser =  SysterUser.objects.get(user=request.user)
+    systeruser = SysterUser.objects.get(user=request.user)
     for community in Community.objects.all():
         if systeruser in community.members.all():
             member_communities.append(community)
     join_requests = []
-    for join_request in JoinRequest.objects.filter(user=systeruser, is_approved=False):
+    user_join_requests = JoinRequest.objects.filter(user=systeruser,
+                                                    is_approved=False)
+    for join_request in user_join_requests:
         join_requests.append(join_request)
     return render_to_response(
         'dashboard/edit_profile.html',
         {'userform': userform,
-        'member_communities': member_communities,
-        'join_requests': join_requests},
+         'member_communities': member_communities,
+         'join_requests': join_requests},
         context)
 
 
@@ -272,13 +275,14 @@ def view_news(request, community_slug, news_slug):
     is_admin = 0
     if request.user.is_authenticated():
         community_admin_group_name = generic_groups[
-                        "community_admin"].format(community.name)
+            "community_admin"].format(community.name)
         group = Group.objects.get(name=community_admin_group_name)
         if group in request.user.groups.all() or request.user.is_superuser:
-            is_admin=1
+            is_admin = 1
     return render_to_response('dashboard/view_news.html',
                               {'news': news, 'comments':
-                               comments, 'form': form, 'active_page': 'news', 'Pages': Pages,
+                               comments, 'form': form, 'active_page': 'news',
+                               'Pages': Pages,
                                'is_admin': is_admin},
                               context)
 
@@ -295,13 +299,14 @@ def add_newscomment(request, community_slug, news_slug):
             comment.news = news
             comment.is_approved = True
             comment.author = SysterUser.objects.get(user=request.user)
-	    if news.is_monitor:
+            if news.is_monitor:
                 community_admin_group_name = generic_groups[
-	                                            "community_admin"].format(community.name)
+                    "community_admin"].format(community.name)
                 group = Group.objects.get(name=community_admin_group_name)
-                if group in request.user.groups.all() or request.user.is_superuser:
+                if (group in request.user.groups.all() or
+                        request.user.is_superuser):
                     comment.is_approved = True
-	        else:
+                else:
                     comment.is_approved = False
             comment.save()
             return redirect('view_news',
@@ -318,7 +323,7 @@ def add_newscomment(request, community_slug, news_slug):
 def approve_newscomment(request, community_slug, news_slug, comment_id):
     community = get_object_or_404(Community, slug=community_slug)
     community_admin_group_name = generic_groups[
-	                "community_admin"].format(community.name)
+        "community_admin"].format(community.name)
     group = Group.objects.get(name=community_admin_group_name)
     if group in request.user.groups.all() or request.user.is_superuser:
         news = get_object_or_404(
@@ -332,6 +337,7 @@ def approve_newscomment(request, community_slug, news_slug, comment_id):
 
     else:
         return HttpResponseForbidden()
+
 
 @login_required
 def delete_newscomment(request, community_slug, news_slug, comment_id=None):
@@ -361,7 +367,11 @@ def show_community_news(request, community_slug):
     news = News.objects.filter(community=community)
     Pages = CommunityPage.objects.filter(community=community)
     return render_to_response('dashboard/show_community_news.html',
-                              {'News': news, 'community': community, 'active_page': 'news', 'Pages': Pages}, context)
+                              {'News': news,
+                               'community': community,
+                               'active_page': 'news',
+                               'Pages': Pages},
+                              context)
 
 
 @login_required
@@ -424,10 +434,9 @@ def edit_news(request, community_slug, news_slug):
 
 @login_required
 def monitor_news(request, community_slug, news_slug):
-    context = RequestContext(request)
     community = get_object_or_404(Community, slug=community_slug)
     community_admin_group_name = generic_groups[
-	                "community_admin"].format(community.name)
+        "community_admin"].format(community.name)
     group = Group.objects.get(name=community_admin_group_name)
     if group in request.user.groups.all() or request.user.is_superuser:
         news = get_object_or_404(News, community=community, slug=news_slug)
@@ -437,15 +446,14 @@ def monitor_news(request, community_slug, news_slug):
                         community_slug=community.slug,
                         news_slug=news.slug)
     else:
-        return HttpResponseForbidden()	    
-    
+        return HttpResponseForbidden()
+
 
 @login_required
 def unmonitor_news(request, community_slug, news_slug):
-    context = RequestContext(request)
     community = get_object_or_404(Community, slug=community_slug)
     community_admin_group_name = generic_groups[
-	                "community_admin"].format(community.name)
+        "community_admin"].format(community.name)
     group = Group.objects.get(name=community_admin_group_name)
     if group in request.user.groups.all() or request.user.is_superuser:
         news = get_object_or_404(News, community=community, slug=news_slug)
@@ -455,7 +463,7 @@ def unmonitor_news(request, community_slug, news_slug):
                         community_slug=community.slug,
                         news_slug=news.slug)
     else:
-        return HttpResponseForbidden()	    
+        return HttpResponseForbidden()
 
 
 @login_required
@@ -515,10 +523,10 @@ def view_resource(request, community_slug, resource_slug):
     is_admin = 0
     if request.user.is_authenticated():
         community_admin_group_name = generic_groups[
-                        "community_admin"].format(community.name)
+            "community_admin"].format(community.name)
         group = Group.objects.get(name=community_admin_group_name)
         if group in request.user.groups.all() or request.user.is_superuser:
-            is_admin=1
+            is_admin = 1
     return render_to_response('dashboard/view_resource.html',
                               {'resource': resource,
                                'comments': comments,
@@ -559,11 +567,12 @@ def add_resourcecomment(request, community_slug, resource_slug):
             comment.is_approved = True
             if resource.is_monitor:
                 community_admin_group_name = generic_groups[
-	                                            "community_admin"].format(community.name)
+                    "community_admin"].format(community.name)
                 group = Group.objects.get(name=community_admin_group_name)
-                if group in request.user.groups.all() or request.user.is_superuser:
+                if (group in request.user.groups.all() or
+                        request.user.is_superuser):
                     comment.is_approved = True
-	        else:
+                else:
                     comment.is_approved = False
             comment.save()
             return redirect('view_resource',
@@ -577,15 +586,17 @@ def add_resourcecomment(request, community_slug, resource_slug):
 
 
 @login_required
-def approve_resourcecomment(request, community_slug, resource_slug, comment_id):
+def approve_resourcecomment(request, community_slug,
+                            resource_slug, comment_id):
     community = get_object_or_404(Community, slug=community_slug)
     community_admin_group_name = generic_groups[
-	                "community_admin"].format(community.name)
+        "community_admin"].format(community.name)
     group = Group.objects.get(name=community_admin_group_name)
     if group in request.user.groups.all() or request.user.is_superuser:
         resource = get_object_or_404(
             Resource, community=community, slug=resource_slug)
-        comment = get_object_or_404(ResourceComment, resource=resource, pk=comment_id)
+        comment = get_object_or_404(
+            ResourceComment, resource=resource, pk=comment_id)
         comment.is_approved = True
         comment.save()
         return redirect('view_resource',
@@ -677,10 +688,9 @@ def edit_resource(request, community_slug, resource_slug):
 
 @login_required
 def monitor_resource(request, community_slug, resource_slug):
-    context = RequestContext(request)
     community = get_object_or_404(Community, slug=community_slug)
     community_admin_group_name = generic_groups[
-	                "community_admin"].format(community.name)
+        "community_admin"].format(community.name)
     group = Group.objects.get(name=community_admin_group_name)
     if group in request.user.groups.all() or request.user.is_superuser:
         resource = get_object_or_404(Resource,
@@ -694,18 +704,18 @@ def monitor_resource(request, community_slug, resource_slug):
     else:
         return HttpResponseForbidden()
 
+
 @login_required
 def unmonitor_resource(request, community_slug, resource_slug):
-    context = RequestContext(request)
     community = get_object_or_404(Community, slug=community_slug)
     community_admin_group_name = generic_groups[
-	                "community_admin"].format(community.name)
+        "community_admin"].format(community.name)
     group = Group.objects.get(name=community_admin_group_name)
     if group in request.user.groups.all() or request.user.is_superuser:
         resource = get_object_or_404(Resource,
                                      community=community,
                                      slug=resource_slug)
-        resource.is_monitor = False 
+        resource.is_monitor = False
         resource.save()
         return redirect('view_resource',
                         community_slug=community.slug,
@@ -768,7 +778,9 @@ def manage_community_users(request, community_slug):
     community = get_object_or_404(Community, slug=community_slug)
     users = community.members.all()
     return render_to_response('dashboard/community_users.html',
-                              {'community': community, 'users': users}, context)
+                              {'community': community,
+                               'users': users},
+                              context)
 
 
 @login_required
@@ -784,7 +796,8 @@ def manage_user_groups(request, community_slug, username):
     user = get_object_or_404(User, username=username)
     community = get_object_or_404(Community, slug=community_slug)
     if request.method == 'POST':
-        form = UserGroupsForm(request.POST, community_name=community.name, username=username)
+        form = UserGroupsForm(
+            request.POST, community_name=community.name, username=username)
         if form.is_valid():
             form.save(community=community, user=user)
             return redirect('manage_community_users',
@@ -792,15 +805,18 @@ def manage_user_groups(request, community_slug, username):
     else:
         form = UserGroupsForm(community_name=community.name, username=username)
     return render_to_response('dashboard/user_groups.html',
-                              {'form': form, 'user': user, 'community': community}, context)
+                              {'form': form, 'user': user,
+                               'community': community},
+                              context)
 
 
 @login_required
 def make_join_request(request, community_slug):
     community = get_object_or_404(Community, slug=community_slug)
     systeruser = SysterUser.objects.get(user=request.user)
-    if systeruser not in community.members.all():	
-        JoinRequest.objects.get_or_create(user=systeruser, community=community, is_approved=False)
+    if systeruser not in community.members.all():
+        JoinRequest.objects.get_or_create(
+            user=systeruser, community=community, is_approved=False)
     return redirect('community_main_page',
                     community_slug=community.slug)
 
@@ -810,7 +826,7 @@ def show_community_join_request(request, community_slug):
     context = RequestContext(request)
     community = get_object_or_404(Community, slug=community_slug)
     community_admin_group_name = generic_groups[
-	                "community_admin"].format(community.name)
+        "community_admin"].format(community.name)
     group = Group.objects.get(name=community_admin_group_name)
     if group in request.user.groups.all() or request.user.is_superuser:
         join_requests = JoinRequest.objects.filter(community=community)
@@ -824,28 +840,33 @@ def show_community_join_request(request, community_slug):
 def approve_community_join_request(request, community_slug, request_id):
     community = get_object_or_404(Community, slug=community_slug)
     community_admin_group_name = generic_groups[
-	                "community_admin"].format(community.name)
+        "community_admin"].format(community.name)
     group = Group.objects.get(name=community_admin_group_name)
     if group in request.user.groups.all() or request.user.is_superuser:
-        join_request = JoinRequest.objects.get(community=community, pk=request_id)
-        join_request.is_approved = True 
-	join_request.save()
+        join_request = JoinRequest.objects.get(
+            community=community, pk=request_id)
+        join_request.is_approved = True
+        join_request.approved_by = SysterUser.objects.get(user=request.user)
+        join_request.save()
         community.members.add(join_request.user)
-        send_mail('Request to join '+community.name, 'Your request to join '+community.name+
-                  ' community has been approved. You can now access news and resources for the community',
+        send_mail('Request to join ' + community.name,
+                  'Your request to join ' + community.name +
+                  ' community has been approved.' +
+                  'You can now access news and resources for the community',
                   settings.base.EMAIL_HOST_USER,
                   [join_request.user.user.email], fail_silently=False)
         return redirect('show_community_join_request',
-	       	        community_slug=community.slug)
+                        community_slug=community.slug)
     else:
-        return HttpResponseForbidden()	    
+        return HttpResponseForbidden()
 
 
 @login_required
 def cancel_community_join_request(request, community_slug):
     systeruser = SysterUser.objects.get(user=request.user)
     community = get_object_or_404(Community, slug=community_slug)
-    join_request = JoinRequest.objects.get(user=systeruser, community=community, is_approved=False)
+    join_request = JoinRequest.objects.get(
+        user=systeruser, community=community, is_approved=False)
     join_request.delete()
     return redirect('community_main_page',
                     community_slug=community.slug)

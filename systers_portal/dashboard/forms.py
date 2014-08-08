@@ -85,6 +85,7 @@ class ResourceCommentForm(forms.ModelForm):
 
 
 class UserGroupsForm(forms.Form):
+
     """Form for managing user groups"""
     groups = forms.ModelMultipleChoiceField(queryset=Group.objects.all())
 
@@ -93,8 +94,10 @@ class UserGroupsForm(forms.Form):
         username = kwargs.pop('username')
         super(UserGroupsForm, self).__init__(*args, **kwargs)
         if community_name is not None:
-            self.fields['groups'].queryset = Group.objects.filter(name__contains=community_name)
-            self.fields['groups'].initial = User.objects.get(username=username).groups.all()
+            self.fields['groups'].queryset = Group.objects.filter(
+                name__contains=community_name)
+            self.fields['groups'].initial = User.objects.get(
+                username=username).groups.all()
 
     def save(self, *args, **kwargs):
         user = kwargs.get('user')

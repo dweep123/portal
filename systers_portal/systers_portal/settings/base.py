@@ -34,7 +34,6 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-#    'django.contrib.comments',
     'django_nose',
     'django.contrib.sites',
     'djangocms_text_ckeditor',
@@ -49,10 +48,10 @@ INSTALLED_APPS = (
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-#   'allauth.socialaccount.providers.facebook',
-#   'allauth.socialaccount.providers.github',
-#   'allauth.socialaccount.providers.google',
-#   'allauth.socialaccount.providers.twitter',
+    'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.github',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.twitter',
     'crispy_forms',
     'guardian',
     'dashboard',
@@ -158,5 +157,5 @@ ANONYMOUS_USER_ID = None
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'reedlepee123@gmail.com'
-EMAIL_HOST_PASSWORD = 'CKT@MPDV19!'
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''

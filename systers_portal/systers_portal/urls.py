@@ -30,7 +30,8 @@ urlpatterns = patterns(
     url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/show_join_requests/$',
         'dashboard.views.show_community_join_request',
         name='show_community_join_request'),
-    url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/approve_request/(?P<request_id>\d+)/$',
+    url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/'
+        'approve_request/(?P<request_id>\d+)/$',
         'dashboard.views.approve_community_join_request',
         name='approve_community_join_request'),
     url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/cancel_request/$',

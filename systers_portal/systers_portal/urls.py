@@ -122,14 +122,13 @@ urlpatterns = patterns(
         'dashboard.views.confirm_delete_news', name='confirm_delete_news'),
     url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/page/add/$',
         'dashboard.views.add_page', name='add_page'),
-
-    url(r'^', include('cms.urls')),
 )
 
-if not settings.DEBUG:
-    urlpatterns += patterns('',
-        (r'^static/(?P<path>.*)$', 'django.views.static.serve',
-            {'document_root': settings.STATIC_ROOT}),
-        (r'^media/(?P<path>.*)$', 'django.views.static.serve',
-            {'document_root': settings.MEDIA_ROOT}),
-    )
+urlpatterns += patterns(
+    '',
+    (r'^static/(?P<path>.*)$', 'django.views.static.serve',
+        {'document_root': settings.STATIC_ROOT}),
+    (r'^media/(?P<path>.*)$', 'django.views.static.serve',
+        {'document_root': settings.MEDIA_ROOT}),
+    (r'^', include('cms.urls')),
+)

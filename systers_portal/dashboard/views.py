@@ -190,7 +190,7 @@ def edit_userprofile(request, username):
     else:
         userform = UserForm(instance=request.user)
     return render_to_response(
-        'dashboard/edit_profile.html',
+        'accounts/edit_user_profile.html',
         {'userform': userform},
         context)
 

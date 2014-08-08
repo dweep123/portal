@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth.models import User, Group
 from django.forms.models import model_to_dict, fields_for_model
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit, Div, HTML
 
 from dashboard.models import (SysterUser, Community, News,
                               Resource, CommunityPage,
@@ -13,16 +15,30 @@ class UserForm(forms.ModelForm):
 
     def __init__(self, instance=None, *args, **kwargs):
         _fields = ('country', 'blog_url', 'homepage_url', 'profile_picture')
-        if not instance:
-            _initial = model_to_dict(instance.systeruser, _fields)
-        else:
-            _initial = {}
+        _initial = model_to_dict(instance.systeruser,
+                                 _fields) if instance else {}
         super(UserForm, self).__init__(
             initial=_initial,
             instance=instance,
             *args,
             **kwargs)
         self.fields.update(fields_for_model(SysterUser, _fields))
+        self.helper = FormHelper(self)
+        self.helper.enctype = "multipart/form-data"
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-lg-2'
+        self.helper.field_class = 'col-lg-8'
+        self.helper.layout.append(
+            Div(
+                Div(
+                    HTML(
+                        """<a href="{% url 'view_userprofile' user.username %}">
+                        <button class="btn btn-default">Cancel</button></a>"""),
+                    Submit('save', 'submit', css_class='btn btn-primary'),
+                    css_class='col-lg-10 col-lg-offset-2',
+                ),
+                css_class='form-group',
+            ))
 
     class Meta:
         model = User

@@ -155,3 +155,5 @@ ACCOUNT_EMAIL_REQUIRED = True
 
 # Django-guardian configuration
 ANONYMOUS_USER_ID = None
+
+CRISPY_TEMPLATE_PACK = 'bootstrap3'

@@ -13,7 +13,6 @@ class SysterUser(models.Model):
     homepage_url = models.URLField(max_length=255, blank=True,
                                    verbose_name="Homepage")
     profile_picture = models.ImageField(upload_to='photos/',
-                                        default='photos/dummy.jpeg',
                                         blank=True,
                                         null=True,
                                         verbose_name="Photo")

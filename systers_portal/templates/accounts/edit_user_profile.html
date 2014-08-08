@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %} - Edit Profile of {{ user }}{% endblock %}
+
+{% load crispy_forms_tags %}
+{% block content %}
+  <div class="spacer"></div>
+  <h2>Edit Profile of {{ user }}</h2>
+  <hr>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="well">
+        {% crispy userform %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block community_name %}Systers{% endblock %}

@@ -1,7 +1,6 @@
 {% extends "dashboard/base.html" %}
 {% load dashboard_extras %}
 {% load guardian_tags %}
-{% load comments %}
 {% block head_title %}resource{% endblock %}
 {% block content %}
   <style type="text/css">
@@ -62,13 +61,13 @@
     {{ resource.content }}
   </div>
       {% if user.is_authenticated and user.is_active %}
-        {% ifequal request.user.systeruser  resource.community.community_admin %}
+        {% if is_admin %}
           {% if resource.is_monitor %}
             <a href="{% url 'unmonitor_resource' resource.community.slug resource.slug %}">Unwatch</a>
           {% else %}
             <a href="{% url 'monitor_resource' resource.community.slug resource.slug %}">Watch</a>
         {% endif %}
-        {% endifequal %}
+        {% endif %}
         {% get_obj_perms request.user for resource.community as "community_perms" %}
         {% if "change_community_resource" in community_perms %}
           <a href="{% url 'edit_resource' resource.community.slug resource.slug %}">Edit</a>
@@ -121,14 +120,14 @@
           {% endif %}
         
         {% else %}
-          {% ifequal request.user.systeruser  comment.resource.community.community_admin %}
+          {% if is_admin %}
             <div class="comment">
             <div class="time">{{ comment.created }} |<a
                 href="{{ comment.author.get_absolute_url }}">{{ comment.author }}</a>
             </div>
             <div class="body">{{ comment.body|linebreaks }}</div>
             <a href="{% url 'approve_resourcecomment' resource.community.slug resource.slug comment.id %}">Approve</a>
-         {% endifequal %}
+         {% endif %}
          </div>
         {% endif %}
       {% endfor %}

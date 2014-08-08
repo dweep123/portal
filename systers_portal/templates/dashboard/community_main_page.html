@@ -41,6 +41,23 @@
             <li><a href="{% url 'manage_community_users' community.slug %}">Manage
               community users</a></li>
           {% endif %}
+          {% if is_admin or request.user.is_superuser %}
+            <li><a href="{% url 'show_community_join_request' community.slug %}">Show join  
+            Request</a></li>
+          {% else %}
+            {% if request.user.systeruser in community.members.all %}
+              <li><a href="{% url 'leave_community' community.slug %}">Leave 
+                Community</a></li> 
+            {% else %}
+              {% if request_id %}
+                <li><a href="{% url 'cancel_community_join_request' community.slug %}">Cancel 
+                Request</a></li> 
+              {% else %}
+                <li><a href="{% url 'make_join_request' community.slug %}">Join 
+                Community</a></li> 
+              {% endif %}
+            {% endif %}
+          {% endif %}
         </ul>
       </div>
     {% endif %}

@@ -246,3 +246,11 @@ class ResourceComment(models.Model):
 
     def __unicode__(self):
         return unicode("%s: %s" % (self.resource, self.body))
+
+
+class JoinRequest(models.Model):
+    user = models.ForeignKey(SysterUser)
+    community = models.ForeignKey(Community, verbose_name='Community')
+    date_created = models.DateField(auto_now=False, auto_now_add=True,
+                                    verbose_name='Request Date')
+    is_approved = models.BooleanField(default=False, verbose_name='is_approved')

@@ -11,6 +11,15 @@
               enctype="multipart/form-data">
           {% csrf_token %}
           {{ userform|crispy }}
+          {% for community in member_communities %}
+           <li><p><a href="{{ community.get_absolute_url }}">{{ community.name }}</a></p>
+           <a href="{% url 'leave_community' community.slug %}">Leave Community</a></li> 
+          {% endfor %}
+          {% for join_request in join_requests %}
+            <li><p><a href="{{ join_request.community.get_absolute_url }}">{{ join_request.community.name }}</a></p>
+            <a href="{% url 'cancel_community_join_request' join_request.community.slug %}">Cancel 
+              Request</a></li> 
+          {% endfor %}
           <input type="submit" name="submit" value="Save"/>
         </form>
       {% endif %}

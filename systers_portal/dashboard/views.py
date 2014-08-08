@@ -159,7 +159,7 @@ def community_main_page(request, community_slug):
                               context)
 
 
-def view_userprofile(request, username):
+def view_user_profile(request, username):
     """View profile of a user
 
     :param request: request object
@@ -175,7 +175,7 @@ def view_userprofile(request, username):
 
 
 @login_required
-def edit_userprofile(request, username):
+def edit_user_profile(request, username):
     context = RequestContext(request)
     if request.method == 'POST':
         userform = UserForm(data=request.POST, instance=request.user)

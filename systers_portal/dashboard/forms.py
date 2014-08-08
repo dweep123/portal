@@ -32,7 +32,7 @@ class UserForm(forms.ModelForm):
             Div(
                 Div(
                     HTML(
-                        """<a href="{% url 'view_userprofile' user.username %}">
+                        """<a href="{% url 'view_user_profile' user.username %}">
                         <button class="btn btn-default">Cancel</button></a>"""),
                     Submit('save', 'submit', css_class='btn btn-primary'),
                     css_class='col-lg-10 col-lg-offset-2',

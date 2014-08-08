@@ -137,11 +137,6 @@ def confirm_delete_page(request, community_slug, page_slug):
     return redirect('manage_pages', community_slug=community.slug)
 
 
-def index(request):
-    context = RequestContext(request)
-    return render_to_response('dashboard/index.html', {}, context)
-
-
 def community_main_page(request, community_slug):
     context = RequestContext(request)
     community = get_object_or_404(Community, slug=community_slug)

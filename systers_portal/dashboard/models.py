@@ -49,6 +49,15 @@ class SysterUser(models.Model):
                 SysterUser._meta.fields]
 
 
+def user_unicode(self):
+    if self.first_name and self.last_name:
+        return "{0} {1}".format(self.first_name, self.last_name)
+    else:
+        return self.username
+
+User.__unicode__ = user_unicode
+
+
 class Community(models.Model):
     """Model to represent a Syster Community"""
     name = models.CharField(max_length=255, verbose_name="Name")

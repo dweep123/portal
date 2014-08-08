@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
+from django.views.generic import TemplateView
 
 try:
     from systers_portal import settings
@@ -15,6 +16,12 @@ urlpatterns = patterns(
     '',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include('allauth.urls')),
+    url(r'^$', TemplateView.as_view(template_name="common/index.html"),
+        name="index"),
+    url(r'^about/$', TemplateView.as_view(template_name="common/about.html",), name="about"),
+    url(r'^contact/$',
+        TemplateView.as_view(template_name="common/contact.html"),
+        name="contact"),
     url(r'^comments/', include('django.contrib.comments.urls')),
     url(r'^community_proposal/$', 'dashboard.views.community_proposal',
         name='community_proposal'),
@@ -113,7 +120,7 @@ urlpatterns = patterns(
         'dashboard.views.confirm_delete_news', name='confirm_delete_news'),
     url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/page/add/$',
         'dashboard.views.add_page', name='add_page'),
-    url(r'^$', 'dashboard.views.index', name='index',),
+
     url(r'^', include('cms.urls')),
 )
 

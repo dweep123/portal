@@ -37,9 +37,13 @@ nosetests.xml
 
 # Virtualenv
 venv
+deactivate
 
 # PyCharm IDE
 .idea
 
 # Documentation build
 _build
+
+# Project specific
+media/

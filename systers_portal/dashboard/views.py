@@ -169,8 +169,12 @@ def view_user_profile(request, username):
     context = RequestContext(request)
     user = get_object_or_404(User, username=username)
     systeruser = SysterUser.objects.get(user=user)
-    return render_to_response('dashboard/view_profile.html',
-                              {'systeruser': systeruser},
+    communities_member = systeruser.member_of_community.all()
+    permission_groups = user.groups.exclude(name="Generic permissions")
+    return render_to_response('accounts/view_user_profile.html',
+                              {'systeruser': systeruser,
+                               'communities_member': communities_member,
+                               'permission_groups': permission_groups},
                               context)
 
 
@@ -186,7 +190,7 @@ def edit_user_profile(request, username):
                 systeruser.profile_picture = request.FILES['profile_picture']
             systeruser.save()
             return HttpResponseRedirect(
-                reverse('view_userprofile', args=(user.username,)))
+                reverse('view_user_profile', args=(user.username,)))
     else:
         userform = UserForm(instance=request.user)
     return render_to_response(
@@ -629,3 +633,12 @@ def manage_user_groups(request, community_slug, username):
 def community_proposal(request):
     """Render google form for new community requests"""
     return render_to_response('dashboard/community_proposal.html')
+
+
+@login_required
+def leave_community(request, username, community_slug):
+    user = get_object_or_404(User, username=username)
+    systeruser = SysterUser.objects.get(user=user)
+    community = get_object_or_404(Community, slug=community_slug)
+    community.members.remove(systeruser)
+    return redirect('view_user_profile', username=username)

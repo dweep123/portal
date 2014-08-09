@@ -122,6 +122,8 @@ urlpatterns = patterns(
         'dashboard.views.confirm_delete_news', name='confirm_delete_news'),
     url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/page/add/$',
         'dashboard.views.add_page', name='add_page'),
+    url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/(?P<username>[\w.@+-]+)/leave/$',
+        'dashboard.views.leave_community', name='leave_community'),
 )
 
 urlpatterns += patterns(

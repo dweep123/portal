@@ -35,10 +35,6 @@ body > .container {
   padding-left: 15px;
 }
 
-ul.nav > li {
-  text-transform: uppercase;
-}
-
 .jumbotron-custom {
   background-color: #fff;
   text-align: center;
@@ -61,6 +57,30 @@ ul.nav > li {
   margin-top: 0;
 }
 
+/* Profile
+------------------------- */
+
+.profile-row {
+    font-size: 16px;
+}
+
+.profile-element {
+    display: inline-block;
+    margin-left: 15px;
+}
+
+.condensed {
+    margin-top: 0;
+}
+
+.profile-pic {
+    margin-bottom: 10px;
+}
+
+table a.table-anchor {
+    text-decoration: none !important;
+}
+
 /* RESPONSIVE CSS
 -------------------------------------------------- */
 
@@ -70,62 +90,3 @@ ul.nav > li {
     font-size: 50px;
   }
 }
-
-/*code {*/
-  /*font-size: 80%;*/
-/*}*/
-
-
-/*html,*/
-/*body {*/
-    /*height: 100%;*/
-    /*padding-bottom: 0px;*/
-    /*padding-top: 0px;*/
-    /* The html and body elements cannot have any padding or margin. */
-/*}*/
-
-/* Wrapper for page content to push down footer */
-/*#wrap {*/
-    /*min-height: 100%;*/
-    /*height: auto !important;*/
-    /*height: 100%;*/
-    /* Negative indent footer by it's height */
-    /*margin: 0 auto -60px;*/
-/*}*/
-
-/* Set the fixed height of the footer here */
-/*#push,*/
-/*#footer {*/
-    /*height: 60px;*/
-/*}*/
-
-/*#footer {*/
-    /*background-color: #f5f5f5;*/
-/*}*/
-
-/* Custom page CSS*/
-/*-------------------------------------------------- */
-/* Not required for template or sticky footer method. */
-
-/*#wrap > .container {*/
-    /*padding-top: 60px;*/
-/*}*/
-
-/*#footer p {*/
-    /*margin: 20px 0;*/
-/*}*/
-
-
-/*input, select, textarea {*/
-    /*width: 100%;*/
-/*}*/
-
-/*.time {*/
-    /*font-size: 0.8em;*/
-    /*margin-top: 2px;*/
-/*}*/
-
-/*.title {*/
-    /*font-size: 1.4em;*/
-    /*margin-top: 20px;*/
-/*}*/

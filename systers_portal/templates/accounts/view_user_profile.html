@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %} - Profile of {{ user }}{% endblock %}
+
+{% load dashboard_extras %}
+{% block content %}
+  <div class="spacer"></div>
+  <div class="row">
+  <h1>{{ user }}</h1>
+  <hr>
+  {# Profile #}
+  <div class="col-md-4">
+    <div class="panel panel-default">
+      <div class="panel-heading">Profile</div>
+      <div class="panel-body">
+        {% if systeruser.profile_picture %}
+          <a class="pull-right profile-pic"
+             href="{{ systeruser.profile_picture.url }}"><img
+              src="{{ systeruser.profile_picture.url }}"
+              width="50%"/></a>
+        {% endif %}
+        <p class="profile-row">
+          <span class="glyphicon glyphicon-envelope"></span>
+          <span
+              class="profile-element">{{ systeruser.user.email|urlize }}</span>
+        </p>
+        {% if systeruser.country %}
+          <p class="profile-row">
+            <span class="glyphicon glyphicon-globe"></span>
+            <span class="profile-element">{{ systeruser.country.name }}</span>
+          </p>
+        {% endif %}
+        {% for name, value in systeruser.get_fields %}
+          {% with "id user country profile_picture" as unnecessary_fields %}
+            {% if value and name not in unnecessary_fields %}
+              <p class="profile-row">{% verbose_name systeruser name %}: {{ value|urlize }}</p>
+            {% endif %}
+          {% endwith %}
+        {% endfor %}
+
+        <div class="pull-right">
+          <a href="{% url 'edit_user_profile' user.username %}">
+            <button type="button" class="btn btn-primary">Edit profile</button>
+          </a>
+        </div>
+        <div class="clearfix"></div>
+      </div>
+    </div>
+  </div>
+  {# END Profile #}
+  {# Membership #}
+  <div class="col-md-4">
+    <div class="panel panel-default">
+      <div class="panel-heading">Membership</div>
+      <div class="panel-body">
+        <table class="table table-hover">
+          <tbody>
+          {% for community in communities_member %}
+            <tr class="profile-row">
+              <td><a href="{% url 'community_main_page' community.slug %}"
+                     class="table-anchor">{{ community }}</a></td>
+              <td>
+                <button class="btn btn-primary btn-xs btn-warning pull-right"
+                        data-toggle="modal" data-community-slug="{{ community.slug }}"
+                        data-username="{{ user.username }}" data-community-name="{{ community }}"
+                        data-target="#leaveModal" id="modal">
+                  Leave
+                </button>
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  {# END Membership #}
+  {# Permissions #}
+  <div class="col-md-4">
+    <div class="panel panel-default">
+      <div class="panel-heading">Permissions</div>
+      <div class="panel-body">
+      </div>
+      {% if permission_groups %}
+        <ul class="list-group">
+          {% for group in permission_groups %}
+            <li class="list-group-item">{{ group }}</li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        Looks like you have no permissions.
+      {% endif %}
+    </div>
+  </div>
+  {# END Permissions #}
+ </div>
+
+<!-- Modal -->
+<div class="modal fade" id="leaveModal" tabindex="-1" role="dialog" aria-labelledby="leaveModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="leaveModalLabel">Leave community</h4>
+      </div>
+      <div class="modal-body">
+        Would you like to leave <strong id="modal-community-name"></strong> community?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <a href="#" id="leave-community">
+          <button type="button" class="btn btn-danger">Leave community</button>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block community_name %}Systers{% endblock %}

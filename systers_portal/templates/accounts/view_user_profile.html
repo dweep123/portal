@@ -13,7 +13,7 @@
     <div class="panel panel-default">
       <div class="panel-heading">Profile</div>
       <div class="panel-body">
-        {% if systeruser.profile_picture %}
+        {% if systeruser.profile_picture.name != "False" %}
           <a class="pull-right profile-pic"
              href="{{ systeruser.profile_picture.url }}"><img
               src="{{ systeruser.profile_picture.url }}"
@@ -55,6 +55,7 @@
       <div class="panel-body">
         <table class="table table-hover">
           <tbody>
+          {% if communities_member %}
           {% for community in communities_member %}
             <tr class="profile-row">
               <td><a href="{% url 'community_main_page' community.slug %}"
@@ -69,6 +70,9 @@
               </td>
             </tr>
           {% endfor %}
+          {% else %}
+            <p>Looks like you are member of no community.</p>
+          {% endif %}
           </tbody>
         </table>
       </div>

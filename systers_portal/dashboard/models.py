@@ -33,8 +33,8 @@ class SysterUser(models.Model):
 
         :return: list of tuples (fieldname, fieldvalue)
         """
-        User._meta.get_field('first_name').verbose_name = 'Firstname'
-        User._meta.get_field('last_name').verbose_name = 'Lastname'
+        User._meta.get_field('first_name').verbose_name = 'First Name'
+        User._meta.get_field('last_name').verbose_name = 'Last Name'
         User._meta.get_field('email').verbose_name = 'Email'
         return [(field.name, getattr(self.user, field.name)) for field in
                 User._meta.fields]

@@ -26,8 +26,8 @@ class UserForm(forms.ModelForm):
         self.helper = FormHelper(self)
         self.helper.enctype = "multipart/form-data"
         self.helper.form_class = 'form-horizontal'
-        self.helper.label_class = 'col-lg-2'
-        self.helper.field_class = 'col-lg-8'
+        self.helper.label_class = 'col-lg-3'
+        self.helper.field_class = 'col-lg-9'
         self.helper.layout.append(
             Div(
                 Div(
@@ -35,7 +35,7 @@ class UserForm(forms.ModelForm):
                         """<a href="{% url 'view_user_profile' user.username %}">
                         <button class="btn btn-default">Cancel</button></a>"""),
                     Submit('save', 'submit', css_class='btn btn-primary'),
-                    css_class='col-lg-10 col-lg-offset-2',
+                    css_class='col-lg-9 col-lg-offset-3',
                 ),
                 css_class='form-group',
             ))

@@ -4,9 +4,11 @@ html {
   position: relative;
   min-height: 100%;
 }
+
 body {
   margin-bottom: 60px;
 }
+
 .footer {
   position: absolute;
   bottom: 0;
@@ -18,7 +20,7 @@ body {
 /* Reusable CSS
 -------------------------------------------------- */
 .spacer {
-    margin-top: 40px;
+  margin-top: 40px;
 }
 
 /* Custom page CSS
@@ -26,6 +28,7 @@ body {
 body > .container {
   padding: 60px 15px 0;
 }
+
 .container .text-muted {
   margin: 20px 0;
 }
@@ -61,24 +64,42 @@ body > .container {
 ------------------------- */
 
 .profile-row {
-    font-size: 16px;
+  font-size: 16px;
 }
 
 .profile-element {
-    display: inline-block;
-    margin-left: 15px;
+  display: inline-block;
+  margin-left: 15px;
 }
 
 .condensed {
-    margin-top: 0;
+  margin-top: 0;
 }
 
 .profile-pic {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 table a.table-anchor {
-    text-decoration: none !important;
+  text-decoration: none !important;
+}
+
+/* Sign in
+------------------------- */
+
+.form-signin {
+  max-width: 330px;
+  padding: 15px;
+  margin: 0 auto;
+}
+
+.social-buttons button {
+  margin-bottom: 10px;
+}
+
+.or-delimiter {
+  text-align: center;
+  margin: 10px 0;
 }
 
 /* RESPONSIVE CSS
@@ -90,3 +111,4 @@ table a.table-anchor {
     font-size: 50px;
   }
 }
+

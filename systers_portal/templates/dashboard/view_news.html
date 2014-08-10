@@ -123,7 +123,7 @@
           {% endif %}
         
         {% else %}
-          {% ifequal is_admin %}
+          {% if is_admin %}
             <div class="comment">
             <div class="time">{{ comment.created }} |<a
                 href="{{ comment.author.get_absolute_url }}">{{ comment.author }}</a>

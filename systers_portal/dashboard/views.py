@@ -849,6 +849,7 @@ def approve_community_join_request(request, community_slug, request_id):
         join_request.approved_by = SysterUser.objects.get(user=request.user)
         join_request.save()
         community.members.add(join_request.user)
+	community.save()
         send_mail('Request to join ' + community.name,
                   'Your request to join ' + community.name +
                   ' community has been approved.' +
@@ -876,6 +877,10 @@ def cancel_community_join_request(request, community_slug):
 def leave_community(request, community_slug):
     systeruser = SysterUser.objects.get(user=request.user)
     community = get_object_or_404(Community, slug=community_slug)
-    community.members.remove(systeruser)
+    community_members = SysterUser.objects.filter(
+                member_of_community=community)
+    if systeruser in community_members:
+        community.members.remove(systeruser)
+	community.save()
     return redirect('community_main_page',
                     community_slug=community.slug)

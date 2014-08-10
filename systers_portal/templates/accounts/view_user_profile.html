@@ -13,7 +13,7 @@
     <div class="panel panel-default">
       <div class="panel-heading">Profile</div>
       <div class="panel-body">
-        {% if systeruser.profile_picture.name != "False" %}
+        {% if systeruser.profile_picture.name and systeruser.profile_picture.name != "False" %}
           <a class="pull-right profile-pic"
              href="{{ systeruser.profile_picture.url }}"><img
               src="{{ systeruser.profile_picture.url }}"

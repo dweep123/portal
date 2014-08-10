@@ -14,20 +14,21 @@
       {% csrf_token %}
       {{ form|crispy }}
       {% if redirect_field_value %}
-        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+        <input type="hidden" name="{{ redirect_field_name }}"
+               value="{{ redirect_field_value }}"/>
       {% endif %}
       <a class="button secondaryAction"
          href="{% url 'account_reset_password' %}">Forgot Password?</a>
-      <button class="primaryAction btn btn-lg btn-primary btn-block" type="submit">Sign In
+      <button class="primaryAction btn btn-lg btn-primary btn-block"
+              type="submit">Sign In
       </button>
       <p class="or-delimiter">or</p>
 
       <p>Sign in with one of your existing third party accounts.</p>
-
-      <div class="social-buttons">
-        {% include "socialaccount/snippets/provider_list.html" with process="login" %}
-      </div>
     </form>
+    <div class="social-buttons form-signin">
+      {% include "socialaccount/snippets/provider_list.html" with process="login" %}
+    </div>
   </div>
 
 {% endblock %}

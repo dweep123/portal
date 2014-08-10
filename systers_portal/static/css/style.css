@@ -93,6 +93,10 @@ table a.table-anchor {
   margin: 0 auto;
 }
 
+.social-buttons {
+  padding-top: 0;
+}
+
 .social-buttons button {
   margin-bottom: 10px;
 }

@@ -9,7 +9,7 @@
   <div class="container">
     <form class="login form-signin" role="form" method="POST"
           action="{% url 'account_login' %}">
-      <h2 class="form-signin-heading">Please sign in</h2>
+      <h2>Please sign in</h2>
       <hr>
       {% csrf_token %}
       {{ form|crispy }}

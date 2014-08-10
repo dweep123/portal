@@ -1,7 +1,9 @@
-{% extends "dashboard/base.html" %}
-{% block title %}Add Resource{% endblock %}
+{% extends "base.html" %}
+
+{% block title %} - New Community Proposal{% endblock %}
 {% load crispy_forms_tags %}
 {% block content %}
+  <div class="spacer"></div>
   <iframe
       src="https://docs.google.com/forms/d/1m-SlwamAD6tycq9-GDBPbWsr_m6Ih-eGeqEhb7sn6LQ/viewform?embedded=true"
       height="500" width="760" frameborder="0" marginheight="0"
@@ -9,3 +11,5 @@
     Loading...
   </iframe>
 {% endblock %}
+
+{% block community_name %}Systers{% endblock %}

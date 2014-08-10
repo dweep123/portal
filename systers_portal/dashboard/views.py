@@ -56,10 +56,10 @@ def view_page(request, community_slug, page_slug):
     community = get_object_or_404(Community, slug=community_slug)
     page = get_object_or_404(
         CommunityPage, community=community, slug=page_slug)
-    Pages = CommunityPage.objects.filter(community=community)
+    pages = CommunityPage.objects.filter(community=community).order_by('order')
     return render_to_response('dashboard/view_page.html',
                               {'community': community, 'page': page,
-                               'Pages': Pages, 'active_page': page.slug},
+                               'pages': pages, 'active_page': page.slug},
                               context_instance=RequestContext(request))
 
 
@@ -150,13 +150,12 @@ def confirm_delete_page(request, community_slug, page_slug):
 
 
 def community_main_page(request, community_slug):
-    context = RequestContext(request)
     community = get_object_or_404(Community, slug=community_slug)
-    Pages = CommunityPage.objects.filter(community=community)
-    return render_to_response('dashboard/community_main_page.html',
-                              {'community': community, 'Pages': Pages,
-                               'active_page': 'home'},
-                              context)
+    pages = CommunityPage.objects.filter(community=community).order_by('order')
+    if pages:
+        return redirect('view_page', community_slug, pages[0].slug)
+    else:
+        return redirect('show_community_news', community_slug)
 
 
 def view_user_profile(request, username):
@@ -305,9 +304,9 @@ def show_community_news(request, community_slug):
     context = RequestContext(request)
     community = get_object_or_404(Community, slug=community_slug)
     news = News.objects.filter(community=community)
-    Pages = CommunityPage.objects.filter(community=community)
+    pages = CommunityPage.objects.filter(community=community)
     return render_to_response('dashboard/show_community_news.html',
-                              {'News': news, 'community': community, 'active_page': 'news', 'Pages': Pages}, context)
+                              {'News': news, 'community': community, 'active_page': 'news', 'pages': pages}, context)
 
 
 @login_required
@@ -439,10 +438,10 @@ def show_community_resources(request, community_slug):
     context = RequestContext(request)
     community = get_object_or_404(Community, slug=community_slug)
     resources = Resource.objects.filter(community=community)
-    Pages = CommunityPage.objects.filter(community=community)
+    pages = CommunityPage.objects.filter(community=community).order_by('order')
     return render_to_response('dashboard/show_community_resources.html',
                               {'Resources': resources, 'community': community,
-                               'active_page': 'resources', 'Pages': Pages},
+                               'active_page': 'resources', 'pages': pages},
                               context)
 
 

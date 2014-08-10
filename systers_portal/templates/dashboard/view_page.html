@@ -1,6 +1,22 @@
 {% extends "dashboard/community_main_page.html" %}
+
+{% block title %} - {{ community }} - {{ page }}{% endblock %}
+
 {% load cms_tags sekizai_tags %}
 {% load cms_tags %}
 {% block community_page %}
-{% render_placeholder page.editable_content language 'en-us' %}
+  <div class="community_page">
+    {% render_placeholder page.editable_content language 'en-us' %}
+  </div>
+{% endblock %}
+
+{% block extra_sidebar %}
+  {% if "change_community_page" in community_perms %}
+    <div class="sidebar-module">
+      <h4>Page Actions</h4>
+      <ol class="list-unstyled">
+        <li><a href="{% url 'edit_page' community.slug page.slug %}">Edit Page</a></li>
+      </ol>
+    </div>
+  {% endif %}
 {% endblock %}

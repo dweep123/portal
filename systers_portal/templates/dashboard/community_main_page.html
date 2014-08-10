@@ -1,24 +1,24 @@
-{% extends "dashboard/base.html" %}
+{% extends "base.html" %}
+
+{% block title %} - {{ community }}{% endblock %}
+
 {% load guardian_tags %}
-{% block title %}{{ community.name }}{% endblock %}
 {% block content %}
+  <h1>{{ community }}</h1>
+  <hr>
   <div class="row">
-    <div class="span9">
-      <h3>{{ community.name }}</h3>
+    <div class="col-md-9">
       <ul class="nav nav-tabs">
-        <li class="{% if active_page == 'home' %} active {% endif %}"><a
-            href="{% url 'community_main_page' community.slug %}">Home</a>
-        </li>
+        {% for page in pages %}
+          <li class="{% if active_page == page.slug %} active {% endif %}">
+            <a href="{% url 'view_page' page.community.slug page.slug %}">{{ page.title }}</a>
+          </li>
+        {% endfor %}
         <li class="{% if active_page == 'news' %} active {% endif %}"><a
             href="{% url 'show_community_news' community.slug %}">News</a>
         </li>
         <li class="{% if active_page == 'resources' %} active {% endif %}">
         <a href="{% url 'show_community_resources' community.slug %}">Resources</a>
-        {% for page in Pages %}
-          <li class="{% if active_page == page.slug %} active {% endif %}">
-            <a href="{% url 'view_page' page.community.slug page.slug %}">{{ page.title }}</a>
-          </li>
-        {% endfor %}
       </ul>
 
     {% block community_page %}
@@ -26,24 +26,26 @@
     </div>
     {% if user.is_authenticated and user.is_active %}
       {% get_obj_perms request.user for community as "community_perms" %}
-      <div class="span3">
-      <div class="well sidebar-nav">
-        <ul class="nav nav-list">
+      <div class="col-md-3">
+      <div class="sidebar-module sidebar-community">
+        <h4>Community Actions</h4>
+        <ol class="list-unstyled">
+          <li><a href="{% url 'view_community_profile' community.slug %}">View Community Profile</a></li>
           {% if "change_community" in community_perms %}
-            <li><a href="{% url 'edit_community_profile' community.slug %}">Edit
-              Community Profile</a></li>
+            <li><a href="{% url 'edit_community_profile' community.slug %}">Edit Community Profile</a></li>
           {% endif %}
           {% if "change_community_page" in community_perms %}
-            <li><a href="{% url 'manage_pages' community.slug %}">Manage
-              Pages</a></li>
+            <li><a href="{% url 'manage_pages' community.slug %}">Manage Pages</a></li>
           {% endif %}
           {% if "change_community_systeruser" in community_perms %}
-            <li><a href="{% url 'manage_community_users' community.slug %}">Manage
-              community users</a></li>
+            <li><a href="{% url 'manage_community_users' community.slug %}">Manage Community Users</a></li>
           {% endif %}
-        </ul>
+        </ol>
       </div>
+      {% block extra_sidebar %}{% endblock %}
     {% endif %}
     </div>
   </div>
 {% endblock %}
+
+{% block community_name %}{{ community }}{% endblock %}

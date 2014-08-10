@@ -107,6 +107,18 @@ table a.table-anchor {
   margin: 10px 0;
 }
 
+/* Community pages
+------------------------- */
+
+.community_page,
+.community_page img {
+  margin: 15px 0;
+}
+
+.sidebar-community {
+  margin-bottom: 30px;
+}
+
 /* RESPONSIVE CSS
 -------------------------------------------------- */
 

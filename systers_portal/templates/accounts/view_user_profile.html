@@ -84,6 +84,9 @@
     <div class="panel panel-default">
       <div class="panel-heading">Permissions</div>
       <div class="panel-body">
+        {% if not permission_groups %}
+          Looks like you have no permissions.
+        {% endif %}
       </div>
       {% if permission_groups %}
         <ul class="list-group">
@@ -91,8 +94,6 @@
             <li class="list-group-item">{{ group }}</li>
           {% endfor %}
         </ul>
-      {% else %}
-        Looks like you have no permissions.
       {% endif %}
     </div>
   </div>

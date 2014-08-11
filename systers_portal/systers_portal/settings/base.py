@@ -93,6 +93,9 @@ AUTHENTICATION_BACKENDS = (
     'guardian.backends.ObjectPermissionBackend',
 )
 
+TEMPLATE_CONTEXT_PROCESSORS += (
+    "dashboard.context_processors.communities_processor", )
+
 
 ROOT_URLCONF = 'systers_portal.urls'
 

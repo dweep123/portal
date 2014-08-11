@@ -12,7 +12,7 @@
 
 {% block extra_sidebar %}
   {% if "change_community_page" in community_perms %}
-    <div class="sidebar-module">
+    <div class="sidebar-module sidebar-community">
       <h4>Page Actions</h4>
       <ol class="list-unstyled">
         <li><a href="{% url 'edit_page' community.slug page.slug %}">Edit Page</a></li>

@@ -600,7 +600,7 @@ def confirm_delete_resource(request, community_slug, resource_slug):
     :param request: request object
     :param community_slug: string community_slug parsed from the URL
     :param resource_slug: string resource_slug parsed from the URL
-    :raises Http404: if acontext= community or news entry
+    :raises Http404: if a community or news entry
                      inside community doesn't exist
     """
     community = get_object_or_404(Community, slug=community_slug)

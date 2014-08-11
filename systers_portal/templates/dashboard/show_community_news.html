@@ -1,28 +1,50 @@
 {% extends "dashboard/community_main_page.html" %}
+
 {% load guardian_tags %}
-{% block title %}{{ community.name }} News{% endblock %}
+{% block title %} - {{ community }} - News{% endblock %}
 {% block community_page %}
   <div>
-    {% if News %}
-      {% for news in News %}
-        <div>
-          <h4 class="title"><a
-              href="{{ news.get_absolute_url }}">{{ news.title }}</a></h4>
+    {% for news in News %}
+      <div class="blog-entry">
+        <h3 class="lead"><a
+            href="{{ news.get_absolute_url }}">{{ news.title }}</a></h3>
 
-          <p class="time">{{ news.date_modified }}</p>
+        <p class="meta">{{ news.date_modified }} | <a
+            href="{% url 'view_user_profile' news.author.user.username %}">{{ news.author }}</a>
+        </p>
 
-          <div class="body">{{ news.content|linebreaks }}</div>
-        </div>
-        <hr>
-      {% endfor %}
-    {% else %}
-      <p>Currently there is no news for this community</p>
-    {% endif %}
-    {% if user.is_authenticated and user.is_active %}
-      {% get_obj_perms request.user for community as "community_perms" %}
-      {% if "add_community_news" in community_perms %}
-        <a href="{% url 'add_news' community.slug %}">Add News</a>
-      {% endif %}
-    {% endif %}
+        <div class="body">{{ news.content|safe }}</div>
+        {% if news.tags %}
+        <ul class="tag-pills">
+          {% for tag in news.tags.all %}
+          <li><span class="label label-info">{{ tag }}</span></li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+      <hr>
+    {% endfor %}
   </div>
+{% endblock %}
+
+{% block extra_sidebar %}
+  {% if "add_community_news" in community_perms %}
+    <div class="sidebar-module sidebar-community">
+      <h4>News Actions</h4>
+      <ol class="list-unstyled">
+        <li><a href="{% url 'add_news' community.slug %}">Add news</a></li>
+      </ol>
+    </div>
+
+    {% if tags %}
+      <div class="sidebar-module sidebar-community">
+        <h4>Tags</h4>
+        <ol class="list-unstyled">
+          {% for tag in tags %}
+          <li><a href="{% url 'show_community_news' community.slug %}?tag={{ tag }}">{{ tag }}</a></li>
+          {% endfor %}
+        </ol>
+      </div>
+    {% endif %}
+  {% endif %}
 {% endblock %}

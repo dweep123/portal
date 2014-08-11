@@ -11,7 +11,7 @@ from dashboard.forms import (UserForm, CommunityForm, NewsForm,
                              ResourceForm, PageForm, UserGroupsForm,
                              NewsCommentForm, ResourceCommentForm)
 from dashboard.models import (CommunityPage, Community, SysterUser, News,
-                              Resource, NewsComment, ResourceComment)
+                              Resource, NewsComment, ResourceComment, Tag)
 
 
 class ExtraContextTemplateView(TemplateView):
@@ -294,7 +294,7 @@ def delete_newscomment(request, community_slug, news_slug, comment_id=None):
                     news_slug=news_slug)
 
 
-def show_community_news(request, community_slug):
+def show_community_news(request, community_slug, tag=None):
     """Show all news about a community
 
     :param request: request object
@@ -303,10 +303,18 @@ def show_community_news(request, community_slug):
     """
     context = RequestContext(request)
     community = get_object_or_404(Community, slug=community_slug)
-    news = News.objects.filter(community=community)
+    tag = request.GET.get('tag', '')
+    if Tag.objects.filter(name=tag).exists():
+        tag_obj = Tag.objects.get(name=tag)
+        news = News.objects.filter(tags=tag_obj)
+    else:
+        news = News.objects.filter(community=community)
     pages = CommunityPage.objects.filter(community=community)
+    tags = Tag.objects.all()
     return render_to_response('dashboard/show_community_news.html',
-                              {'News': news, 'community': community, 'active_page': 'news', 'pages': pages}, context)
+                              {'News': news, 'community': community,
+                               'active_page': 'news', 'pages': pages,
+                               'tags': tags}, context)
 
 
 @login_required

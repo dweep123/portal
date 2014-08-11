@@ -11,7 +11,8 @@ from dashboard.forms import (UserForm, CommunityForm, NewsForm,
                              ResourceForm, PageForm, UserGroupsForm,
                              NewsCommentForm, ResourceCommentForm)
 from dashboard.models import (CommunityPage, Community, SysterUser, News,
-                              Resource, NewsComment, ResourceComment, Tag)
+                              Resource, NewsComment, ResourceComment, Tag,
+                              ResourceType)
 
 
 class ExtraContextTemplateView(TemplateView):
@@ -436,7 +437,7 @@ def view_resource(request, community_slug, resource_slug):
                               context)
 
 
-def show_community_resources(request, community_slug):
+def show_community_resources(request, community_slug, tag=None, resource_type=None):
     """Show all resources of a community
 
     :param request: request object
@@ -445,12 +446,25 @@ def show_community_resources(request, community_slug):
     """
     context = RequestContext(request)
     community = get_object_or_404(Community, slug=community_slug)
-    resources = Resource.objects.filter(community=community)
+    tag = request.GET.get('tag', '')
+    resource_type = request.GET.get('resource_type', '')
+    tag_exists = Tag.objects.filter(name=tag).exists()
+    resource_type_exists = ResourceType.objects.filter(name=resource_type).exists()
+    if tag_exists:
+        tag_obj = Tag.objects.get(name=tag)
+        resources = Resource.objects.filter(tags=tag_obj)
+    if resource_type_exists:
+        resource_type_obj = ResourceType.objects.get(name=resource_type)
+        resources = Resource.objects.filter(resource_type=resource_type_obj)
+    if not tag_exists and not resource_type_exists:
+        resources = Resource.objects.filter(community=community)
     pages = CommunityPage.objects.filter(community=community).order_by('order')
+    tags = Tag.objects.all()
+    resource_types = ResourceType.objects.all()
     return render_to_response('dashboard/show_community_resources.html',
-                              {'Resources': resources, 'community': community,
-                               'active_page': 'resources', 'pages': pages},
-                              context)
+                              {'resources': resources, 'community': community,
+                               'active_page': 'resources', 'pages': pages,
+                               'tags': tags, 'resource_types': resource_types}, context)
 
 
 @login_required

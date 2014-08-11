@@ -1,29 +1,71 @@
 {% extends "dashboard/community_main_page.html" %}
+
 {% load guardian_tags %}
-{% block title %}Resource {{ community.name }}{% endblock %}
+{% block title %} - {{ community }} - Resources{% endblock %}
 {% block community_page %}
   <div>
-    {% if Resources %}
-      {% for resource in Resources %}
-        <div>
-          <h4 class="title"><a
-              href="{{ resource.get_absolute_url }}">{{ resource.title }}</a>
-          </h4>
+    {% for resource in resources %}
+      <div class="blog-entry">
+        <h3 class="lead"><a
+            href="{{ resource.get_absolute_url }}">{{ resource.title }}</a></h3>
 
-          <p class="time">{{ resource.date_modified }}</p>
+        <p class="meta">{{ resource.date_modified }} | <a
+            href="{% url 'view_user_profile' resource.author.user.username %}">{{ resource.author }}</a>
+        </p>
 
-          <div class="body">{{ resource.content|linebreaks }}</div>
-        </div>
-        <hr>
-      {% endfor %}
-    {% else %}
-      <p>Currently there is no resource for this community</p>
-    {% endif %}
-    {% if user.is_authenticated and user.is_active %}
-      {% get_obj_perms request.user for community as "community_perms" %}
-      {% if "add_community_resource" in community_perms %}
-        <a href="{% url 'add_resource' community.slug %}">Add resource</a>
-      {% endif %}
-    {% endif %}
+        <div class="body">{{ resource.content|safe }}</div>
+        {% if resource.tags %}
+          <ul class="tag-pills">
+            {% if resource.resource_type %}
+              <li><span
+                  class="label label-primary">{{ resource.resource_type }}</span>
+              </li>
+            {% endif %}
+            {% for tag in resource.tags.all %}
+              <li><span class="label label-info">{{ tag }}</span></li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+      <hr>
+    {% endfor %}
   </div>
+{% endblock %}
+
+{% block extra_sidebar %}
+  {% if "add_community_resource" in community_perms %}
+    <div class="sidebar-module sidebar-community">
+      <h4>Resource Actions</h4>
+      <ol class="list-unstyled">
+        <li><a href="{% url 'add_resource' community.slug %}">Add resource</a>
+        </li>
+      </ol>
+    </div>
+
+    {% if tags %}
+      <div class="sidebar-module sidebar-community">
+        <h4>Tags</h4>
+        <ol class="list-unstyled">
+          {% for tag in tags %}
+            <li><a
+                href="{% url 'show_community_resources' community.slug %}?tag={{ tag }}">{{ tag }}</a>
+            </li>
+          {% endfor %}
+        </ol>
+      </div>
+    {% endif %}
+
+    {% if resource_types %}
+      <div class="sidebar-module sidebar-community">
+        <h4>Types</h4>
+        <ol class="list-unstyled">
+          {% for resource_type in resource_types %}
+            <li><a
+                href="{% url 'show_community_resources' community.slug %}?resource_type={{ resource_type }}">
+              {{ resource_type }}</a></li>
+          {% endfor %}
+        </ol>
+      </div>
+    {% endif %}
+  {% endif %}
 {% endblock %}

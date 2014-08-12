@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %} - Edit {{ community }} Profile{% endblock %}
+
+{% load crispy_forms_tags %}
+{% block content %}
+  <div class="spacer"></div>
+  <h2>Edit "{{ community }}" Profile</h2>
+  <hr>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="well">
+        <form action="{% url 'edit_community_profile' community.slug %}"
+              method="post">
+          {% csrf_token %}
+          {{ form|crispy }}
+          <div class="form-group">
+            <input type="submit" class="btn btn-primary" value="Submit"/>
+            <a href="{% url 'view_community_profile' community.slug %}">
+              <button class="btn btn-default">Cancel</button>
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block community_name %}{{ community }}{% endblock %}

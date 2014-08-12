@@ -232,7 +232,7 @@ def edit_community_profile(request, community_slug):
         community = get_object_or_404(Community, slug=community_slug)
     else:
         form = CommunityForm(instance=community)
-    return render_to_response('dashboard/edit_community_profile.html',
+    return render_to_response('community/edit_community_profile.html',
                               {'form': form, 'community': community}, context)
 
 

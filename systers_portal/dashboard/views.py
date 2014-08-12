@@ -205,9 +205,10 @@ def view_community_profile(request, community_slug):
     :param request: request object
     :param community_slug: string slug parsed from the URL
     """
+    context = RequestContext(request)
     community = get_object_or_404(Community, slug=community_slug)
-    return render_to_response('dashboard/view_community_profile.html',
-                              {'community': community})
+    return render_to_response('community/view_community_profile.html',
+                              {'community': community}, context)
 
 
 @login_required

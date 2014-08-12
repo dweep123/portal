@@ -80,7 +80,8 @@ body > .container {
   margin-bottom: 10px;
 }
 
-table a.table-anchor {
+table a.table-anchor,
+table.decoration-none  tr a{
   text-decoration: none !important;
 }
 

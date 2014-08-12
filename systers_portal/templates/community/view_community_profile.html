@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %} - Edit {{ community }} Profile{% endblock %}
+
+{% load dashboard_extras %}
+{% block content %}
+  <div class="spacer"></div>
+  <h2>{{ community }} Profile</h2>
+  <hr>
+  <div class="row">
+    <div class="col-md-9">
+      <div class="well">
+        <table class="table table-hover decoration-none">
+          <tbody>
+          {% for name, value in community.get_fields %}
+            {% with "id slug members" as unnecessary_fields %}
+              {% if value and name not in unnecessary_fields %}
+                <tr class="profile-row">
+                  <td>{% verbose_name community name %}:</td>
+                  {% if name == 'community_admin' %}
+                    <td><a
+                        href="{% url 'view_user_profile' value.user.username %}">{{ value }}</a>
+                    </td>
+                  {% elif name == "parent_community" %}
+                    <td><a
+                        href="{% url 'community_main_page' value.slug %}">{{ value }}</a>
+                    </td>
+                  {% else %}
+                    <td>{{ value|urlize }}</td>
+                  {% endif %}
+                </tr>
+              {% endif %}
+            {% endwith %}
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div class="pull-right">
+        <a href="{% url 'community_main_page' community.slug %}">
+          <button type="button" class="btn btn-success">Go to {{ community }} main page</button>
+        </a>
+      </div>
+      <div class="clearfix"></div>
+    </div>
+    <div class="col-md-3">
+      {% include "community/community_actions_sidebar.html" %}
+    </div>
+  </div>
+  <div class="spacer"></div>
+
+{% endblock %}
+
+{% block community_name %}{{ community }}{% endblock %}

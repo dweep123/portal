@@ -310,7 +310,7 @@ def show_community_news(request, community_slug, tag=None):
         news = News.objects.filter(tags=tag_obj)
     else:
         news = News.objects.filter(community=community)
-    pages = CommunityPage.objects.filter(community=community)
+    pages = CommunityPage.objects.filter(community=community).order_by('order')
     tags = Tag.objects.all()
     return render_to_response('community/show_community_news.html',
                               {'News': news, 'community': community,

@@ -41,31 +41,32 @@
         </li>
       </ol>
     </div>
-
-    {% if tags %}
-      <div class="sidebar-module sidebar-community">
-        <h4>Tags</h4>
-        <ol class="list-unstyled">
-          {% for tag in tags %}
-            <li><a
-                href="{% url 'show_community_resources' community.slug %}?tag={{ tag }}">{{ tag }}</a>
-            </li>
-          {% endfor %}
-        </ol>
-      </div>
-    {% endif %}
-
-    {% if resource_types %}
-      <div class="sidebar-module sidebar-community">
-        <h4>Types</h4>
-        <ol class="list-unstyled">
-          {% for resource_type in resource_types %}
-            <li><a
-                href="{% url 'show_community_resources' community.slug %}?resource_type={{ resource_type }}">
-              {{ resource_type }}</a></li>
-          {% endfor %}
-        </ol>
-      </div>
-    {% endif %}
   {% endif %}
+
+  {% if tags %}
+    <div class="sidebar-module sidebar-community">
+      <h4>Tags</h4>
+      <ol class="list-unstyled">
+        {% for tag in tags %}
+          <li><a
+              href="{% url 'show_community_resources' community.slug %}?tag={{ tag }}">{{ tag }}</a>
+          </li>
+        {% endfor %}
+      </ol>
+    </div>
+  {% endif %}
+
+  {% if resource_types %}
+    <div class="sidebar-module sidebar-community">
+      <h4>Types</h4>
+      <ol class="list-unstyled">
+        {% for resource_type in resource_types %}
+          <li><a
+              href="{% url 'show_community_resources' community.slug %}?resource_type={{ resource_type }}">
+            {{ resource_type }}</a></li>
+        {% endfor %}
+      </ol>
+    </div>
+  {% endif %}
+
 {% endblock %}

@@ -35,16 +35,18 @@
         <li><a href="{% url 'add_news' community.slug %}">Add news</a></li>
       </ol>
     </div>
-
-    {% if tags %}
-      <div class="sidebar-module sidebar-community">
-        <h4>Tags</h4>
-        <ol class="list-unstyled">
-          {% for tag in tags %}
-          <li><a href="{% url 'show_community_news' community.slug %}?tag={{ tag }}">{{ tag }}</a></li>
-          {% endfor %}
-        </ol>
-      </div>
-    {% endif %}
   {% endif %}
+
+  {% if tags %}
+    <div class="sidebar-module sidebar-community">
+      <h4>Tags</h4>
+      <ol class="list-unstyled">
+        {% for tag in tags %}
+          <li><a href="{% url 'show_community_news' community.slug %}?tag={{ tag }}">{{ tag }}</a>
+          </li>
+        {% endfor %}
+      </ol>
+    </div>
+  {% endif %}
+
 {% endblock %}

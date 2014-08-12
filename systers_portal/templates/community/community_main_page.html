@@ -2,7 +2,7 @@
 
 {% block title %} - {{ community }}{% endblock %}
 
-{% load guardian_tags %}
+{#{% load guardian_tags %}#}
 {% block content %}
   <h1>{{ community }}</h1>
   <hr>
@@ -18,32 +18,15 @@
             href="{% url 'show_community_news' community.slug %}">News</a>
         </li>
         <li class="{% if active_page == 'resources' %} active {% endif %}">
-        <a href="{% url 'show_community_resources' community.slug %}">Resources</a>
+          <a href="{% url 'show_community_resources' community.slug %}">Resources</a>
       </ul>
 
-    {% block community_page %}
-    {% endblock %}
+      {% block community_page %}
+      {% endblock %}
     </div>
-    {% if user.is_authenticated and user.is_active %}
-      {% get_obj_perms request.user for community as "community_perms" %}
-      <div class="col-md-3">
-      <div class="sidebar-module sidebar-community">
-        <h4>Community Actions</h4>
-        <ol class="list-unstyled">
-          <li><a href="{% url 'view_community_profile' community.slug %}">View Community Profile</a></li>
-          {% if "change_community" in community_perms %}
-            <li><a href="{% url 'edit_community_profile' community.slug %}">Edit Community Profile</a></li>
-          {% endif %}
-          {% if "change_community_page" in community_perms %}
-            <li><a href="{% url 'manage_pages' community.slug %}">Manage Pages</a></li>
-          {% endif %}
-          {% if "change_community_systeruser" in community_perms %}
-            <li><a href="{% url 'manage_community_users' community.slug %}">Manage Community Users</a></li>
-          {% endif %}
-        </ol>
-      </div>
+    <div class="col-md-3">
+    {% include "community/community_actions_sidebar.html" %}
       {% block extra_sidebar %}{% endblock %}
-    {% endif %}
     </div>
   </div>
 {% endblock %}

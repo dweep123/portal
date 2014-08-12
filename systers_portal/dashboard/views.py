@@ -171,7 +171,7 @@ def view_user_profile(request, username):
     systeruser = SysterUser.objects.get(user=user)
     communities_member = systeruser.member_of_community.all()
     permission_groups = user.groups.exclude(name="Generic permissions")
-    return render_to_response('accounts/view_user_profile.html',
+    return render_to_response('users/view_user_profile.html',
                               {'systeruser': systeruser,
                                'communities_member': communities_member,
                                'permission_groups': permission_groups},
@@ -194,7 +194,7 @@ def edit_user_profile(request, username):
     else:
         userform = UserForm(instance=request.user)
     return render_to_response(
-        'accounts/edit_user_profile.html',
+        'users/edit_user_profile.html',
         {'userform': userform},
         context)
 

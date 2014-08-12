@@ -28,6 +28,7 @@
 {% endblock %}
 
 {% block extra_sidebar %}
+  {% get_obj_perms request.user for community as "community_perms" %}
   {% if "add_community_news" in community_perms %}
     <div class="sidebar-module sidebar-community">
       <h4>News Actions</h4>

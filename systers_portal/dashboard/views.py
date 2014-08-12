@@ -312,7 +312,7 @@ def show_community_news(request, community_slug, tag=None):
         news = News.objects.filter(community=community)
     pages = CommunityPage.objects.filter(community=community)
     tags = Tag.objects.all()
-    return render_to_response('dashboard/show_community_news.html',
+    return render_to_response('community/show_community_news.html',
                               {'News': news, 'community': community,
                                'active_page': 'news', 'pages': pages,
                                'tags': tags}, context)
@@ -461,7 +461,7 @@ def show_community_resources(request, community_slug, tag=None, resource_type=No
     pages = CommunityPage.objects.filter(community=community).order_by('order')
     tags = Tag.objects.all()
     resource_types = ResourceType.objects.all()
-    return render_to_response('dashboard/show_community_resources.html',
+    return render_to_response('community/show_community_resources.html',
                               {'resources': resources, 'community': community,
                                'active_page': 'resources', 'pages': pages,
                                'tags': tags, 'resource_types': resource_types}, context)
@@ -654,7 +654,7 @@ def manage_user_groups(request, community_slug, username):
 def community_proposal(request):
     """Render google form for new community requests"""
     context = RequestContext(request)
-    return render_to_response('dashboard/community_proposal.html', context)
+    return render_to_response('community/community_proposal.html', context)
 
 
 @login_required

@@ -1,15 +1,29 @@
-{% extends "dashboard/base.html" %}
-{% block title %}{{ resource.title }}{% endblock %}
+{% extends "base.html" %}
+
+{% block title %} - {{ resource.community }} - Edit {{ resource.title }}{% endblock %}
+
 {% load crispy_forms_tags %}
 {% block content %}
-<div class="row">
-  <div class="span5">
-  <form action="{% url 'edit_resource' resource.community.slug resource.slug %} " method="post">
-    {% csrf_token %}
-    {{ resourceform|crispy }}
-    <input type="submit" value="Submit"/>
-    <a href="{% url 'view_resource' resource.community.slug resource.slug %}">Cancel</a>
-  </form>
+  <div class="spacer"></div>
+  <h2>Edit {{ resource.title }}</h2>
+  <hr>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="well">
+        <form action="{% url 'edit_resource' resource.community.slug resource.slug %} "
+              method="post">
+          {% csrf_token %}
+          {{ resourceform|crispy }}
+          <div class="form-group">
+            <input type="submit" class="btn btn-primary" value="Submit"/>
+            <a href="{% url 'view_resource' resource.community.slug resource.slug %}">
+              <button type="button" class="btn btn-default">Cancel</button>
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
-</div>
 {% endblock %}
+
+{% block community_name %}{{ resource.community }}{% endblock %}

@@ -1,46 +1,61 @@
-{% extends "dashboard/base.html" %}
+{% extends "base.html" %}
+
 {% load guardian_tags %}
 {% block title %} - {{ community.name }} Users{% endblock %}
+
 {% block content %}
-<div>
-  <h3>Manage {{ community.name }} users</h3>
-  <div>
-    {% get_obj_perms request.user for community as "community_perms" %}
-    <table class="table table-bordered table-hover table-condensed">
-      <thead>
-      <tr>
-        <th>#</th>
-        <th>Username</th>
-        <th>First name</th>
-        <th>Last name</th>
-        <th>Email address</th>
-        {% if "change_community_systeruser" in community_perms %}
-          <th>Manage user permissions</th>
-        {% endif %}
-      </tr>
-      </thead>
-      <tbody>
-      {% for user in users %}
+  <div class="spacer"></div>
+  <h2>Manage {{ community.name }} Users</h2>
+  <hr>
+  <div class="row">
+    <div class="col-md-9">
+    {% if users %}
+      {% get_obj_perms request.user for community as "community_perms" %}
+      <table class="table table-hover table-condensed decoration-none">
+        <thead>
         <tr>
-          <td>{{ forloop.counter }}</td>
-          <td><a href="{% url 'view_userprofile' user.user.username %}">{{ user.user.username }}</a>
-          </td>
-          <td>{{ user.user.first_name }}</td>
-          <td>{{ user.user.last_name }}</td>
-          <td>{{ user.user.email }}</td>
-          {% if 'change_community_systeruser' in community_perms %}
-            <td><a
-                href="{% url 'manage_user_groups' community.slug user.user.username %}">Manage
-              permissions for {{ user.user.username }}</a></td>
+          <th>#</th>
+          <th>Username</th>
+          <th>First name</th>
+          <th>Last name</th>
+          <th>Email address</th>
+          {% if "change_community_systeruser" in community_perms %}
+            <th>Manage user permissions</th>
           {% endif %}
         </tr>
-      {% endfor %}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+        {% for user in users %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td><a
+                href="{% url 'view_user_profile' user.user.username %}">{{ user.user.username }}</a>
+            </td>
+            <td>{{ user.user.first_name }}</td>
+            <td>{{ user.user.last_name }}</td>
+            <td>{{ user.user.email }}</td>
+            {% if 'change_community_systeruser' in community_perms %}
+              <td><a
+                  href="{% url 'manage_user_groups' community.slug user.user.username %}">Manage
+                permissions for {{ user.user.username }}</a></td>
+            {% endif %}
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+    </div>
+
+  <div class="col-md-3">
+    <div class="sidebar-module sidebar-community">
+      <h4>Actions</h4>
+      <ol class="list-unstyled">
+        <li><a href="{% url 'community_main_page' community.slug %}">Back
+          to {{ community }}</a></li>
+      </ol>
+    </div>
   </div>
-</div>
+  </div>
 {% endblock %}
 
-{% for user in users %}
-{{ user }}
-{% endfor %}
+{% block community_name %}{{ community }}{% endblock %}

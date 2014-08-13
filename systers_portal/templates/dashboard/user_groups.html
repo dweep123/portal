@@ -1,20 +1,45 @@
-{% extends "dashboard/base.html" %}
-{% block title %}User {{ user.username }} permission groups{% endblock %}
-{% block content %}
-  <div class="row">
-    <div class="span5">
-      <h3>Manage user {{ user.username }} permission groups</h3>
+{% extends "base.html" %}
 
-      <div>
+{% block title %} - User {{ user.username }} permission groups{% endblock %}
+
+{% load crispy_forms_tags %}
+{% load guardian_tags %}
+
+{% block content %}
+  <div class="spacer"></div>
+  <h2>Manage user {{ user.username }} permission groups</h2>
+  <hr>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="well">
         <form
             action="{% url 'manage_user_groups' community.slug user.username %} "
             method="post">
           {% csrf_token %}
-          {{ form.as_p }}
-          <input type="submit" value="Submit"/>
-          <a href="{% url 'manage_community_users' community.slug %}">Cancel</a>
+          {{ form|crispy }}
+          <input type="submit" class="btn btn-primary" value="Submit"/>
+          <a href="{% url 'manage_community_users' community.slug %}">
+            <button type="button" class="btn btn-default">Cancel</button>
+          </a>
         </form>
+      </div>
+    </div>
+    <div class="col-md-3"></div>
+    <div class="col-md-3">
+      <div class="sidebar-module sidebar-community">
+        <h4>Actions</h4>
+        <ol class="list-unstyled">
+          {% get_obj_perms request.user for community as "community_perms" %}
+          {% if 'change_community_systeruser' in community_perms %}
+            <li><a href="{% url 'manage_community_users' community.slug %}">Back
+              to Manage {{ community }} Users</a></li>
+          {% endif %}
+          <li><a href="{% url 'community_main_page' community.slug %}">Back
+            to {{ community }}</a></li>
+        </ol>
       </div>
     </div>
   </div>
 {% endblock %}
+
+{% block community_name %}{{ community }}{% endblock %}

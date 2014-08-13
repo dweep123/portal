@@ -125,8 +125,13 @@ table.decoration-none  tr a{
   font-size: 26px;
 }
 
-.blog-entry p.meta {
+.blog-entry p.meta,
+.comment p.meta {
   font-size: 11px;
+}
+
+p.meta-main {
+  margin-bottom: 0;
 }
 
 ul.tag-pills {
@@ -137,6 +142,26 @@ ul.tag-pills {
 
 ul.tag-pills li {
   display: inline-block;
+}
+
+/* Comments
+-------------------------------------------------- */
+.comment {
+  border-left: 3px solid #eee;
+  padding: 0 10px;
+}
+
+.comment-body {
+  margin: 10px 0;
+}
+
+.comments h4 {
+  margin-top: 30px;
+}
+
+.leave-comment textarea {
+  height: 200px;
+  width: 50%;
 }
 
 /* RESPONSIVE CSS

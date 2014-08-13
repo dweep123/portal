@@ -1,136 +1,60 @@
-{% extends "dashboard/base.html" %}
+{% extends "base.html" %}
+
 {% load dashboard_extras %}
 {% load guardian_tags %}
 {% load comments %}
-{% block head_title %}resource{% endblock %}
+
+{% block title %} - {{ resource.community }} - {{ resource.title }}{% endblock %}
 {% block content %}
-  <style type="text/css">
-    .time {
-      font-size: 0.8em;
-      margin-top: 2px;
-    }
+  <div class="spacer"></div>
+  <h2>{{ resource.title }}</h2>
+  <p class="meta-main">{{ resource.date_modified }} | <a
+      href="{% url 'view_user_profile' resource.author.user.username %}">{{ resource.author }}</a>
+  </p>
 
-    .comment {
-      border: 1px solid #eee;
-      padding: 4px;
-      margin-bottom: 12px;
-    }
-
-    .body {
-      font-size: 1.1em;
-      margin-top: 2px;
-    }
-
-    .title {
-      font-size: 1.4em;
-      margin-top: 20px;
-      border-bottom: 1px solid #ccc;
-      padding-left: 4px;
-    }
-
-    #addc {
-      width: 508px;
-      background: #f5f5f5;
-      padding: 3px;
-      padding-bottom: 8px;
-      border-bottom: 1px dotted #aaa;
-    }
-
-    #cform {
-      background: #f5f5f5;
-      width: 506px;
-      padding: 4px;
-      padding-bottom: 0px;
-    }
-
-    #submit {
-      text-align: right;
-      margin-right: 50px;
-      width: 500px;
-      margin-top: -5px;
-    }
-
-    ul {
-      margin-bottom: 30px;
-    }
-  </style>
-  <div class="main">
-  <!-- resource  -->
-  <h3>{{ resource.title }}</h3>
-  <p>{{ resource.date_created }}</p>
-  <div>
-    {{ resource.content }}
-  </div>
-      {% if user.is_authenticated and user.is_active %}
-        {% get_obj_perms request.user for resource.community as "community_perms" %}
-        {% if "change_community_resource" in community_perms %}
-          <a href="{% url 'edit_resource' resource.community.slug resource.slug %}">Edit</a>
+  <div class="row">
+  <div class="col-md-9">
+    <hr>
+    <div class="body">{{ resource.content|safe }}</div>
+    {% if resource.tags %}
+      <ul class="tag-pills">
+        {% if resource.resource_type %}
+          <li><span
+              class="label label-primary">{{ resource.resource_type }}</span>
+          </li>
         {% endif %}
-        {% if "delete_community_resource" in community_perms %}
-          <a href="{% url 'delete_resource' resource.community.slug resource.slug %}">Delete</a>
-        {% endif %}
-      {% endif %}
-    <div>
-      <div class="fb-share-button"
-           data-href="{% url 'view_resource'  resource.community.slug resource.slug %}"
-           data-type="button"></div>
-      <div class="g-plus" data-action="share"
-           data-href="{% url 'view_resource'  resource.community.slug resource.slug %}"
-           data-annotation="none"></div>
-      <a href="https://twitter.com/share" class="twitter-share-button"
-         data-count="none"
-         data-href="{% url 'view_resource'  resource.community.slug resource.slug %}">Tweet</a>
-      <script src="//platform.linkedin.com/in.js" type="text/javascript">
-        lang: en_US
-      </script>
-      <script type="IN/Share" data-counter="none"></script>
+        {% for tag in resource.tags.all %}
+          <li><span class="label label-info">{{ tag }}</span></li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    <div class="social-media"></div>
+    <hr>
+    <div class="comments">
+      {% include 'dashboard/comments.html' with posting=resource type='resource' %}
     </div>
-    <!-- Comments  -->
-    {% if comments %}
-      <p>Comments:</p>
-    {% endif %}
-    <form
-        action="{% url 'delete_resourcecomment' resource.community.slug resource.slug %}"
-        method="POST">
-      {% csrf_token %}
-      {% for comment in comments %}
-        <div class="comment">
-        <div class="time">{{ comment.created }} |<a
-            href="{{ comment.author.get_absolute_url }}">{{ comment.author }}</a>
-        </div>
-        <div class="body">{{ comment.body|linebreaks }}</div>
-        {% if user.is_authenticated %}
-          {% get_obj_perms request.user for resource.community as "community_perms" %}
-          {% if "delete_community_resource" in community_perms %}
-            <input type="checkbox" name="delete" value="{{ comment.pk }}">
-            <a href="{% url 'delete_resourcecomment' resource.community.slug resource.slug comment.id %}">delete</a>
-          {% else %}
-            {% ifequal request.user  comment.author.user %}
-              <a href="{% url 'delete_resourcecomment' resource.community.slug resource.slug comment.id %}">delete</a>
-            {% endifequal %}
-          {% endif %}
-        {% endif %}
-      {% endfor %}
-      </div>
-      {% if user.is_authenticated and comments %}
-        {% get_obj_perms request.user for resource.community as "community_perms" %}
-        {% if "delete_community_resource" in community_perms %}
-          <div id="submit"><input type="submit" value="Delete all selected">
-          </div>
-        {% endif %}
-      {% endif %}
-    </form>
-    {% if user.is_authenticated %}
-      <div id="addc">Add a comment</div>
-      <form
-          action="{% url 'add_resourcecomment' resource.community.slug resource.slug %}"
-          method="post">
-        {% csrf_token %}
-        <div id="cform">
-          <p>{{ form.body|linebreaks }}</p>
-        </div>
-        <div id="submit"><input type="submit" value="Submit"></div>
-      </form>
-    {% endif %}
   </div>
+
+    <div class="col-md-3">
+      <div class="sidebar-module sidebar-community">
+        <h4>Resource actions</h4>
+        <ol class="list-unstyled">
+          {% if user.is_authenticated and user.is_active %}
+            {% get_obj_perms request.user for resource.community as "community_perms" %}
+            {% if "change_community_resource" in community_perms %}
+              <li><a href="{% url 'edit_resource' resource.community.slug resource.slug %}">Edit</a>
+              </li>
+            {% endif %}
+            {% if "delete_community_resource" in community_perms %}
+              <li><a href="{% url 'delete_resource' resource.community.slug resource.slug %}">Delete</a>
+              </li>
+            {% endif %}
+          {% endif %}
+          <li><a href="{% url 'show_community_resources' resource.community.slug %}">
+            Back to {{ resource.community }} resources</a></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
 {% endblock %}

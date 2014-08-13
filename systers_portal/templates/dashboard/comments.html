@@ -1,0 +1,71 @@
+{% load crispy_forms_tags %}
+{% load guardian_tags %}
+
+{% if comments %}
+  <h4>Comments</h4>
+{% endif %}
+{% get_obj_perms request.user for posting.community as "community_perms" %}
+{% if type == 'news' %}
+<form action="{% url 'delete_newscomment' posting.community.slug posting.slug %}" method="POST">
+{% elif type == 'resource' %}
+<form action="{% url 'delete_resourcecomment' posting.community.slug posting.slug %}" method="POST">
+{% endif %}
+  {% csrf_token %}
+  {% for comment in comments %}
+    <div class="comment">
+      <p class="meta">{{ comment.created }} |
+        <a href="{% url 'view_user_profile' comment.author.user.username %}">{{ comment.author }}</a>
+        {% if type == 'news' %}
+          {% if "delete_community_news" in community_perms or request.user == comment.author.user %}
+            |
+            <a href="{% url 'delete_newscomment' posting.community.slug posting.slug comment.id %}">Delete
+              comment</a>
+          {% endif %}
+        {% elif type == 'resource' %}
+          {% if "delete_community_resource" in community_perms or request.user == comment.author.user %}
+            |
+            <a href="{% url 'delete_resourcecomment' posting.community.slug posting.slug comment.id %}">Delete
+              comment</a>
+          {% endif %}
+        {% endif %}
+        {% if type == 'news' %}
+          {% if "delete_community_news" in community_perms %}
+          | <input type="checkbox" name="delete" value="{{ comment.pk }}">
+          {% endif %}
+        {% elif type == 'resource' %}
+          {% if "delete_community_resource" in community_perms %}
+          | <input type="checkbox" name="delete" value="{{ comment.pk }}">
+          {% endif %}
+        {% endif %}
+
+      </p>
+      <div class="comment-body">{{ comment.body|linebreaks }}</div>
+    </div>
+  {% endfor %}
+  {% if user.is_authenticated and comments %}
+    {% if "delete_community_news" in community_perms %}
+      <a href="{% url 'delete_newscomment' posting.community.slug posting.slug %}">
+        <button class="btn btn-warning btn-primary">Delete all selected</button>
+      </a>
+    {% endif %}
+  {% endif %}
+</form>
+
+{% if user.is_authenticated %}
+  <h4>Leave a comment</h4>
+  <div class="leave-comment">
+    {% if type == 'news' %}
+    <form action="{% url 'add_newscomment' posting.community.slug posting.slug %}" method="post">
+    {% elif type == 'resource' %}
+    <form action="{% url 'add_resourcecomment' posting.community.slug posting.slug %}" method="post">
+    {% endif %}
+      {% csrf_token %}
+      <div class="form-group">
+        {{ form.body|safe }}
+      </div>
+      <div class="form-group">
+        <input type="submit" class="btn btn-primary" value="Submit"/>
+      </div>
+    </form>
+  </div>
+{% endif %}

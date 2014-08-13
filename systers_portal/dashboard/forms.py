@@ -91,6 +91,9 @@ class NewsCommentForm(forms.ModelForm):
     class Meta:
         model = NewsComment
         exclude = ["news", "author"]
+        widgets = {
+            'body': forms.Textarea(attrs={'class': 'textarea form-control'}),
+        }
 
 
 class ResourceCommentForm(forms.ModelForm):

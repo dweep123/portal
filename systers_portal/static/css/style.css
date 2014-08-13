@@ -81,7 +81,7 @@ body > .container {
 }
 
 table a.table-anchor,
-table.decoration-none  tr a{
+table.decoration-none  tr a {
   text-decoration: none !important;
 }
 
@@ -142,6 +142,10 @@ ul.tag-pills {
 
 ul.tag-pills li {
   display: inline-block;
+}
+
+table.table-manage {
+  margin-bottom: 0;
 }
 
 /* Comments

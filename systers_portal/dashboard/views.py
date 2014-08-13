@@ -76,9 +76,9 @@ def manage_pages(request, community_slug):
     """
     context = RequestContext(request)
     community = get_object_or_404(Community, slug=community_slug)
-    Pages = CommunityPage.objects.filter(community=community)
+    pages = CommunityPage.objects.filter(community=community)
     return render_to_response('dashboard/manage_pages.html',
-                              {'Pages': Pages, 'community': community},
+                              {'pages': pages, 'community': community},
                               context)
 
 

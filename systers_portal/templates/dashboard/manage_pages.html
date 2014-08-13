@@ -1,22 +1,55 @@
-{% extends "dashboard/base.html" %}
+{% extends "base.html" %}
+
 {% load guardian_tags %}
-{% block title %}Manage Pages of {{ community.name }}{% endblock %}
+{% block title %} - Manage Pages of {{ community }}{% endblock %}
+
 {% block content %}
-<div>
-  <h3>Community "{{ community.name }}" Pages</h3>
-  <div>
-   {% get_obj_perms request.user for community as "community_perms" %}
-    <ul>
-      {% for page in Pages %}
-        <li><a href="{% url 'edit_page' page.community.slug page.slug %}">{{ page.title }}</a></li>
-        {% if "delete_community_page" in community_perms %}
-          <a href="{% url 'delete_page' page.community.slug page.slug %}">Delete</a>
+  <div class="spacer"></div>
+  <h2>"{{ community }}" Pages</h2>
+  <hr>
+  <div class="row">
+    <div class="col-md-9">
+      <div class="well">
+        {% get_obj_perms request.user for community as "community_perms" %}
+        {% if pages %}
+          <table class="table table-bordered table-hover table-condensed table-manage decoration-none">
+            <tbody>
+            {% for page in pages %}
+              <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>
+                  <a href="{% url 'view_page' page.community.slug page.slug %}">{{ page.title }}</a>
+                </td>
+                <td>
+                  {% if "change_community_page" in community_perms %}
+                    <a href="{% url 'edit_page' page.community.slug page.slug %}">
+                      <button class="btn btn-primary btn-sm">Edit</button>
+                    </a>
+                  {% endif %}
+                  {% if "delete_community_page" in community_perms %}
+                    <a href="{% url 'delete_page' page.community.slug page.slug %}">
+                      <button class="btn btn-warning btn-sm">Delete</button>
+                    </a>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </table>
         {% endif %}
-      {% endfor %}
-    </ul>
-    {% if "add_community_page" in community_perms %}
-      <a href="{% url 'add_page' community.slug %}">Add Page</a>
-    {% endif %}
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="sidebar-module sidebar-community">
+        <h4>Pages actions</h4>
+        <ol class="list-unstyled">
+          {% if "add_community_page" in community_perms %}
+            <li><a href="{% url 'add_page' community.slug %}">Add Page</a></li>
+          {% endif %}
+          <li><a href="{% url 'community_main_page' community.slug %}">Back to {{ community }}</a></li>
+        </ol>
+      </div>
+    </div>
   </div>
-</div>
 {% endblock %}
+
+{% block community_name %}{{ community }}{% endblock %}

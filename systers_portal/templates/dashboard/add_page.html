@@ -1,17 +1,28 @@
-{% extends "dashboard/base.html" %}
-{% block title %}Add Page{% endblock %}
+{% extends "base.html" %}
+
+{% block title %} - {{ community }} - Add Page{% endblock %}
+
 {% load crispy_forms_tags %}
 {% block content %}
+  <div class="spacer"></div>
+  <h2>Add Page to "{{ community }}"</h2>
+  <hr>
   <div class="row">
-    <div class="span5">
-      <h3>Add Page to community "{{ community.name }}"</h3>
-
-      <form id="page_add_form" method="post"
-            action="{% url 'add_page' community.slug %}">
-        {% csrf_token %}
-        {{ form|crispy }}
-        <input type="submit" name="submit" value="Add Page"/>
-      </form>
+    <div class="col-md-6">
+      <div class="well">
+        <form id="page_add_form" action="{% url 'add_page' community.slug %}" method="post">
+          {% csrf_token %}
+          {{ form|crispy }}
+          <div class="form-group">
+            <input type="submit" class="btn btn-primary" value="Add Page"/>
+            <a href="{% url 'community_main_page' community.slug %}">
+              <button type="button" class="btn btn-default">Cancel</button>
+            </a>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 {% endblock %}
+
+{% block community_name %}{{ community }}{% endblock %}

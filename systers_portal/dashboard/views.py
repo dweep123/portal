@@ -338,8 +338,10 @@ def add_news(request, community_slug):
             news.community = community
             news.author = SysterUser.objects.get(user=request.user)
             news.save()
-            return redirect('show_community_news',
-                            community_slug=community.slug)
+            form.save_m2m()
+            return redirect('view_news',
+                            community_slug=community.slug,
+                            news_slug=news.slug)
     else:
         form = NewsForm()
     return render_to_response('dashboard/add_news.html',
@@ -527,6 +529,7 @@ def add_resource(request, community_slug):
             resource.community = community
             resource.author = SysterUser.objects.get(user=request.user)
             resource.save()
+            form.save_m2m()
             return redirect('show_community_resources',
                             community_slug=community.slug)
     else:

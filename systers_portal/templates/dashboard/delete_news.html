@@ -1,12 +1,24 @@
-{% extends "dashboard/base.html" %}
-{% block title %}Delete News of {{ community.name }}{% endblock %}
+{% extends "base.html" %}
+
+{% block title %} - Delete {{ news.title }}{% endblock %}
+
 {% block content %}
-<div>
-  <h3>Delete "{{ news.title }}" News of "{{ community.name }}"</h3>
   <div>
-    <strong>Are you sure you want to delete it?</strong>
-    <a href="{% url 'confirm_delete_news' news.community.slug news.slug %}">Yes I am sure</a><br>
-    <a href="{% url 'view_news' news.community.slug news.slug %}">Cancel</a><br>
+    <div class="spacer"></div>
+    <h2>Delete "{{ news.title }}" of "{{ news.community }}"</h2>
+    <hr>
+
+    <p>Are you sure you want to delete it?</p>
+
+    <div class="form-group">
+      <a href="{% url 'confirm_delete_news' news.community.slug news.slug %}">
+        <button class="btn btn-danger">Yes, I am sure</button>
+      </a>
+      <a href="{% url 'view_news' news.community.slug news.slug %}">
+        <button class="btn bnt-default">Cancel</button>
+      </a><br>
+    </div>
   </div>
-</div>
 {% endblock %}
+
+{% block community_name %}{{ news.community }}{% endblock %}

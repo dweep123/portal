@@ -33,15 +33,17 @@
 {% endblock %}
 
 {% block extra_sidebar %}
-  {% get_obj_perms request.user for community as "community_perms" %}
-  {% if "add_community_resource" in community_perms %}
-    <div class="sidebar-module sidebar-community">
-      <h4>Resource Actions</h4>
-      <ol class="list-unstyled">
-        <li><a href="{% url 'add_resource' community.slug %}">Add resource</a>
-        </li>
-      </ol>
-    </div>
+  {% if user.is_authenticated and user.is_active %}
+    {% get_obj_perms request.user for community as "community_perms" %}
+    {% if "add_community_resource" in community_perms %}
+      <div class="sidebar-module sidebar-community">
+        <h4>Resource Actions</h4>
+        <ol class="list-unstyled">
+          <li><a href="{% url 'add_resource' community.slug %}">Add resource</a>
+          </li>
+        </ol>
+      </div>
+    {% endif %}
   {% endif %}
 
   {% if tags %}

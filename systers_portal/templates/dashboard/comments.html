@@ -4,7 +4,7 @@
 {% if comments %}
   <h4>Comments</h4>
 {% endif %}
-{% get_obj_perms request.user for posting.community as "community_perms" %}
+
 {% if type == 'news' %}
 <form action="{% url 'delete_newscomment' posting.community.slug posting.slug %}" method="POST">
 {% elif type == 'resource' %}
@@ -16,6 +16,8 @@
     <div class="comment">
       <p class="meta">{{ comment.created }} |
         <a href="{% url 'view_user_profile' comment.author.user.username %}">{{ comment.author }}</a>
+      {% if user.is_authenticated and user.is_active %}
+        {% get_obj_perms request.user for posting.community as "community_perms" %}
         {% if type == 'news' %}
           {% if "delete_community_news" in community_perms or request.user == comment.author.user %}
             |
@@ -31,13 +33,14 @@
         {% endif %}
         {% if type == 'news' %}
           {% if "delete_community_news" in community_perms %}
-          | <input type="checkbox" name="delete" value="{{ comment.pk }}">
+            | <input type="checkbox" name="delete" value="{{ comment.pk }}">
           {% endif %}
         {% elif type == 'resource' %}
           {% if "delete_community_resource" in community_perms %}
-          | <input type="checkbox" name="delete" value="{{ comment.pk }}">
+            | <input type="checkbox" name="delete" value="{{ comment.pk }}">
           {% endif %}
         {% endif %}
+      {% endif %}
 
       </p>
       <div class="comment-body">{{ comment.body|linebreaks }}</div>

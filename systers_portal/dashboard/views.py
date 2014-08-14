@@ -168,24 +168,6 @@ def confirm_delete_page(request, community_slug, page_slug):
 def community_main_page(request, community_slug):
     community = get_object_or_404(Community, slug=community_slug)
     pages = CommunityPage.objects.filter(community=community).order_by('order')
-    # request_id = 0
-    # is_admin = 0
-    # if request.user.is_authenticated():
-    #     systeruser = SysterUser.objects.get(user=request.user)
-    #     community_admin_group_name = generic_groups[
-    #         "community_admin"].format(community.name)
-    #     group = Group.objects.get(name=community_admin_group_name)
-    #     if group in request.user.groups.all() or request.user.is_superuser:
-    #         is_admin = 1
-    #     requested = JoinRequest.objects.filter(
-    #         user=systeruser, community=community, is_approved=False).exists()
-    #     if requested:
-    #         request_id = JoinRequest.objects.get(
-    #             user=systeruser, community=community, is_approved=False).id
-    #     systeruser = SysterUser.objects.get(user=request.user)
-    #     join_request = get_object_or_404(JoinRequest, user=systeruser, community=community)
-    # else:
-    #     join_request = None
     if pages:
         return redirect('view_page', community_slug, pages[0].slug)
     else:
@@ -449,13 +431,13 @@ def add_news(request, community_slug):
 @permission_required_or_403('dashboard.change_community_news',
                             (Community, 'slug__exact', 'community_slug'))
 def edit_news(request, community_slug, news_slug):
-    """Edit a particluar news about a community
+    """Edit a particular news about a community
 
     :param request: request object
     :param community_slug: string community_slug parsed from the URL
     :param news_slug: string news_slug parsed from the URL
     :raises Http404: if a community entry or news entry
-    inside that community doesn't exist
+                     inside that community doesn't exist
     """
     context = RequestContext(request)
     community = get_object_or_404(Community, slug=community_slug)

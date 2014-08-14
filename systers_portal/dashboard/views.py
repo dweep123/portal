@@ -955,4 +955,7 @@ def leave_community(request, username, community_slug):
     systeruser = SysterUser.objects.get(user=user)
     community = get_object_or_404(Community, slug=community_slug)
     community.members.remove(systeruser)
+    user_groups = user.groups.filter(name__endswith=community.name)
+    for group in user_groups:
+        user.groups.remove(group)
     return redirect('view_user_profile', username=username)

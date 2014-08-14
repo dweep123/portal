@@ -65,13 +65,13 @@
               <li><a href="{% url 'delete_resource' resource.community.slug resource.slug %}">Delete</a>
               </li>
             {% endif %}
-            {% ifequal request.user.systeruser resource.community.community_admin %}
+            {% if user == news.community.community_admin.user or user.is_superuser %}
               {% if resource.is_monitor %}
                 <li><a href="{% url 'unmonitor_resource' resource.community.slug resource.slug %}">Unwatch</a></li>
               {% else %}
                 <li><a href="{% url 'monitor_resource' resource.community.slug resource.slug %}">Watch</a></li>
               {% endif %}
-            {% endifequal %}
+            {% endif %}
           {% endif %}
           <li><a href="{% url 'show_community_resources' resource.community.slug %}">
             Back to {{ resource.community }} resources</a></li>

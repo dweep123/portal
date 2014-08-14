@@ -54,7 +54,7 @@
       <div class="panel panel-default">
         <div class="panel-heading">Membership</div>
         <div class="panel-body">
-          {% if communities_member %}
+          {% if communities_member or join_requests %}
             <table class="table table-hover">
               <tbody>
               {% for community in communities_member %}
@@ -68,8 +68,25 @@
                         data-community-slug="{{ community.slug }}"
                         data-username="{{ user.username }}"
                         data-community-name="{{ community }}"
-                        data-target="#leaveModal" id="modal">
+                        data-target="#leaveModal" id="modalLeave">
                       Leave
+                    </button>
+                  </td>
+                </tr>
+              {% endfor %}
+              {% for join_request in join_requests %}
+                <tr class="profile-row">
+                  <td><a href="{% url 'community_main_page' join_request.community.slug %}"
+                         class="table-anchor">{{ join_request.community }}</a></td>
+                  <td>
+                    <button
+                        class="btn btn-primary btn-xs btn-warning pull-right"
+                        data-toggle="modal"
+                        data-community-slug="{{ join_request.community.slug }}"
+                        data-username="{{ join_request.user.username }}"
+                        data-community-name="{{ join_request.community }}"
+                        data-target="#cancelModal" id="modalCancel">
+                      Cancel request
                     </button>
                   </td>
                 </tr>
@@ -106,7 +123,7 @@
     {# END Permissions #}
   </div>
 
-  <!-- Modal -->
+  <!-- Leave Modal -->
   <div class="modal fade" id="leaveModal" tabindex="-1" role="dialog"
        aria-labelledby="leaveModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -118,7 +135,7 @@
           <h4 class="modal-title" id="leaveModalLabel">Leave community</h4>
         </div>
         <div class="modal-body">
-          Would you like to leave <strong id="modal-community-name"></strong>
+          Would you like to leave <strong class="modal-community-name"></strong>
           community?
         </div>
         <div class="modal-footer">
@@ -127,6 +144,34 @@
           </button>
           <a href="#" id="leave-community">
             <button type="button" class="btn btn-danger">Leave community
+            </button>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cancel Request Modal -->
+  <div class="modal fade" id="cancelModal" tabindex="-1" role="dialog"
+       aria-labelledby="leaveModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal"><span
+              aria-hidden="true">&times;</span><span
+              class="sr-only">Close</span></button>
+          <h4 class="modal-title" id="leaveModalLabel">Cancel join community request</h4>
+        </div>
+        <div class="modal-body">
+          Would you like to cancel your request to join <strong class="modal-community-name"></strong>
+          community?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">
+            Cancel
+          </button>
+          <a href="#" id="cancel-request">
+            <button type="button" class="btn btn-danger">Cancel request
             </button>
           </a>
         </div>

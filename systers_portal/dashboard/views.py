@@ -62,9 +62,20 @@ def view_page(request, community_slug, page_slug):
     page = get_object_or_404(
         CommunityPage, community=community, slug=page_slug)
     pages = CommunityPage.objects.filter(community=community).order_by('order')
+    is_member = False
+    join_request = None
+    if request.user.is_authenticated():
+        systeruser = SysterUser.objects.get(user=request.user)
+        if systeruser in community.members.all():
+            is_member = True
+        join_requests = JoinRequest.objects.filter(user=systeruser, community=community)
+        if join_requests:
+            join_request = join_requests.latest()
     return render_to_response('dashboard/view_page.html',
                               {'community': community, 'page': page,
-                               'pages': pages, 'active_page': page.slug},
+                               'pages': pages, 'active_page': page.slug,
+                               'is_member': is_member,
+                               'join_request': join_request},
                               context_instance=RequestContext(request))
 
 
@@ -156,38 +167,29 @@ def confirm_delete_page(request, community_slug, page_slug):
 
 def community_main_page(request, community_slug):
     community = get_object_or_404(Community, slug=community_slug)
-# <<<<<<< HEAD
-#     pages = CommunityPage.objects.filter(community=community).order_by('order')
-#     if pages:
-#         return redirect('view_page', community_slug, pages[0].slug)
-#     else:
-#         return redirect('show_community_news', community_slug)
-# =======
     pages = CommunityPage.objects.filter(community=community).order_by('order')
-    request_id = 0
-    is_admin = 0
-    if request.user.is_authenticated():
-        systeruser = SysterUser.objects.get(user=request.user)
-        community_admin_group_name = generic_groups[
-            "community_admin"].format(community.name)
-        group = Group.objects.get(name=community_admin_group_name)
-        if group in request.user.groups.all() or request.user.is_superuser:
-            is_admin = 1
-        requested = JoinRequest.objects.filter(
-            user=systeruser, community=community, is_approved=False).exists()
-        if requested:
-            request_id = JoinRequest.objects.get(
-                user=systeruser, community=community, is_approved=False).id
+    # request_id = 0
+    # is_admin = 0
+    # if request.user.is_authenticated():
+    #     systeruser = SysterUser.objects.get(user=request.user)
+    #     community_admin_group_name = generic_groups[
+    #         "community_admin"].format(community.name)
+    #     group = Group.objects.get(name=community_admin_group_name)
+    #     if group in request.user.groups.all() or request.user.is_superuser:
+    #         is_admin = 1
+    #     requested = JoinRequest.objects.filter(
+    #         user=systeruser, community=community, is_approved=False).exists()
+    #     if requested:
+    #         request_id = JoinRequest.objects.get(
+    #             user=systeruser, community=community, is_approved=False).id
+    #     systeruser = SysterUser.objects.get(user=request.user)
+    #     join_request = get_object_or_404(JoinRequest, user=systeruser, community=community)
+    # else:
+    #     join_request = None
     if pages:
         return redirect('view_page', community_slug, pages[0].slug)
     else:
         return redirect('show_community_news', community_slug)
-    # return render_to_response('dashboard/community_main_page.html',
-    #                           {'community': community, 'Pages': Pages,
-    #                            'active_page': 'home', 'request_id': request_id,
-    #                            'is_admin': is_admin},
-    #                           context)
-# >>>>>>> demo-portal-join-requests
 
 
 def view_user_profile(request, username):
@@ -202,11 +204,14 @@ def view_user_profile(request, username):
     systeruser = SysterUser.objects.get(user=user)
     communities_member = systeruser.member_of_community.all()
     permission_groups = user.groups.exclude(name="Generic permissions")
+    user_join_requests = JoinRequest.objects.filter(user=systeruser,
+                                                    is_approved=False)
     return render_to_response('users/view_user_profile.html',
                               {'systeruser': systeruser,
                                'communities_member': communities_member,
-                               'permission_groups': permission_groups},
-                              context)
+                               'permission_groups': permission_groups,
+                               'join_requests': user_join_requests},
+                                context)
 
 
 @login_required
@@ -394,10 +399,20 @@ def show_community_news(request, community_slug, tag=None):
         news = News.objects.filter(community=community)
     pages = CommunityPage.objects.filter(community=community).order_by('order')
     tags = Tag.objects.all()
+    is_member = False
+    join_request = None
+    if request.user.is_authenticated():
+        systeruser = SysterUser.objects.get(user=request.user)
+        if systeruser in community.members.all():
+            is_member = True
+        join_requests = JoinRequest.objects.filter(user=systeruser, community=community)
+        if join_requests:
+            join_request = join_requests.latest()
     return render_to_response('community/show_community_news.html',
                               {'News': news, 'community': community,
                                'active_page': 'news', 'pages': pages,
-                               'tags': tags}, context)
+                               'tags': tags, 'is_member': is_member,
+                               'join_request': join_request}, context)
 
 
 @login_required
@@ -587,10 +602,21 @@ def show_community_resources(request, community_slug, tag=None, resource_type=No
     pages = CommunityPage.objects.filter(community=community).order_by('order')
     tags = Tag.objects.all()
     resource_types = ResourceType.objects.all()
+    is_member = False
+    join_request = None
+    if request.user.is_authenticated():
+        systeruser = SysterUser.objects.get(user=request.user)
+        if systeruser in community.members.all():
+            is_member = True
+        join_requests = JoinRequest.objects.filter(user=systeruser, community=community)
+        if join_requests:
+            join_request = join_requests.latest()
     return render_to_response('community/show_community_resources.html',
                               {'resources': resources, 'community': community,
                                'active_page': 'resources', 'pages': pages,
-                               'tags': tags, 'resource_types': resource_types}, context)
+                               'tags': tags, 'resource_types': resource_types,
+                               'is_member': is_member,
+                               'join_request': join_request}, context)
 
 
 @login_required
@@ -872,8 +898,9 @@ def show_community_join_request(request, community_slug):
     group = Group.objects.get(name=community_admin_group_name)
     if group in request.user.groups.all() or request.user.is_superuser:
         join_requests = JoinRequest.objects.filter(community=community)
-        return render_to_response('dashboard/show_community_join_request.html',
-                                  {'join_requests': join_requests}, context)
+        return render_to_response('community/show_community_join_request.html',
+                                  {'community': community,
+                                   'join_requests': join_requests}, context)
     else:
         return HttpResponseForbidden()
 
@@ -891,12 +918,12 @@ def approve_community_join_request(request, community_slug, request_id):
         join_request.approved_by = SysterUser.objects.get(user=request.user)
         join_request.save()
         community.members.add(join_request.user)
-	community.save()
-        send_mail('Request to join ' + community.name,
-                  'Your request to join ' + community.name +
+        community.save()
+        send_mail('Request to join {0} approved'.format(community),
+                  'Your request to join {0}'.format(community) +
                   ' community has been approved.' +
-                  'You can now access news and resources for the community',
-                  settings.base.EMAIL_HOST_USER,
+                  ' You can now access news and resources for the community',
+                  settings.EMAIL_HOST_USER,
                   [join_request.user.user.email], fail_silently=False)
         return redirect('show_community_join_request',
                         community_slug=community.slug)
@@ -929,16 +956,3 @@ def leave_community(request, username, community_slug):
     community = get_object_or_404(Community, slug=community_slug)
     community.members.remove(systeruser)
     return redirect('view_user_profile', username=username)
-
-# =======
-# def leave_community(request, community_slug):
-#     systeruser = SysterUser.objects.get(user=request.user)
-#     community = get_object_or_404(Community, slug=community_slug)
-#     community_members = SysterUser.objects.filter(
-#                 member_of_community=community)
-#     if systeruser in community_members:
-#         community.members.remove(systeruser)
-# 	community.save()
-#     return redirect('community_main_page',
-#                     community_slug=community.slug)
-# >>>>>>> demo-portal-join-requests

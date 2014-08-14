@@ -38,7 +38,7 @@ urlpatterns = patterns(
     url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/join/$',
         'dashboard.views.make_join_request',
         name='make_join_request'),
-    url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/show_join_requests/$',
+    url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/join_requests/$',
         'dashboard.views.show_community_join_request',
         name='show_community_join_request'),
     url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/'
@@ -48,9 +48,6 @@ urlpatterns = patterns(
     url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/cancel_request/$',
         'dashboard.views.cancel_community_join_request',
         name='cancel_community_join_request'),
-    url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/leave/$',
-        'dashboard.views.leave_community',
-        name='leave_community'),
     url(r'^(?P<community_slug>[a-zA-Z0-9_-]+)/profile/$',
         'dashboard.views.view_community_profile',
         name='view_community_profile'),

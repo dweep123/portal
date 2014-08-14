@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% load dashboard_extras %}
+{% load guardian_tags %}
+
+{% block title %} - {{ community }} - Join Requests{% endblock %}
+
+{% block content %}
+  <div class="spacer"></div>
+  <h2>{{ community }} Join Requests</h2>
+  <hr>
+  <div class="row">
+    <div class="col-md-6">
+      {% if join_requests %}
+        <table class="table table-hover table-condensed decoration-none">
+        <thead>
+        <tr>
+          <th>#</th>
+          <th>User</th>
+          <th>Email address</th>
+          <th>Join Request Date</th>
+          <th>Approve</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for join_request in join_requests %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td><a
+                href="{{ join_request.user.get_absolute_url }}">{{ join_request.user }}</a>
+            </td>
+            <td>{{ join_request.user.user.email|urlize }}</td>
+            <td>{{ join_request.date_created }}</td>
+            <td>{% if not join_request.is_approved %}
+              <a href="{% url 'approve_community_join_request' join_request.community.slug join_request.id %}">
+                <button type="button" class="btn btn-primary btn-sm">Approve
+                </button>
+              </a>
+            {% else %}
+              Approved on by <a href="{{ join_request.approved_by.get_absolute_url }}">{{ join_request.approved_by }}</a>
+            {% endif %}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+        <p>No requests</p>
+      {% endif %}
+    </div>
+    <div class="col-md-3"></div>
+    <div class="col-md-3">
+      <div class="sidebar-module sidebar-community">
+        <h4>Actions</h4>
+        <ol class="list-unstyled">
+          <li><a href="{% url 'community_main_page' community.slug %}">Back
+            to {{ community }}</a></li>
+        </ol>
+      </div>
+    </div>
+   </div>
+
+
+
+
+
+{#    {% if join_requests %}#}
+{#      <p>Requests: </p>#}
+{#      {% for join_request in join_requests %}#}
+{#        {% if not join_request.is_approved %}#}
+{#          <div class="join_request">#}
+{#          <div class="time">{{ join_request.date_created }}</div>#}
+{#          <div class="body"><p><a href="{{ join_request.user.get_absolute_url }}">{{ join_request.user }}</a> #}
+{#            wants to join the community  </p></div>#}
+{#          <div><a href="{% url 'approve_community_join_request' join_request.community.slug join_request.id %}">Approve</a></div></div>#}
+{#        {% endif %}#}
+{#      {% endfor %} #}
+{#      {% for join_request in join_requests %}#}
+{#        {% if join_request.is_approved %}#}
+{#        <div class="join_request">#}
+{#          <div class="time">{{ join_request.date_created }}</div>#}
+{#          <div class="body"><p><a href="{{ join_request.user.get_absolute_url }}">{{ join_request.user }}</a>#}
+{#           wants to join the community  </ p></div>#}
+{#         <p><strong> Approved by <a href="{{ join_request.approved_by.get_absolute_url }}">{{join_request.approved_by}}</a></strong></p></div>#}
+{#        {% endif %}#}
+{#      {% endfor %} #}
+{#       #}
+{#    {% else %}#}
+{#    <p> No new join request </p>#}
+{#    {% endif %}#}
+{#  </div>#}
+{% endblock %}
+
+{% block community_name %}{{ community }}{% endblock %}

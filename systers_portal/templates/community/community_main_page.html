@@ -25,8 +25,9 @@
       {% endblock %}
     </div>
     <div class="col-md-3">
-    {% include "community/community_actions_sidebar.html" %}
+      {% include "community/community_actions_sidebar.html" %}
       {% block extra_sidebar %}{% endblock %}
+      {% include 'community/join_button.html' %}
     </div>
   </div>
 {% endblock %}

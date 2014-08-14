@@ -26,7 +26,7 @@ class SysterUser(models.Model):
             return self.user.username
 
     def get_absolute_url(self):
-        return reverse('view_userprofile', args=[self.user.username])
+        return reverse('view_user_profile', args=[self.user.username])
 
     def get_user_fields(self):
         """Set verbose name for User fields and Get model fields of a User object
@@ -265,7 +265,16 @@ class JoinRequest(models.Model):
     approved_by = models.ForeignKey(
         SysterUser, blank=True, null=True, related_name='approved_by')
     community = models.ForeignKey(Community, verbose_name='Community')
-    date_created = models.DateField(auto_now=False, auto_now_add=True,
-                                    verbose_name='Request Date')
+    date_created = models.DateTimeField(auto_now=False, auto_now_add=True,
+                                        verbose_name='Request Date')
     is_approved = models.BooleanField(
         default=False, verbose_name='Is approved')
+
+    def __unicode__(self):
+        if self.is_approved:
+            return unicode("Join Request by {0} - approved".format(self.user))
+        else:
+            return unicode("Join Request by {0} - not approved".format(self.user))
+
+    class Meta:
+        get_latest_by = 'date_created'

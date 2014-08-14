@@ -1,0 +1,33 @@
+<div class="community_membership">
+  {% if user.is_authenticated %}
+    {% if is_member %}
+      <a href="{% url 'leave_community' community.slug user.username %}">
+        <button type="button" class="btn btn-warning btn-block">Leave
+          Community
+        </button>
+      </a>
+    {% else %}
+      {% if join_request %}
+        {% if not join_request.is_approved %}
+          <a href="{% url 'cancel_community_join_request' community.slug %}">
+            <button type="button" class="btn btn-warning btn-block">Cancel
+              request
+            </button>
+          </a>
+        {% elif not is_member and join_request.is_approved %}
+          <a href="{% url 'make_join_request' community.slug %}">
+          <button type="button" class="btn btn-success btn-block">Join
+            Community
+          </button>
+        </a>
+        {% endif %}
+      {% else %}
+        <a href="{% url 'make_join_request' community.slug %}">
+          <button type="button" class="btn btn-success btn-block">Join
+            Community
+          </button>
+        </a>
+      {% endif %}
+    {% endif %}
+  {% endif %}
+</div>

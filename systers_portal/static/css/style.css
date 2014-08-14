@@ -148,6 +148,10 @@ table.table-manage {
   margin-bottom: 0;
 }
 
+.community_membership a {
+  text-decoration: none;
+}
+
 /* Comments
 -------------------------------------------------- */
 .comment {

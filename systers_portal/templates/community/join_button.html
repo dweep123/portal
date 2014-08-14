@@ -1,5 +1,5 @@
 <div class="community_membership">
-  {% if user.is_authenticated %}
+  {% if user.is_authenticated and user != community.community_admin.user %}
     {% if is_member %}
       <a href="{% url 'leave_community' community.slug user.username %}">
         <button type="button" class="btn btn-warning btn-block">Leave

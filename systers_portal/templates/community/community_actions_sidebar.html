@@ -19,7 +19,7 @@
         <li><a href="{% url 'manage_community_users' community.slug %}">Manage
           Community Users</a></li>
       {% endif %}
-      {% if community.community_admin.user == user %}
+      {% if user.is_superuser or community.community_admin.user == user %}
         <li><a href="{% url "show_community_join_request" community.slug %}">Show
           join requests</a></li>
       {% endif %}

@@ -58,21 +58,23 @@
             <table class="table table-hover">
               <tbody>
               {% for community in communities_member %}
-                <tr class="profile-row">
-                  <td><a href="{% url 'community_main_page' community.slug %}"
-                         class="table-anchor">{{ community }}</a></td>
-                  <td>
-                    <button
-                        class="btn btn-primary btn-xs btn-warning pull-right"
-                        data-toggle="modal"
-                        data-community-slug="{{ community.slug }}"
-                        data-username="{{ user.username }}"
-                        data-community-name="{{ community }}"
-                        data-target="#leaveModal" id="modalLeave">
-                      Leave
-                    </button>
-                  </td>
-                </tr>
+                {% if user != community.community_admin.user %}
+                  <tr class="profile-row">
+                    <td><a href="{% url 'community_main_page' community.slug %}"
+                           class="table-anchor">{{ community }}</a></td>
+                    <td>
+                      <button
+                          class="btn btn-primary btn-xs btn-warning pull-right"
+                          data-toggle="modal"
+                          data-community-slug="{{ community.slug }}"
+                          data-username="{{ user.username }}"
+                          data-community-name="{{ community }}"
+                          data-target="#leaveModal" id="modalLeave">
+                        Leave
+                      </button>
+                    </td>
+                  </tr>
+                {% endif %}
               {% endfor %}
               {% for join_request in join_requests %}
                 <tr class="profile-row">

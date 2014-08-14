@@ -12,6 +12,7 @@
 {% endif %}
   {% csrf_token %}
   {% for comment in comments %}
+    {% if comment.is_approved %}
     <div class="comment">
       <p class="meta">{{ comment.created }} |
         <a href="{% url 'view_user_profile' comment.author.user.username %}">{{ comment.author }}</a>
@@ -41,6 +42,44 @@
       </p>
       <div class="comment-body">{{ comment.body|linebreaks }}</div>
     </div>
+    {% else %}
+        {% ifequal request.user.systeruser  comment.news.community.community_admin %}
+          <div class="comment">
+      <p class="meta">{{ comment.created }} |
+        <a href="{% url 'view_user_profile' comment.author.user.username %}">{{ comment.author }}</a>
+        {% if type == 'news' %}
+          {% if "delete_community_news" in community_perms or request.user == comment.author.user %}
+            |
+            <a href="{% url 'delete_newscomment' posting.community.slug posting.slug comment.id %}">Delete
+              comment</a>
+          {% endif %}
+        {% elif type == 'resource' %}
+          {% if "delete_community_resource" in community_perms or request.user == comment.author.user %}
+            |
+            <a href="{% url 'delete_resourcecomment' posting.community.slug posting.slug comment.id %}">Delete
+              comment</a>
+          {% endif %}
+        {% endif %}
+        {% if type == 'news' %}
+          {% if "delete_community_news" in community_perms %}
+          | <input type="checkbox" name="delete" value="{{ comment.pk }}">
+          {% endif %}
+        {% elif type == 'resource' %}
+          {% if "delete_community_resource" in community_perms %}
+          | <input type="checkbox" name="delete" value="{{ comment.pk }}">
+          {% endif %}
+        {% endif %}
+        {% if type == 'news' %}
+          | <a href="{% url 'approve_newscomment' news.community.slug news.slug comment.id %}">Approve</a>
+        {% elif type == 'resource' %}
+          | <a href="{% url 'approve_resourcecomment' news.community.slug news.slug comment.id %}">Approve</a>
+        {% endif %}
+
+      </p>
+      <div class="comment-body">{{ comment.body|linebreaks }}</div>
+    </div>
+       {% endifequal %}
+    {% endif %}
   {% endfor %}
   {% if user.is_authenticated and comments %}
     {% if "delete_community_news" in community_perms %}

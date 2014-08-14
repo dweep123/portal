@@ -2,7 +2,6 @@
 
 {% load dashboard_extras %}
 {% load guardian_tags %}
-{% load comments %}
 
 {% block head %}
   <script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
@@ -61,6 +60,13 @@
               <li><a href="{% url 'delete_news' news.community.slug news.slug %}">Delete</a>
               </li>
             {% endif %}
+            {% ifequal request.user.systeruser  news.community.community_admin %}
+              {% if news.is_monitor %}
+                <li><a href="{% url 'unmonitor_news' news.community.slug news.slug %}">Unwatch</a></li>
+              {% else %}
+                <li><a href="{% url 'monitor_news' news.community.slug news.slug %}">Watch</a></li>
+              {% endif %}
+            {% endifequal %}
           {% endif %}
           <li><a href="{% url 'show_community_news' news.community.slug %}">Back to {{ news.community }} news</a></li>
         </ol>

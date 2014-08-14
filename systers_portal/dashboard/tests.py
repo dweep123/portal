@@ -19,10 +19,10 @@ from dashboard.models import (SysterUser, Community, News, Resource, Tag,
                               ResourceType, CommunityPage, NewsComment,
                               ResourceComment, JoinRequest)
 from dashboard.signals import *
-from dashboard.views import edit_user_profile
 
 
 class DashboardModelsTestCase(TestCase):
+
     def setUp(self):
         self.auth_user = User.objects.create(username='foo', password='foobar')
         self.tag = Tag.objects.create(name='dummy_tag')
@@ -30,6 +30,7 @@ class DashboardModelsTestCase(TestCase):
             name='dummy_resource_type')
 
     def test_user_and_syster_user(self):
+        """Test SysterUser Model"""
         self.assertQuerysetEqual(SysterUser.objects.all(), [])
         systeruser = SysterUser.objects.create(
             user=self.auth_user,
@@ -51,6 +52,7 @@ class DashboardModelsTestCase(TestCase):
         self.assertEqual(len(SysterUser.objects.all()), 1)
 
     def test_community_model(self):
+        """Test Community Model"""
         self.assertQuerysetEqual(Community.objects.all(), [])
         self.assertQuerysetEqual(SysterUser.objects.all(), [])
         systeruser = SysterUser.objects.create(user=self.auth_user)
@@ -73,18 +75,21 @@ class DashboardModelsTestCase(TestCase):
         self.assertEqual(second_systeruser in community_members, True)
 
     def test_tag_model(self):
+        """Test Tag model"""
         self.assertEqual(len(Tag.objects.all()), 1)
         tag = Tag.objects.create(name='dummy_tag1')
         self.assertEqual(len(Tag.objects.all()), 2)
         self.assertEqual(unicode(tag), 'dummy_tag1')
 
     def test_resourcetype_model(self):
+        """Test ResourceType model"""
         self.assertEqual(len(ResourceType.objects.all()), 1)
         resource = ResourceType.objects.create(name='dummy_resource1')
         self.assertEqual(len(ResourceType.objects.all()), 2)
         self.assertEqual(unicode(resource), 'dummy_resource1')
 
     def test_news_model(self):
+        """Test News Model"""
         self.assertQuerysetEqual(News.objects.all(), [])
         self.assertQuerysetEqual(Community.objects.all(), [])
         self.assertQuerysetEqual(SysterUser.objects.all(), [])
@@ -114,6 +119,7 @@ class DashboardModelsTestCase(TestCase):
                          Community.objects.get(news=news_article))
 
     def test_resource_model(self):
+        """Test Resource Model"""
         self.assertQuerysetEqual(Resource.objects.all(), [])
         self.assertQuerysetEqual(Community.objects.all(), [])
         self.assertQuerysetEqual(SysterUser.objects.all(), [])
@@ -145,6 +151,7 @@ class DashboardModelsTestCase(TestCase):
         self.assertEqual(resource.is_public, False)
 
     def test_CommunityPage_model(self):
+        """Test CommunityPage Model"""
         self.assertQuerysetEqual(CommunityPage.objects.all(), [])
         self.assertQuerysetEqual(Community.objects.all(), [])
         self.assertQuerysetEqual(SysterUser.objects.all(), [])
@@ -165,6 +172,7 @@ class DashboardModelsTestCase(TestCase):
         self.assertEqual(len(CommunityPage.objects.all()), 0)
 
     def test_NewsComment_model(self):
+        """Test NewsComment Model"""
         systeruser = SysterUser.objects.create(user=self.auth_user)
         community = Community.objects.create(name='dummy_community',
                                              community_admin=systeruser)
@@ -175,12 +183,13 @@ class DashboardModelsTestCase(TestCase):
                     content='This is foo news')
         news.save()
         self.assertEqual(len(NewsComment.objects.all()), 0)
-        comment = NewsComment.objects.create(author=systeruser,
-                                             body='foo_comment',
-                                             news=news)
+        NewsComment.objects.create(author=systeruser,
+                                   body='foo_comment',
+                                   news=news)
         self.assertEqual(len(NewsComment.objects.all()), 1)
 
     def test_ResourceComment_model(self):
+        """Test ResourceComment model"""
         systeruser = SysterUser.objects.create(user=self.auth_user)
         community = Community.objects.create(name='dummy_community',
                                              community_admin=systeruser)
@@ -191,18 +200,19 @@ class DashboardModelsTestCase(TestCase):
                             content='This is foo resource')
         resource.save()
         self.assertEqual(len(ResourceComment.objects.all()), 0)
-        comment = ResourceComment.objects.create(author=systeruser,
-                                                 body='foo_comment',
-                                                 resource=resource)
+        ResourceComment.objects.create(author=systeruser,
+                                       body='foo_comment',
+                                       resource=resource)
         self.assertEqual(len(ResourceComment.objects.all()), 1)
 
     def test_JoinRequest_model(self):
+        """Test JoinRequest Model"""
         systeruser = SysterUser.objects.create(user=self.auth_user)
         community = Community.objects.create(name='dummy_community',
                                              community_admin=systeruser)
         self.assertEqual(len(JoinRequest.objects.all()), 0)
-        join_request = JoinRequest.objects.create(user=systeruser,
-                                                  community=community)
+        JoinRequest.objects.create(user=systeruser,
+                                   community=community)
         self.assertEqual(len(JoinRequest.objects.all()), 1)
 
     def test_signal_registry(self):
@@ -259,7 +269,7 @@ class DashboardModelsTestCase(TestCase):
                 name=group_name.format(community.name)).exists())
         self.assertIn(Group.objects.get(
             name=generic_groups["community_admin"].format(name)),
-                      systeruser.user.groups.all())
+            systeruser.user.groups.all())
         community.name = "BarFoo"
         systeruser2 = SysterUser.objects.create(
             user=User.objects.create(username='bar', password='foobar'))
@@ -267,10 +277,10 @@ class DashboardModelsTestCase(TestCase):
         community.save()
         self.assertNotIn(Group.objects.get(
             name=generic_groups["community_admin"].format(community.name)),
-                         systeruser.user.groups.all())
+            systeruser.user.groups.all())
         self.assertIn(Group.objects.get(
             name=generic_groups["community_admin"].format(community.name)),
-                      systeruser2.user.groups.all())
+            systeruser2.user.groups.all())
         for key, group_name in generic_groups.items():
             self.assertFalse(Group.objects.filter(
                 name=group_name.format(name)).exists())
@@ -354,15 +364,16 @@ class DashboardModelsTestCase(TestCase):
                    generic_groups["content_manager"].format(community.name))
         self.assertIn(Group.objects.get(
             name=generic_groups["content_manager"].format(community.name)),
-                      systeruser.user.groups.all())
+            systeruser.user.groups.all())
         leave_group(systeruser,
                     generic_groups["content_manager"].format(community.name))
         self.assertNotIn(Group.objects.get(
             name=generic_groups["content_manager"].format(community.name)),
-                         systeruser.user.groups.all())
+            systeruser.user.groups.all())
 
 
 class DashboardDecoratorsTestCase(TestCase):
+
     def setUp(self):
         self.auth_user_foo = User.objects.create_user(username="foo",
                                                       password="foobar")
@@ -412,6 +423,7 @@ class DashboardDecoratorsTestCase(TestCase):
 
 
 class DashboardFormsTestCase(TestCase):
+
     def setUp(self):
         auth_user = User.objects.create_user(username="foo", password="foobar")
         self.user = SysterUser(user=auth_user)
@@ -554,6 +566,7 @@ class DashboardFormsTestCase(TestCase):
 
 
 class DashboardViewsTestCase(TestCase):
+
     def setUp(self):
         self.client = Client()
         auth_user = User.objects.create_user(username="foo", password="foobar")
@@ -703,7 +716,7 @@ class DashboardViewsTestCase(TestCase):
         url = reverse('add_news',
                       kwargs={'community_slug': self.community.slug})
         self._test_response_status('get', nonexistent_url, 302)
-        response1 = self._test_response_status('get', url, 302)
+        self._test_response_status('get', url, 302)
         self.assertTemplateUsed(template_name='login.html')
         self.client.login(username='foo', password='foobar')
         # TODO: fix this
@@ -828,7 +841,7 @@ class DashboardViewsTestCase(TestCase):
         url = reverse('add_resource',
                       kwargs={'community_slug': self.community.slug})
         self._test_response_status('get', nonexistent_url, 302)
-        response1 = self._test_response_status('get', url, 302)
+        self._test_response_status('get', url, 302)
         self.assertTemplateUsed(template_name='login.html')
         self.client.login(username='foo', password='foobar')
         # TODO: fix this
@@ -864,7 +877,8 @@ class DashboardViewsTestCase(TestCase):
         # TODO: fix this
         # response1 = self._test_response_status('get', url, 403)
         # self.assertTemplateNotUsed(response1, 'dashboard/edit_resource.html')
-        assign_perm('change_community_resource', self.user.user, self.community)
+        assign_perm(
+            'change_community_resource', self.user.user, self.community)
         self.client.login(username='foo', password='foobar')
         self._test_response_status('get', nonexistent_url, 404)
         self._test_response_status('get', url, 200)
@@ -893,8 +907,10 @@ class DashboardViewsTestCase(TestCase):
         self.client.login(username='foo', password='foobar')
         # TODO: fix this
         # response1 = self._test_response_status('get', url, 403)
-        # self.assertTemplateNotUsed(response1, 'dashboard/delete_resource.html')
-        assign_perm('delete_community_resource', self.user.user, self.community)
+        # self.assertTemplateNotUsed(response1,
+        # 'dashboard/delete_resource.html')
+        assign_perm(
+            'delete_community_resource', self.user.user, self.community)
         response1 = self._test_response_status('get', url, 200)
         self.assertTemplateUsed(response1, 'dashboard/delete_resource.html')
 
@@ -915,8 +931,10 @@ class DashboardViewsTestCase(TestCase):
         self.client.login(username='foo', password='foobar')
         # TODO: fix this
         # response1 = self._test_response_status('get', url, 403)
-        # self.assertTemplateNotUsed(response1, 'dashboard/delete_resource.html')
-        assign_perm('delete_community_resource', self.user.user, self.community)
+        # self.assertTemplateNotUsed(response1,
+        # 'dashboard/delete_resource.html')
+        assign_perm(
+            'delete_community_resource', self.user.user, self.community)
         self._test_response_status('get', nonexistent_url, 404)
         self.assertEqual(len(Resource.objects.all()), 1)
         self._test_response_status('get', url, 302)
@@ -934,7 +952,7 @@ class DashboardViewsTestCase(TestCase):
                       kwargs={'community_slug': self.community.slug,
                               'page_slug': self.page.slug})
         self._test_response_status('get', nonexistent_url, 302)
-        response1 = self._test_response_status('get', url, 302)
+        self._test_response_status('get', url, 302)
         self.assertTemplateUsed(template_name='login.html')
         self.client.login(username='foo', password='foobar')
         # TODO: fix this
@@ -1042,7 +1060,7 @@ class DashboardViewsTestCase(TestCase):
                       kwargs={'community_slug': self.community.slug,
                               'page_slug': self.page.slug})
         self._test_response_status('get', nonexistent_url, 302)
-        response1 = self._test_response_status('get', url, 302)
+        self._test_response_status('get', url, 302)
         self.assertTemplateUsed(template_name='login.html')
         self.client.login(username='foo', password='foobar')
         # TODO: fix this
@@ -1072,7 +1090,7 @@ class DashboardViewsTestCase(TestCase):
                       kwargs={'community_slug': self.community.slug,
                               'news_slug': self.news.slug})
         self._test_response_status('get', nonexistent_url, 302)
-        response1 = self._test_response_status('get', url, 302)
+        self._test_response_status('get', url, 302)
         self.assertTemplateUsed(template_name='login.html')
         self.client.login(username='foo', password='foobar')
         self._test_response_status('get', nonexistent_url, 404)
@@ -1101,10 +1119,10 @@ class DashboardViewsTestCase(TestCase):
                               'news_slug': self.news.slug,
                               'comment_id': comment.id})
         self._test_response_status('get', nonexistent_url, 302)
-        response1 = self._test_response_status('get', url, 302)
+        self._test_response_status('get', url, 302)
         self.assertTemplateUsed(template_name='login.html')
         self.client.login(username='foo', password='foobar')
-        # TODO : Fix this 
+        # TODO : Fix this
         # response1 = self._test_response_status('get', url, 403)
         # response1 = self._test_response_status('get', url, 302)
         # self.assertTemplateNotUsed(response1, 'dashboard/view_news.html')
@@ -1131,7 +1149,7 @@ class DashboardViewsTestCase(TestCase):
                               'news_slug': self.news.slug,
                               'comment_id': comment.id})
         self._test_response_status('get', nonexistent_url, 302)
-        response1 = self._test_response_status('get', url, 302)
+        self._test_response_status('get', url, 302)
         self.assertTemplateUsed(template_name='login.html')
         self.client.login(username='foo', password='foobar')
         self._test_response_status('get', nonexistent_url, 404)
@@ -1148,10 +1166,10 @@ class DashboardViewsTestCase(TestCase):
                       kwargs={'community_slug': self.community.slug,
                               'news_slug': self.news.slug})
         self._test_response_status('get', nonexistent_url, 302)
-        response1 = self._test_response_status('get', url, 302)
+        self._test_response_status('get', url, 302)
         self.assertTemplateUsed(template_name='login.html')
         self.client.login(username='foo', password='foobar')
-        # TODO : Fix this 
+        # TODO : Fix this
         # response1 = self._test_response_status('get', url, 403)
         # response1 = self._test_response_status('get', url, 302)
         # self.assertTemplateNotUsed(response1, 'dashboard/view_news.html')
@@ -1175,10 +1193,10 @@ class DashboardViewsTestCase(TestCase):
                       kwargs={'community_slug': self.community.slug,
                               'news_slug': self.news.slug})
         self._test_response_status('get', nonexistent_url, 302)
-        response1 = self._test_response_status('get', url, 302)
+        self._test_response_status('get', url, 302)
         self.assertTemplateUsed(template_name='login.html')
         self.client.login(username='foo', password='foobar')
-        # TODO : Fix this 
+        # TODO : Fix this
         # response1 = self._test_response_status('get', url, 403)
         # response1 = self._test_response_status('get', url, 302)
         # self.assertTemplateNotUsed(response1, 'dashboard/view_news.html')
@@ -1200,7 +1218,7 @@ class DashboardViewsTestCase(TestCase):
                       kwargs={'community_slug': self.community.slug,
                               'resource_slug': self.resource.slug})
         self._test_response_status('get', nonexistent_url, 302)
-        response1 = self._test_response_status('get', url, 302)
+        self._test_response_status('get', url, 302)
         self.assertTemplateUsed(template_name='login.html')
         self.client.login(username='foo', password='foobar')
         self._test_response_status('get', nonexistent_url, 404)
@@ -1229,10 +1247,10 @@ class DashboardViewsTestCase(TestCase):
                               'resource_slug': self.resource.slug,
                               'comment_id': comment.id})
         self._test_response_status('get', nonexistent_url, 302)
-        response1 = self._test_response_status('get', url, 302)
+        self._test_response_status('get', url, 302)
         self.assertTemplateUsed(template_name='login.html')
         self.client.login(username='foo', password='foobar')
-        # TODO : Fix this 
+        # TODO : Fix this
         # response1 = self._test_response_status('get', url, 403)
         # response1 = self._test_response_status('get', url, 302)
         # self.assertTemplateNotUsed(response1, 'dashboard/view_resource.html')
@@ -1259,7 +1277,7 @@ class DashboardViewsTestCase(TestCase):
                               'resource_slug': self.resource.slug,
                               'comment_id': comment.id})
         self._test_response_status('get', nonexistent_url, 302)
-        response1 = self._test_response_status('get', url, 302)
+        self._test_response_status('get', url, 302)
         self.assertTemplateUsed(template_name='login.html')
         self.client.login(username='foo', password='foobar')
         self._test_response_status('get', nonexistent_url, 404)
@@ -1276,10 +1294,10 @@ class DashboardViewsTestCase(TestCase):
                       kwargs={'community_slug': self.community.slug,
                               'resource_slug': self.resource.slug})
         self._test_response_status('get', nonexistent_url, 302)
-        response1 = self._test_response_status('get', url, 302)
+        self._test_response_status('get', url, 302)
         self.assertTemplateUsed(template_name='login.html')
         self.client.login(username='foo', password='foobar')
-        # TODO : Fix this 
+        # TODO : Fix this
         # response1 = self._test_response_status('get', url, 403)
         # response1 = self._test_response_status('get', url, 302)
         # self.assertTemplateNotUsed(response1, 'dashboard/view_resource.html')
@@ -1303,10 +1321,10 @@ class DashboardViewsTestCase(TestCase):
                       kwargs={'community_slug': self.community.slug,
                               'resource_slug': self.resource.slug})
         self._test_response_status('get', nonexistent_url, 302)
-        response1 = self._test_response_status('get', url, 302)
+        self._test_response_status('get', url, 302)
         self.assertTemplateUsed(template_name='login.html')
         self.client.login(username='foo', password='foobar')
-        # TODO : Fix this 
+        # TODO : Fix this
         # response1 = self._test_response_status('get', url, 403)
         # response1 = self._test_response_status('get', url, 302)
         # self.assertTemplateNotUsed(response1, 'dashboard/view_resource.html')
@@ -1343,10 +1361,11 @@ class DashboardViewsTestCase(TestCase):
         self._test_response_status('get', url, 302)
         self.assertTemplateUsed(template_name='login.html')
         self.client.login(username='foo', password='foobar')
-        # TODO : Fix this 
+        # TODO : Fix this
         # response1 = self._test_response_status('get', url, 403)
         # response1 = self._test_response_status('get', url, 302)
-        # self.assertTemplateNotUsed(response1, 'dashboard/show_community_join_request.html')
+        # self.assertTemplateNotUsed(response1,
+        # 'dashboard/show_community_join_request.html')
         name = generic_groups["community_admin"].format(self.community.name)
         group = Group.objects.get(name=name)
         group.user_set.add(self.user.user)
@@ -1373,10 +1392,11 @@ class DashboardViewsTestCase(TestCase):
         self._test_response_status('get', url, 302)
         self.assertTemplateUsed(template_name='login.html')
         self.client.login(username='foo', password='foobar')
-        # TODO : Fix this 
+        # TODO : Fix this
         # response1 = self._test_response_status('get', url, 403)
         # response1 = self._test_response_status('get', url, 302)
-        # self.assertTemplateNotUsed(response1, 'dashboard/show_community_join_request.html')
+        # self.assertTemplateNotUsed(response1,
+        # 'dashboard/show_community_join_request.html')
         name = generic_groups["community_admin"].format(self.community.name)
         group = Group.objects.get(name=name)
         group.user_set.add(self.user.user)
@@ -1384,7 +1404,7 @@ class DashboardViewsTestCase(TestCase):
         community_members = SysterUser.objects.filter(
             member_of_community=self.community)
         self.assertEqual(user in community_members, False)
-        response1 = self._test_response_status('get', url, 302)
+        self._test_response_status('get', url, 302)
         join_request = JoinRequest.objects.get(user=user)
         self.assertEqual(join_request.is_approved, True)
         user = SysterUser.objects.get(user=auth_user1)
@@ -1401,9 +1421,9 @@ class DashboardViewsTestCase(TestCase):
         self._test_response_status('get', nonexistent_url, 302)
         self._test_response_status('get', url, 302)
         self.assertTemplateUsed(template_name='login.html')
-        join_request = JoinRequest.objects.create(user=self.user,
-                                                  community=self.community,
-                                                  is_approved=False)
+        JoinRequest.objects.create(user=self.user,
+                                   community=self.community,
+                                   is_approved=False)
         self.client.login(username='foo', password='foobar')
         self._test_response_status('get', nonexistent_url, 404)
         self.assertEqual(len(JoinRequest.objects.all()), 1)

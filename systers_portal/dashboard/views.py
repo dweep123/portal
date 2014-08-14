@@ -68,7 +68,8 @@ def view_page(request, community_slug, page_slug):
         systeruser = SysterUser.objects.get(user=request.user)
         if systeruser in community.members.all():
             is_member = True
-        join_requests = JoinRequest.objects.filter(user=systeruser, community=community)
+        join_requests = JoinRequest.objects.filter(
+            user=systeruser, community=community)
         if join_requests:
             join_request = join_requests.latest()
     return render_to_response('dashboard/view_page.html',
@@ -166,6 +167,12 @@ def confirm_delete_page(request, community_slug, page_slug):
 
 
 def community_main_page(request, community_slug):
+    """Main page of a community
+
+    :param request: request object
+    :param community_slug: string community_slug parsed from the URL
+    :raises Http404: if a community entry doesn't exist
+    """
     community = get_object_or_404(Community, slug=community_slug)
     pages = CommunityPage.objects.filter(community=community).order_by('order')
     if pages:
@@ -193,11 +200,17 @@ def view_user_profile(request, username):
                                'communities_member': communities_member,
                                'permission_groups': permission_groups,
                                'join_requests': user_join_requests},
-                                context)
+                              context)
 
 
 @login_required
 def edit_user_profile(request, username):
+    """Edit profile of a user only
+       loggedin user can edit its own profile
+
+    :param request: request object
+    :param username: string username parsed from the URL
+    """
     context = RequestContext(request)
     if request.method == 'POST':
         userform = UserForm(data=request.POST, instance=request.user)
@@ -298,7 +311,14 @@ def view_news(request, community_slug, news_slug):
 
 @login_required
 def add_newscomment(request, community_slug, news_slug):
-    """Add a new comment."""
+    """Add a comment for a news
+
+    :param request: request object
+    :param community_slug: string community_slug parsed from the URL
+    :param news_slug: string news_slug parsed from the URL
+    :raises Http404: if a community or news entry
+                     inside community doesn't exist
+    """
     community = get_object_or_404(Community, slug=community_slug)
     news = get_object_or_404(News, community=community, slug=news_slug)
     if request.method == 'POST':
@@ -330,6 +350,16 @@ def add_newscomment(request, community_slug, news_slug):
 
 @login_required
 def approve_newscomment(request, community_slug, news_slug, comment_id):
+    """Approve comment on news of a community
+
+    :param request: request object
+    :param community_slug: string community_slug parsed from the URL
+    :param news_slug: string news_slug parsed from the URL
+    :param comment_id: number id parsed from the url
+    :raises Http404: if a community entry doesn't exist
+                     or news for that community does not exist
+    """
+
     community = get_object_or_404(Community, slug=community_slug)
     community_admin_group_name = generic_groups[
         "community_admin"].format(community.name)
@@ -351,8 +381,19 @@ def approve_newscomment(request, community_slug, news_slug, comment_id):
 @login_required
 def delete_newscomment(request, community_slug, news_slug, comment_id=None):
     """Delete comment(s) with primary key
-    comment_id or with comment_ids in POST."""
+    comment_id or with comment_ids in news.
+
+    :param request: request object
+    :param community_slug: string community_slug parsed from the URL
+    :param news_slug: string news_slug parsed from the URL
+    :param comment_id: number id parsed from the url or none
+                       if list of comments is to be deleted
+    :raises Http404: if a community entry doesn't exist
+                     or news for that community does not exist
+    """
     community = get_object_or_404(Community, slug=community_slug)
+    news = get_object_or_404(
+        News, community=community, slug=news_slug)
     if not comment_id:
         commentlist = request.POST.getlist("delete")
     else:
@@ -387,7 +428,8 @@ def show_community_news(request, community_slug, tag=None):
         systeruser = SysterUser.objects.get(user=request.user)
         if systeruser in community.members.all():
             is_member = True
-        join_requests = JoinRequest.objects.filter(user=systeruser, community=community)
+        join_requests = JoinRequest.objects.filter(
+            user=systeruser, community=community)
         if join_requests:
             join_request = join_requests.latest()
     return render_to_response('community/show_community_news.html',
@@ -459,6 +501,14 @@ def edit_news(request, community_slug, news_slug):
 
 @login_required
 def monitor_news(request, community_slug, news_slug):
+    """Allow admins and superuser to monitor news about a community
+
+    :param request: request object
+    :param community_slug: string community_slug parsed from the URL
+    :param news_slug: string news_slug parsed from the URL
+    :raises Http404: if a community entry or news entry
+                     inside that community doesn't exist
+    """
     community = get_object_or_404(Community, slug=community_slug)
     community_admin_group_name = generic_groups[
         "community_admin"].format(community.name)
@@ -476,6 +526,14 @@ def monitor_news(request, community_slug, news_slug):
 
 @login_required
 def unmonitor_news(request, community_slug, news_slug):
+    """Allow admins and superuser to unmonitor news about a community
+
+    :param request: request object
+    :param community_slug: string community_slug parsed from the URL
+    :param news_slug: string news_slug parsed from the URL
+    :raises Http404: if a community entry or news entry
+                     inside that community doesn't exist
+    """
     community = get_object_or_404(Community, slug=community_slug)
     community_admin_group_name = generic_groups[
         "community_admin"].format(community.name)
@@ -560,7 +618,8 @@ def view_resource(request, community_slug, resource_slug):
                               context)
 
 
-def show_community_resources(request, community_slug, tag=None, resource_type=None):
+def show_community_resources(request, community_slug,
+                             tag=None, resource_type=None):
     """Show all resources of a community
 
     :param request: request object
@@ -572,7 +631,8 @@ def show_community_resources(request, community_slug, tag=None, resource_type=No
     tag = request.GET.get('tag', '')
     resource_type = request.GET.get('resource_type', '')
     tag_exists = Tag.objects.filter(name=tag).exists()
-    resource_type_exists = ResourceType.objects.filter(name=resource_type).exists()
+    resource_type_exists = ResourceType.objects.filter(
+        name=resource_type).exists()
     if tag_exists:
         tag_obj = Tag.objects.get(name=tag)
         resources = Resource.objects.filter(tags=tag_obj)
@@ -590,7 +650,8 @@ def show_community_resources(request, community_slug, tag=None, resource_type=No
         systeruser = SysterUser.objects.get(user=request.user)
         if systeruser in community.members.all():
             is_member = True
-        join_requests = JoinRequest.objects.filter(user=systeruser, community=community)
+        join_requests = JoinRequest.objects.filter(
+            user=systeruser, community=community)
         if join_requests:
             join_request = join_requests.latest()
     return render_to_response('community/show_community_resources.html',
@@ -603,7 +664,14 @@ def show_community_resources(request, community_slug, tag=None, resource_type=No
 
 @login_required
 def add_resourcecomment(request, community_slug, resource_slug):
-    """Add a resource comment."""
+    """Add a comment for a resource
+
+    :param request: request object
+    :param community_slug: string community_slug parsed from the URL
+    :param resource_slug: string resource_slug parsed from the URL
+    :raises Http404: if a community or resource entry
+                     inside community doesn't exist
+    """
     community = get_object_or_404(Community, slug=community_slug)
     resource = get_object_or_404(
         Resource, community=community, slug=resource_slug)
@@ -637,6 +705,17 @@ def add_resourcecomment(request, community_slug, resource_slug):
 @login_required
 def approve_resourcecomment(request, community_slug,
                             resource_slug, comment_id):
+    """Approve comment on resource of a community by admins
+    and superuser
+
+    :param request: request object
+    :param community_slug: string community_slug parsed from the URL
+    :param resource_slug: string resource_slug parsed from the URL
+    :param comment_id: number id parsed from the url
+    :raises Http404: if a community entry doesn't exist
+                     or resource for that community does not exist
+    """
+
     community = get_object_or_404(Community, slug=community_slug)
     community_admin_group_name = generic_groups[
         "community_admin"].format(community.name)
@@ -659,7 +738,16 @@ def approve_resourcecomment(request, community_slug,
 def delete_resourcecomment(request, community_slug,
                            resource_slug, comment_id=None):
     """Delete comment(s) with primary key
-    comment_id or with comment_ids in POST."""
+    comment_id or with comment_ids in resource.
+
+    :param request: request object
+    :param community_slug: string community_slug parsed from the URL
+    :param resource_slug: string resource_slug parsed from the URL
+    :param comment_id: number id parsed from the url or none
+                       if list of comments is to be deleted
+    :raises Http404: if a community entry doesn't exist
+                     or resource for that community does not exist
+    """
     community = get_object_or_404(Community, slug=community_slug)
     if not comment_id:
         commentlist = request.POST.getlist("delete")
@@ -738,6 +826,14 @@ def edit_resource(request, community_slug, resource_slug):
 
 @login_required
 def monitor_resource(request, community_slug, resource_slug):
+    """Allow admins and superuser to monitor resource of a community
+
+    :param request: request object
+    :param community_slug: string community_slug parsed from the URL
+    :param resource_slug: string resource_slug parsed from the URL
+    :raises Http404: if a community entry or resource entry
+                     inside that community doesn't exist
+    """
     community = get_object_or_404(Community, slug=community_slug)
     community_admin_group_name = generic_groups[
         "community_admin"].format(community.name)
@@ -757,6 +853,14 @@ def monitor_resource(request, community_slug, resource_slug):
 
 @login_required
 def unmonitor_resource(request, community_slug, resource_slug):
+    """Allow admins and superuser to unmonitor resource of a community
+
+    :param request: request object
+    :param community_slug: string community_slug parsed from the URL
+    :param resource_slug: string resource_slug parsed from the URL
+    :raises Http404: if a community entry or resource entry
+                     inside that community doesn't exist
+    """
     community = get_object_or_404(Community, slug=community_slug)
     community_admin_group_name = generic_groups[
         "community_admin"].format(community.name)
@@ -820,9 +924,9 @@ def confirm_delete_resource(request, community_slug, resource_slug):
 def manage_community_users(request, community_slug):
     """Manage all community users
 
-    :param request:
-    :param community_slug:
-    :return:
+    :param request: request object
+    :param community_slug: string community_slug parsed from the URL
+    :raises Http404: if a community entry does not exist
     """
     context = RequestContext(request)
     community = get_object_or_404(Community, slug=community_slug)
@@ -862,6 +966,13 @@ def manage_user_groups(request, community_slug, username):
 
 @login_required
 def make_join_request(request, community_slug):
+    """Make join request for a community if
+    request is not made already
+
+    :param request: request object
+    :param community_slug: string community_slug parsed from the URL
+    :raises Http404: if a community entry does not exist
+    """
     community = get_object_or_404(Community, slug=community_slug)
     systeruser = SysterUser.objects.get(user=request.user)
     if systeruser not in community.members.all():
@@ -873,6 +984,13 @@ def make_join_request(request, community_slug):
 
 @login_required
 def show_community_join_request(request, community_slug):
+    """Show join requests for a community to
+    admins and superuser
+
+    :param request: request object
+    :param community_slug: string community_slug parsed from the URL
+    :raises Http404: if a community entry does not exist
+    """
     context = RequestContext(request)
     community = get_object_or_404(Community, slug=community_slug)
     community_admin_group_name = generic_groups[
@@ -889,6 +1007,14 @@ def show_community_join_request(request, community_slug):
 
 @login_required
 def approve_community_join_request(request, community_slug, request_id):
+    """Approve join request for community by admins and superuser
+
+    :param request: request object
+    :param community_slug: string community_slug parsed from the URL
+    :param request_id: number request_id parsed from the URL
+    :raises Http404: if a community entry or the request
+                     entry does not exist
+    """
     community = get_object_or_404(Community, slug=community_slug)
     community_admin_group_name = generic_groups[
         "community_admin"].format(community.name)
@@ -915,6 +1041,14 @@ def approve_community_join_request(request, community_slug, request_id):
 
 @login_required
 def cancel_community_join_request(request, community_slug):
+    """Cancel join request for community by
+    the currently loggedin user
+
+    :param request: request object
+    :param community_slug: string community_slug parsed from the URL
+    :raises Http404: if a community entry or the request
+                     entry does not exist
+    """
     systeruser = SysterUser.objects.get(user=request.user)
     community = get_object_or_404(Community, slug=community_slug)
     join_request = JoinRequest.objects.get(
@@ -933,6 +1067,15 @@ def community_proposal(request):
 
 @login_required
 def leave_community(request, username, community_slug):
+    """Leave community by the currently loggedin user
+    Takes the permissions granted to the user back when
+    user leaves the community
+
+    :param request: request object
+    :param community_slug: string community_slug parsed from the URL
+    :raises Http404: if a community entry or the join request
+                     entry does not exist
+    """
     user = get_object_or_404(User, username=username)
     systeruser = SysterUser.objects.get(user=user)
     community = get_object_or_404(Community, slug=community_slug)

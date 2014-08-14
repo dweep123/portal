@@ -1,0 +1,49 @@
+{% extends "dashboard/base.html" %}
+{% load dashboard_extras %}
+{% load guardian_tags %}
+{% block head_title %}Join Requests{% endblock %}
+{% block content %}
+  <style type="text/css">
+    .time {
+      font-size: 0.8em;
+      margin-top: 2px;
+    }
+
+    .join_request {
+      border: 1px solid #eee;
+      padding: 4px;
+      margin-bottom: 12px;
+    }
+
+    .body {
+      font-size: 1.1em;
+      margin-top: 2px;
+    }
+  </style>
+  <div class="main">
+    {% if join_requests %}
+      <p>Requests: </p>
+      {% for join_request in join_requests %}
+        {% if not join_request.is_approved %}
+          <div class="join_request">
+          <div class="time">{{ join_request.date_created }}</div>
+          <div class="body"><p><a href="{{ join_request.user.get_absolute_url }}">{{ join_request.user }}</a> 
+            wants to join the community  </p></div>
+          <div><a href="{% url 'approve_community_join_request' join_request.community.slug join_request.id %}">Approve</a></div></div>
+        {% endif %}
+      {% endfor %} 
+      {% for join_request in join_requests %}
+        {% if join_request.is_approved %}
+        <div class="join_request">
+          <div class="time">{{ join_request.date_created }}</div>
+          <div class="body"><p><a href="{{ join_request.user.get_absolute_url }}">{{ join_request.user }}</a>
+           wants to join the community  </ p></div>
+         <p><strong> Approved by <a href="{{ join_request.approved_by.get_absolute_url }}">{{join_request.approved_by}}</a></strong></p></div>
+        {% endif %}
+      {% endfor %} 
+       
+    {% else %}
+    <p> No new join request </p>
+    {% endif %}
+  </div>
+{% endblock %}

@@ -34,7 +34,6 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.comments',
     'django_nose',
     'django.contrib.sites',
     'djangocms_text_ckeditor',

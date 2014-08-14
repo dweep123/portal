@@ -160,10 +160,11 @@ class News(models.Model):
                                     verbose_name='Publish date')
     date_modified = models.DateField(auto_now=True, auto_now_add=False,
                                      verbose_name='Last Modified date')
-    is_public = models.BooleanField(default=True, verbose_name='is_public')
+    is_public = models.BooleanField(default=True, verbose_name='Is public')
     tags = models.ManyToManyField(Tag, blank=True, null=True,
                                   verbose_name='Tags')
     content = models.TextField(verbose_name='Content')
+    is_monitor = models.BooleanField(default=False, verbose_name='Is monitored')
 
     def __unicode__(self):
         return "{0} of {1} Community".format(self.title, self.community.name)
@@ -208,12 +209,13 @@ class Resource(models.Model):
                                     verbose_name='Publish Date')
     date_modified = models.DateField(auto_now=True, auto_now_add=False,
                                      verbose_name='Last Modified date')
-    is_public = models.BooleanField(default=True, verbose_name='is_public')
+    is_public = models.BooleanField(default=True, verbose_name='Is public')
     tags = models.ManyToManyField(Tag, blank=True, null=True,
                                   verbose_name='Tags')
     resource_type = models.ForeignKey(ResourceType, blank=True, null=True,
                                       verbose_name='Resource Type')
     content = models.TextField(verbose_name='Content')
+    is_monitor = models.BooleanField(default=False, verbose_name='Is monitored')
 
     def __unicode__(self):
         return "{0} of {1} Community".format(self.title, self.community.name)
@@ -234,20 +236,36 @@ class Resource(models.Model):
 
 
 class NewsComment(models.Model):
+    """Model to represent a comment to a News instance"""
     created = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(SysterUser)
     body = models.TextField()
     news = models.ForeignKey(News)
+    is_approved = models.BooleanField(default=True, verbose_name='Is approved')
 
     def __unicode__(self):
         return unicode("%s: %s" % (self.news, self.body))
 
 
 class ResourceComment(models.Model):
+    """Model to represent a comment to a Resource instance"""
     created = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(SysterUser)
     body = models.TextField()
     resource = models.ForeignKey(Resource)
+    is_approved = models.BooleanField(default=True, verbose_name='is_approved')
 
     def __unicode__(self):
         return unicode("%s: %s" % (self.resource, self.body))
+
+
+class JoinRequest(models.Model):
+    """Model to represent a request to join a community by a user"""
+    user = models.ForeignKey(SysterUser, related_name='created_by')
+    approved_by = models.ForeignKey(
+        SysterUser, blank=True, null=True, related_name='approved_by')
+    community = models.ForeignKey(Community, verbose_name='Community')
+    date_created = models.DateField(auto_now=False, auto_now_add=True,
+                                    verbose_name='Request Date')
+    is_approved = models.BooleanField(
+        default=False, verbose_name='Is approved')
